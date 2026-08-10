@@ -1,23 +1,136 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zafar Iqbal | Technology Journal</title>
-    <meta name="description" content="Personal website of Zafar Iqbal. Articles, ideas, and thoughts.">
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZFRQBL — Writing about software, AI, and engineering</title>
+  <meta name="description" content="Independent software engineer. Writing about artificial intelligence, software architecture, and the craft of building systems.">
+  <link rel="canonical" href="https://zfrqbl.com/">
+  <link rel="alternate" type="application/rss+xml" title="ZFRQBL RSS Feed" href="https://zfrqbl.com/feed.xml">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="ZFRQBL — Writing about software, AI, and engineering">
+  <meta property="og:description" content="Independent software engineer. Writing about artificial intelligence, software architecture, and the craft of building systems.">
+  <meta property="og:url" content="https://zfrqbl.com/">
+  <meta property="og:site_name" content="ZFRQBL">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="ZFRQBL — Writing about software, AI, and engineering">
+  <meta name="twitter:description" content="Independent software engineer. Writing about artificial intelligence, software architecture, and the craft of building systems.">
+
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90' font-family='monospace'%3EZ%3C/text%3E%3C/svg%3E">
+
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script src="/js/theme.js"></script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "ZFRQBL",
+    "url": "https://zfrqbl.com/",
+    "description": "Independent software engineer writing about software, AI, and engineering.",
+    "author": {
+      "@type": "Person",
+      "name": "ZFRQBL",
+      "url": "https://zfrqbl.com/",
+      "jobTitle": "Independent Software Engineer"
+    }
+  }
+  </script>
 </head>
 <body>
+  <a href="#main" class="skip-link">Skip to main content</a>
 
-    <header>
-        <h1>Zafar</h1>
-        <p>Articles, ideas, and thoughts.</p>
-    </header>
+  <header class="site-header">
+    <div class="nav-container">
+      <a href="/" class="site-logo" aria-label="ZFRQBL home">ZFRQBL</a>
 
-    <main>
-        <h2>Welcome</h2>
-        <p>The site is under construction.</p>
-    </main>
+      <button class="icon-button nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="primary-nav">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
 
+      <ul class="nav-links" id="primary-nav">
+        <li><a href="/writing.html" class="active">Writing</a></li>
+        <li><a href="/projects.html">Projects</a></li>
+        <li><a href="/notes.html">Notes</a></li>
+        <li><a href="/about.html">About</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="/search.html" class="icon-button" aria-label="Search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </a>
+        <button class="icon-button" data-theme-toggle aria-label="Toggle color theme">
+          <span class="theme-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          </span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <div class="container">
+      <section class="hero">
+        <p class="hero-intro">Independent software engineer. Writing about artificial intelligence, software architecture, and the craft of building systems.</p>
+        <p class="hero-description">This site collects long-form essays, engineering projects, and shorter technical notes. No marketing, no hype — just thinking in public.</p>
+      </section>
+
+      <!-- Latest writing -->
+      <section class="section">
+        <header class="section-header">
+          <h2 class="section-title">Latest Writing</h2>
+          <a href="/writing.html" class="section-link">View all →</a>
+        </header>
+        <p class="text-muted">No essays published yet. Check back soon.</p>
+      </section>
+
+      <!-- Projects -->
+      <section class="section">
+        <header class="section-header">
+          <h2 class="section-title">Projects</h2>
+          <a href="/projects.html" class="section-link">View all →</a>
+        </header>
+        <p class="text-muted">Projects will be listed here once published.</p>
+      </section>
+
+      <!-- Recent notes -->
+      <section class="section">
+        <header class="section-header">
+          <h2 class="section-title">Recent Notes</h2>
+          <a href="/notes.html" class="section-link">View all →</a>
+        </header>
+        <p class="text-muted">No notes published yet.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-content">
+      <div>
+        <p>© 2026 ZFRQBL. Writing in public.</p>
+        <ul class="footer-links">
+          <li><a href="/writing.html">Writing</a></li>
+          <li><a href="/projects.html">Projects</a></li>
+          <li><a href="/notes.html">Notes</a></li>
+          <li><a href="/about.html">About</a></li>
+          <li><a href="/feed.xml">RSS</a></li>
+        </ul>
+      </div>
+      <div class="footer-meta">
+        <p>zfrqbl.com</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/main.js"></script>
 </body>
 </html>
