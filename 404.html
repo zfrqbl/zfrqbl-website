@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>404 — Page Not Found</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+  <script>
+    (function () {
+      const stored = localStorage.getItem('theme');
+      const theme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+</head>
+<body>
+  <main class="container" style="text-align: center; padding-top: 6rem; max-width: 500px;">
+    <h1 style="font-size: 4rem; margin-bottom: 0.5rem;">404</h1>
+    <p class="secondary" style="font-size: 1.1rem; margin-bottom: 2rem;">This page doesn't exist or has been moved.</p>
+    <a href="/" class="contrast" role="button">← Back to Homepage</a>
+  </main>
+</body>
+</html>
