@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Graph Engineering Isn’t Magic: It’s Just Loops with State Management — ZFRQBL</title>
+  <meta name="description" content="Understand graph-based AI agents by following their evolution from plain Python loops to explicit state management and graph execution." />
+  
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Graph Engineering Isn’t Magic: It’s Just Loops with State Management" />
+  <meta property="og:description" content="Understand graph-based AI agents by following their evolution from plain Python loops to explicit state management and graph execution." />
+  <meta property="og:url" content="https://zfrqbl.com/essays/graph-engineering-isnt-magic-its-just-loops-with-state-management" />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary" aria-label="Toggle theme" style="padding: 0.25rem 0.5rem; font-size: 0.85rem;">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article class="essay-content">
+      <header style="margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <small style="text-transform: uppercase; font-weight: bold; font-size: 0.75rem;" class="secondary">ESSAY</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-08-14" class="secondary" style="font-size: 0.85rem;">August 14, 2026</time>
+        </div>
+        <h1>Graph Engineering Isn’t Magic: It’s Just Loops with State Management</h1>
+      </header>
+
+      <section>
+        <p>A graph-based agent can look complicated when you first encounter one. You see nodes, state objects, routing functions, checkpoints, and framework APIs.</p>
+        <p>Most agent workflows can be understood as repeated execution: run an operation, update state, inspect the result, and decide what happens next. This article follows that progression from plain Python to explicit state management and graph-based execution.</p>
+
+        <h2>The Loop and the State</h2>
+        <p>Consider a coding agent that generates a function, runs tests, examines failures, and repairs the implementation.</p>
+        <p>The workflow loop is straightforward:</p>
+
+        <figure style="margin: 2rem 0;">
+          <img src="/public/images/code-loop.png" alt="Coding agent workflow loop diagram" style="width: 100%; height: auto; border-radius: 6px;" />
+          <figcaption class="secondary" style="font-size: 0.85rem; text-align: center; margin-top: 0.5rem;">Coding agent workflow loop</figcaption>
+        </figure>
+
+        <p>The repeated part is the actual loop the agent moves around while it generates and tests the code.</p>
+        <p>A small implementation of this loop could be:</p>
+
+        <div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-python">attempts = 0
+
+while attempts &lt; 3:
+    result = run_tests(code)
+
+    if result.passed:
+        break
+
+    code = repair_code(
+        code=code,
+        error=result.error,
+    )
+
+    attempts += 1</code></pre>
+        </div>
+
+        <p>The program runs an operation, checks its result, and either stops or runs another operation.</p>
+        <p>The other part is the state the workflow carries between iterations.</p>
+
+        <h2>The State</h2>
+        <p>At first, the program only needs the generated code. Once testing and repair are added, it needs to retain the latest result and error:</p>
+
+        <div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-python">state = {
+    "code": code,
+    "test_result": None,
+    "error": None,
+    "attempt_count": 0,
+}</code></pre>
+        </div>
+
+        <p>A slightly larger workflow might need:</p>
+        <ul>
+          <li><code>code</code></li>
+          <li><code>test_result</code></li>
+          <li><code>error</code></li>
+          <li><code>attempt_count</code></li>
+          <li><code>messages</code></li>
+          <li><code>status</code></li>
+        </ul>
+
+        <p>Each field exists because a different part of the system depends on it. <code>code</code> is the current working artifact that every step reads and updates. <code>test_result</code> captures the latest execution outcome so the system does not need to rerun tests just to inspect past results. <code>error</code> stores the most recent failure context, which is what the repair step uses to decide what to change.</p>
+        <p><code>attempt_count</code> tracks how many iterations have occurred so the workflow can enforce retry limits or switch strategies after repeated failures. <code>messages</code> preserves any accumulated interaction or tool output that may be required for debugging or for the model to maintain continuity. <code>status</code> represents the current phase of execution, such as running, repairing, or completed, and is often used for routing or external visibility.</p>
+        <p>The repair step needs the current code and the latest error. The retry policy needs the attempt count. Logging may need the previous test result. A user interface may need the current status.</p>
+        <p>The loop is still doing the execution. The state carries information from one step to the next. As such, the loop controls execution. State records the information required to continue execution.</p>
+
+        <h2>State Is Not the Same as Message History</h2>
+        <p>In a basic LLM application, much of the state may live in a message list:</p>
+
+        <div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-python">messages = [...]</code></pre>
+        </div>
+
+        <p>That is useful when the main requirement is giving the model the conversation it needs.</p>
+        <p>It becomes less convenient when the application needs structured information such as:</p>
+
+        <div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-python">state = {
+    "code": "...",
+    "test_result": "...",
+    "error": "...",
+    "attempt_count": 2,
+    "status": "repairing",
+}</code></pre>
+        </div>
+
+        <p>Now the application can read the current attempt count directly. It does not need to infer it from previous messages.</p>
+        <p>As workflows grow, reconstructing application state from message history becomes harder to test and maintain.</p>
+        <p>Once retry logic, tool calls, and branching behavior are introduced, relying on message history to reconstruct state becomes fragile. You have to scan or interpret past events to determine “where you are” in the process, which can lead to subtle bugs when messages are reordered, truncated, or partially lost. With explicit state, the workflow can make decisions deterministically based on a single source of truth, such as <code>attempt_count</code>, rather than reconstructing intent from a sequence of past interactions.</p>
+        <p>Suppose the agent has generated three versions of a function, run five tests, received two tool results, found a security warning, and is waiting for approval. Some information needs to be available to the model. Some need to be available to the application. The same piece of information may need to exist in both.</p>
+        <p>The state object holds the current values. The schema defines which fields the workflow expects and what type of value each field contains.</p>
+        <p>A state model gives the application a place to represent information that must persist across steps in the workflow instead of being inferred from local variables or message history. This becomes important once multiple operations need to read and update the same shared context.</p>
+        <p>For example, in a simple code-generation and testing loop, the workflow needs to track the current code, the latest test result, any error output, how many attempts have been made, and the current execution status. This is usually implemented in a key:value pair structure, such as the following dictionary:</p>
+
+        <div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-python">from typing import TypedDict
+
+
+class AgentState(TypedDict):
+    code: str
+    test_result: str
+    error: str | None
+    attempt_count: int
+    status: str</code></pre>
+        </div>
+
+        <p>Each field corresponds to a piece of information that would otherwise be scattered across function scope, loop variables, or reconstructed from history. Keeping it in a single state object makes updates explicit and makes it clear what data is carried from one step to the next.</p>
+        <p>The exact fields will vary by application. The important part is deciding what the workflow actually needs to remember and representing that information deliberately.</p>
+
+        <h2>The Same Agent, Three Ways</h2>
+        <p>The easiest way to see why these abstractions exist is to keep the application behavior the same while changing only how it is implemented. If the requirements do not change, but the structure of the code does, it becomes much easier to see what each abstraction is actually buying us in terms of clarity, control, and state management.</p>
+        <p>To make this concrete, consider the simple code agent I mentioned earlier. It stays the same across all implementations, but it has five requirements:</p>
+        <ol>
+          <li>Generate a Python function from a specification.</li>
+          <li>Run tests against the generated function.</li>
+          <li>Use test failures to repair the function.</li>
+          <li>Allow up to three attempts.</li>
+          <li>Escalate to human review after the retry limit.</li>
+        </ol>
+        <p>These requirements stay the same throughout the three stages I will demonstrate below.</p>
+
+        <h3>Stage 1: The Raw while Loop</h3>
+        <p>The first version uses a simple Python while loop.</p>
+
+        <div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-python">def run_code_agent():
+    code = ""
+    error_feedback = ""
+    retries = 0
+    max_retries = 3
+    tests_passed = False
+
+    while not tests_passed and retries &lt; max_retries:
+
+        if error_feedback:
+            code = repair_code(
+                code=code,
+                error=error_feedback,
+            )
+        else:
+            code = generate_code()
+
+        result = run_tests(code)
+
+        if result.passed:
+            tests_passed = True
+        else:
+            error_feedback = result.error
+            retries += 1
+
+    if tests_passed:
+        return code
+
+    return "Escalate to human review"</code></pre>
+        </div>
+
+        <p>The control flow is visible. The state is local. Each step in the loop directly maps to a concrete action: generate code, run tests, check the result, and either exit or update the code based on the failure. The execution path is linear and easy to follow because all decisions are made in one place.</p>
+        <p>You can trace the entire execution by reading one function, from initial code generation through repeated test-and-repair cycles until success or the retry limit is reached.</p>
+        <p>Suppose the agent also needs to search documentation for unfamiliar errors, run a security check, use a different repair strategy after repeated failures, and wait for human approval before applying a risky change.</p>
+        <p>This agent can still handle these complications within the workflow. The change is that the main loop simply starts accumulating more responsibilities.</p>
+
+        <div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-python">while not tests_passed and retries &lt; max_retries:
+
+    if needs_documentation(error_feedback):
+        documentation = search_docs(error_feedback)
+
+    if security_check_required(code):
+        security_result = run_security_check(code)
+
+    repair = generate_repair(
+        code=code,
+        error=error_feedback,
+        documentation=documentation,
+    )
+
+    if requires_human_review(repair):
+        approved = request_human_review(repair)
+
+        if not approved:
+            continue
+
+    code = apply_repair(repair)</code></pre>
+        </div>
+
+        <p>The individual operations are still easy to understand. The execution logic around them is getting harder to follow.</p>
+        <p>That distinction matters because it separates what the system remembers (state) from how it moves forward (control flow). If you don’t separate them, logic and data get mixed together, making the workflow harder to reason about, debug, and most importantly, extend.</p>
+
+        <h3>Stage 2: The ReAct Loop</h3>
+        <p>A ReAct-style workflow moves some of the decision-making about which tool or action to run next from fixed application logic into the model itself.</p>
+        <p>The basic cycle becomes:</p>
+
+        <div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-markdown">User request
+    ↓
+   LLM
+    ↓
+Choose action
+    ↓
+Tool execution
+    ↓
+Tool result
+    ↓
+   LLM
+    ↓
+Choose next action
+    ↓
+   ...</code></pre>
+        </div>
+
+        <p>A simplified implementation looks like this:</p>
+
+        <div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-python">messages = [user_request]
+
+while True:
+    response = model.generate(messages)
+
+    messages.append(response)
+
+    if response.is_final:
+        return response
+
+    result = execute_tool(response.tool_call)
+    # Assume the model returns at most one tool call per turn
+
+    messages.append(result)</code></pre>
+        </div>
+
+        <p>The Python loop still controls repeated execution. The model now supplies some of the decisions that determine which tool or action runs inside that loop. The difference is that the model now participates in deciding which operation to run, rather than the application code fully determining the next step through fixed conditions.</p>
+        <p>In the Stage 1 version, the programmer writes:</p>
+
+        <div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-python">if result.passed:
+    finish()
+else:
+    repair_code(...)</code></pre>
+        </div>
+
+        <p>In a ReAct-style system, the model might decide to:</p>
+
+        <div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-markdown">test failed
+    ↓
+   LLM
+    ├── search documentation
+    ├── repair code
+    ├── run another test
+    └── finish</code></pre>
+        </div>
+
+        <p>That gives the workflow more flexibility. It also means that some control decisions are now model-driven rather than fixed in application code.</p>
+        <p>That has consequences.</p>
+        <p>The model may choose an unexpected action. It may repeat a tool call. It may stop without performing an operation that the application considers mandatory. It may also hallucinate a tool result or confidently produce reasoning that is not grounded in any actual execution, which can lead the workflow down a completely invalid path if the system treats the output as authoritative.</p>
+        <p>There is also a more subtle issue: the model making the decision is often not the same model that performs the heavy reasoning or has the strongest capabilities. In practice, a smaller or cheaper model is frequently used to decide what to do next, while a more capable model is reserved for generation or repair steps. This creates a mismatch where a less powerful model is responsible for routing complex reasoning tasks, and it may not reliably understand when it is appropriate to escalate, retry, or request additional context.</p>
+        <p>The application still needs limits and checks around those decisions.</p>
+        <p>There is also a state-management problem.</p>
+        <p>The message history may grow like this:</p>
+
+        <div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-markdown">User request
+↓
+Generated code
+↓
+Test tool call
+↓
+Test output
+↓
+Repair decision
+↓
+Documentation lookup
+↓
+Documentation result
+↓
+New code
+↓
+Second test
+↓
+Second failure
+↓
+...</code></pre>
+        </div>
+
+        <p>The history contains useful information, but it is now carrying both conversation context and application state. Over time, this history becomes a full record of everything the agent has seen, done, and decided, which can be helpful for debugging or replaying execution, but it is not always the right structure for runtime decision-making.</p>
+        <p>As the sequence grows, the model is forced to retrieve relevant signals from a long stream of mixed information. Important details can become harder to surface, especially in longer-running workflows where earlier steps are far back in the context window. This is where issues like “lost in the middle” can appear, where critical information exists in the history but is not reliably attended to by the model. In other cases, the agent may simply run out of usable context entirely, leading to “out of context” failures where the necessary state is no longer visible.</p>
+        <p>That can become expensive and awkward to manage. This is where explicit state management becomes useful.</p>
+
+        <h3>Stage 3: Explicit State Management</h3>
+        <p>Instead of letting state be implicitly reconstructed from an ever-growing sequence of messages (which quickly becomes fragile and expensive as workflows grow), we explicitly define the information the workflow actually needs to carry forward. This makes execution easier to reason about and gives each step a clear contract for what it can read and update.</p>
+        <p>In practice, this means introducing a structured state object that contains only the fields required for the workflow to continue.</p>
+
+        <div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-python">from typing import TypedDict
+
+
+class AgentState(TypedDict):
+    code: str
+    tests_passed: bool
+    error_feedback: str | None
+    retries: int</code></pre>
+        </div>
+
+        <p>The operations can now work against that state:</p>
+
+        <div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-python">def generate_code(state: AgentState) -> dict:
+    if state["error_feedback"]:
+        code = repair_code(
+            state["code"],
+            state["error_feedback"],
+        )
+    else:
+        code = generate_initial_code()
+
+    return {"code": code}
+
+
+def evaluate_code(state: AgentState) -> dict:
+    result = run_tests(state["code"])
+
+    if result.passed:
+        return {
+            "tests_passed": True,
+            "error_feedback": None,
+        }
+
+    return {
+        "tests_passed": False,
+        "error_feedback": result.error,
+        "retries": state["retries"] + 1,
+    }</code></pre>
+        </div>
+
+        <p>The execution now has a clearer shape:</p>
+
+        <figure style="margin: 2rem 0;">
+          <img src="/public/images/agent-loop.png" alt="Explicit state agent graph workflow diagram" style="width: 100%; height: auto; border-radius: 6px;" />
+          <figcaption class="secondary" style="font-size: 0.85rem; text-align: center; margin-top: 0.5rem;">State and execution graph workflow diagram</figcaption>
+        </figure>
+
+        <p>A graph framework such as LangGraph provides abstractions for defining and running workflows organized around this kind of state. Instead of manually writing a while loop that controls every step, you describe the workflow as a set of nodes (the operations) and edges (the transitions between them). The framework then handles moving the state through those nodes, applying each function, and deciding what comes next based on routing logic you define.</p>
+        <p>The framework does not change what <code>generate_code()</code> or <code>run_tests()</code> actually do. Those remain application functions. What it adds is a structured way to separate what happens (the functions) from how execution flows between them (the graph). It also makes it easier to introduce things like branching, retries, and checkpoints without embedding all of that logic directly inside a single loop.</p>
+        <p>So, instead of having the main loop contain every operation and every routing decision, the application can represent those pieces separately.</p>
+        <p>A simplified implementation might look like:</p>
+
+        <div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-python">from typing import Literal, TypedDict
+
+from langgraph.graph import END, START, StateGraph
+
+
+class AgentState(TypedDict):
+    code: str
+    tests_passed: bool
+    error_feedback: str | None
+    retries: int
+
+
+def generate_code(state: AgentState) -> dict:
+    if state["error_feedback"]:
+        code = repair_code(
+            state["code"],
+            state["error_feedback"],
+        )
+    else:
+        code = generate_initial_code()
+
+    return {"code": code}
+
+
+def evaluate_code(state: AgentState) -> dict:
+    result = run_tests(state["code"])
+
+    if result.passed:
+        return {
+            "tests_passed": True,
+            "error_feedback": None,
+        }
+
+    return {
+        "tests_passed": False,
+        "error_feedback": result.error,
+        "retries": state["retries"] + 1,
+    }
+
+
+def route_after_test(
+    state: AgentState,
+) -> Literal["generate_code", "human_review", END]:
+
+    if state["tests_passed"]:
+        return END
+
+    if state["retries"] >= 3:
+        return "human_review"
+
+    return "generate_code"
+
+
+def human_review(state: AgentState) -> dict:
+    request_human_review(state)
+    return {}</code></pre>
+        </div>
+
+        <p>The important separation is now visible:</p>
+
+        <div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-markdown">State
+  ↓
+Operation
+  ↓
+Updated state
+  ↓
+Routing decision
+  ↓
+Next operation</code></pre>
+        </div>
+
+        <p>That structure becomes useful when the workflow needs more than a few local variables and conditions.</p>
+
+        <h2>Comparing the Three Approaches</h2>
+
+        <div style="overflow-x: auto; margin-bottom: 2rem;">
+          <table>
+            <thead>
+              <tr>
+                <th>Concern</th>
+                <th>while loop</th>
+                <th>ReAct loop</th>
+                <th>Explicit state / graph</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>State</strong></td>
+                <td>Local variables</td>
+                <td>Primarily message history</td>
+                <td>Explicit schema</td>
+              </tr>
+              <tr>
+                <td><strong>Control decisions</strong></td>
+                <td>Application code</td>
+                <td>Model plus application code</td>
+                <td>Explicit workflow logic</td>
+              </tr>
+              <tr>
+                <td><strong>Predictability</strong></td>
+                <td>High</td>
+                <td>Lower for model-driven decisions</td>
+                <td>Higher for application routing</td>
+              </tr>
+              <tr>
+                <td><strong>Context growth</strong></td>
+                <td>Developer controlled</td>
+                <td>Can grow rapidly</td>
+                <td>State can be separated from model context</td>
+              </tr>
+              <tr>
+                <td><strong>Persistence</strong></td>
+                <td>Manual</td>
+                <td>Depends on implementation</td>
+                <td>Framework capability where supported</td>
+              </tr>
+              <tr>
+                <td><strong>Resumption</strong></td>
+                <td>Manual</td>
+                <td>Depends on implementation</td>
+                <td>Framework capability where supported</td>
+              </tr>
+              <tr>
+                <td><strong>Initial complexity</strong></td>
+                <td>Low</td>
+                <td>Low to moderate</td>
+                <td>Higher</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>The third approach adds structure, but a small workflow may not need it.</p>
+        <p>A small workflow can remain a small Python program, and in many cases that is exactly the right choice. If the logic is easy to follow, the state is minimal, and the execution path is obvious, adding a graph abstraction only introduces unnecessary structure.</p>
+        <p>The graph becomes useful when the workflow starts to grow in ways that make a single loop harder to reason about. In particular, when state needs to be tracked more explicitly across multiple steps, or when the execution flow branches into different paths that depend on intermediate results, the simple loop starts to feel overloaded. At that point, separating what the system knows (state) from what the system does next (execution flow) becomes valuable, and that is where graph-based approaches begin to make sense.</p>
+        <p>Let’s take a closer look at this distinction.</p>
+
+        <h2>When the Simple Loop Stops Being Simple</h2>
+        <p>A loop does not stop working at some fixed level of complexity. You can keep adding steps, conditions, and tool calls, and the program will still run.</p>
+        <p>The issue is not correctness, but clarity. As more behavior gets layered into the loop, it becomes harder to see what the system is actually doing at any given moment, and harder to reason about how one step affects the next.</p>
+        <p>For instance, you can start with a simple workflow:</p>
+
+        <div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-markdown">generate → test → repair → test</code></pre>
+        </div>
+
+        <p>At this stage, everything is easy to follow because the entire process fits in your head at once. But real agent systems rarely stay this small. As soon as you move beyond this, you begin adding practical requirements that are not part of the core loop itself, but are necessary for it to work reliably in production. These requirements can include:</p>
+        <ul>
+          <li>retry limits</li>
+          <li>error handling</li>
+          <li>tool calls</li>
+          <li>message history</li>
+          <li>persistent state</li>
+          <li>human approval</li>
+          <li>resume after failure</li>
+        </ul>
+
+        <p>Each of these concerns is reasonable on its own. Retry limits prevent infinite loops. Error handling makes failures observable. Tool calls extend capability. Human approval adds safety, while resume support makes long-running workflows practical.</p>
+        <p>The problem is that the loop is now responsible for all of them at once.</p>
+        <p>It is no longer just describing what happens next, but also how long to keep going, what information to remember, and when to stop or pause. Over time, the control flow becomes a mixture of execution logic and state tracking, and those two concerns start to blur together.</p>
+        <p>This is where the next step becomes important. Once the loop is carrying this much implicit information, you need a clearer way to represent what the system knows at any point in time. That is where state comes in, and why separating state from execution is the natural next step in making the system easier to reason about.</p>
+
+        <h2>State and Execution Start to Diverge</h2>
+        <p>A small agent might only need to track a few pieces of information while it runs:</p>
+        <ul>
+          <li><code>code</code></li>
+          <li><code>error</code></li>
+          <li><code>retries</code></li>
+        </ul>
+
+        <p>At this scale, it is still easy to treat these as local variables inside a loop. The execution logic and the data it operates on live in the same place, and you can mentally follow the program step by step.</p>
+        <p>As the workflow grows, the set of things you need to remember grows with it:</p>
+        <ul>
+          <li><code>code</code></li>
+          <li><code>test_result</code></li>
+          <li><code>error</code></li>
+          <li><code>retry_count</code></li>
+          <li><code>messages</code></li>
+          <li><code>tool_results</code></li>
+          <li><code>security_status</code></li>
+          <li><code>approval_status</code></li>
+          <li><code>execution_id</code></li>
+        </ul>
+
+        <p>At this point, these values are no longer just temporary inputs to a single function or loop iteration. They become persistent state that must survive across multiple steps of execution, interruptions, retries, or even process restarts.</p>
+        <p>This is where the separation starts to matter:</p>
+        <ul>
+          <li><strong>Execution</strong> is what the system is doing right now (generate, test, repair, route).</li>
+          <li><strong>State</strong> is what the system must remember in order to continue correctly later.</li>
+        </ul>
+
+        <p>When those two are mixed together in a single loop with local variables or message history, the program becomes harder to reason about. You start needing to reconstruct “what happened so far” from execution traces instead of simply reading a structured state object.</p>
+        <p>Passing these values manually between operations in a growing workflow becomes cumbersome not just because there are more of them, but because they are serving different roles: some are inputs to the model, some are outputs from tools, and some exist purely to control the flow of execution. Once that distinction becomes clear, the motivation for explicit state management and graph-style execution starts to make sense.</p>
+        <p>Consider the following state object that you can use to make sure the values persist as the agent moves through various states:</p>
+
+        <div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-python">class AgentState(TypedDict):
+    code: str
+    test_result: str | None
+    error: str | None
+    retry_count: int
+    approval_required: bool</code></pre>
+        </div>
+
+        <p>The schema also makes a design question visible: which information actually belongs in the workflow state?</p>
+        <p>That question is easy to miss when everything is stored in local variables or appended to a message list.</p>
+
+        <h2>Control Logic Spreads</h2>
+        <p>A small workflow may have one decision:</p>
+
+        <div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-python">if tests_passed:
+    finish()
+else:
+    repair()</code></pre>
+        </div>
+
+        <p>However, a larger workflow can end up with several:</p>
+
+        <div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-python">if tests_passed:
+    finish()
+elif retry_limit_reached:
+    request_review()
+elif security_check_failed:
+    run_security_repair()
+elif documentation_required:
+    search_documentation()
+else:
+    retry()</code></pre>
+        </div>
+
+        <p>The code is valid. The execution path is simply harder to inspect.</p>
+        <p>This is the second practical benefit of graph-based design: it lets you move this growing decision logic out of a single loop and into explicit routing steps. Instead of stacking more conditions into one block, each decision becomes a separate, named transition in the workflow. The loop stays focused on execution, while routing logic becomes its own layer.</p>
+        <p>When computation and routing are mixed together, changing one part of the workflow can require reading through several unrelated conditions.</p>
+        <p>Separating the operations from the decisions about when to run them gives the workflow a clearer structure.</p>
+
+        <h2>Retry Logic Becomes Part of the Design</h2>
+        <p>A single retry is easy:</p>
+
+        <div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-python">for attempt in range(3):
+    result = call_model()
+
+    if result.success:
+        break</code></pre>
+        </div>
+
+        <p>Real workflows often need different policies.</p>
+        <p>For instance, a model API failure may be retried because it is transient. A failed security check may require a different repair path. Three unsuccessful code repairs may require human review instead of another attempt.</p>
+        <p>These workflow decisions should be visible rather than buried inside a large loop.</p>
+        <p>When retry logic is hidden inside the same control flow as execution, it becomes harder to reason about what is actually being retried and why. It also makes failure handling more fragile, because exceptions and edge cases tend to get absorbed into generic loop logic instead of being handled at the point where they occur. In practice, this leads to unclear error propagation, where a failure in one step surfaces much later without context about which operation caused it.</p>
+        <p>This is why exception handling and clear error messages matter. When something goes wrong, developers need to know not just that a failure happened, but where it happened and what state the system was in at that moment. A well-structured workflow should surface errors with enough context to answer questions like: which step failed, what inputs were being processed, and what decision led to that step being executed. Without this clarity, debugging turns into reconstructing the execution path from scattered logs inside a monolithic loop.</p>
+
+        <h2>Message History Can Become Context Bloat</h2>
+        <p>ReAct-style systems make this problem particularly obvious.</p>
+        <p>If every model response, tool call, tool result, test failure, and repair attempt is appended to the conversation, the context grows with each iteration. Over time, the loop accumulates a full execution trace inside the prompt rather than outside it.</p>
+        <p>In long-running runs, this leads to context bloat, where the model is forced to process an increasingly large history that includes both relevant signals (like the latest error) and irrelevant or redundant past steps. This has direct operational impact:</p>
+        <ul>
+          <li>token usage increases linearly with each iteration,</li>
+          <li>latency increases because each request processes a larger prompt,</li>
+          <li>API cost increases proportionally to context size,</li>
+          <li>and model performance can degrade because important signals are diluted in a long history of intermediate steps.</li>
+        </ul>
+
+        <p>The solution is not automatically a graph.</p>
+        <p>First separate the two questions:</p>
+        <ol>
+          <li>What information does the model need to see?</li>
+          <li>What information does the application need to remember?</li>
+        </ol>
+
+        <p>Those answers may overlap, but they do not have to be identical. This separation is what prevents context bloat in ReAct-style systems, where every tool call, observation, and intermediate reasoning step can otherwise accumulate into an ever-growing message history. In a poorly managed loop, the model is repeatedly fed unnecessary past interactions, increasing cost, latency, and confusion.</p>
+        <p>A well-structured ReAct loop keeps this under control by being strict about what enters the model context at each iteration. The model should only receive the minimal working set: the current task, the latest observation, and any essential state summary. Everything else should be stored in application state outside the prompt.</p>
+        <p>Structurally, the loop should look like this:</p>
+        <ol>
+          <li>Build a compact context from state (not full history)</li>
+          <li>Ask the model for the next action</li>
+          <li>Execute the tool or operation</li>
+          <li>Update external state with the result</li>
+          <li>Repeat with a refreshed, minimal context</li>
+        </ol>
+
+        <p>By continuously reconstructing a clean prompt from state rather than appending raw history, the system avoids context bloat while still preserving full execution memory outside the model.</p>
+
+        <h2>Human Intervention Creates Another Boundary</h2>
+        <p>Some workflows need a person to approve an operation before execution continues, and this becomes especially important when you run real-world autonomous systems that operate over real data, real infrastructure, and real risk.</p>
+        <p>For our coding agent, Human-in-the-Loop (HITL) is a dedicated step of the loop:</p>
+
+        <div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-markdown">modify source
+    ↓
+run tests
+    ↓
+request approval
+    ↓
+push change</code></pre>
+        </div>
+
+        <p>In a local script, this is just another conditional branch. But in a production autonomous agent, the “request approval” step is not instantaneous. It may depend on a human reviewing a diff, a security engineer validating a change, or an external system enforcing compliance. That means the human review and approval can take minutes, hours, or even days.</p>
+        <p>This is where HITL systems introduce a fundamental requirement: the agent must be able to pause execution without losing its internal progress or reasoning context.</p>
+        <p>A production workflow therefore needs to preserve information such as:</p>
+        <ul>
+          <li>current state</li>
+          <li>approval status</li>
+          <li>execution ID</li>
+          <li>pending operation</li>
+        </ul>
+
+        <p>The process can then pause:</p>
+
+        <div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-markdown">agent reaches approval point
+        ↓
+state is saved
+        ↓
+execution pauses
+        ↓
+human reviews change
+        ↓
+approval is recorded
+        ↓
+execution resumes</code></pre>
+        </div>
+
+        <p>A graph framework can provide mechanisms for this type of interruption and resumption. The underlying requirement is ordinary workflow management: preserve enough state to know where execution stopped and what should happen next.</p>
+
+        <h2>When Should You Use a Graph?</h2>
+        <p>The simplest implementation should usually be the first one you try, because most agent workflows do not need anything more complex at the beginning. A normal loop is often enough to express the full execution flow clearly, especially when the number of steps is small and the state is easy to track.</p>
+        <p>A normal loop is a good fit when:</p>
+        <ul>
+          <li>the workflow has only a few steps,</li>
+          <li>state is small,</li>
+          <li>execution is short-lived,</li>
+          <li>control flow is easy to follow,</li>
+          <li>persistence is unnecessary,</li>
+          <li>and failure handling is straightforward.</li>
+        </ul>
+
+        <p>For example:</p>
+
+        <div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-python">for attempt in range(3):
+    result = run_tests(code)
+
+    if result.passed:
+        return code
+
+    code = repair_code(
+        code,
+        result.error,
+    )
+
+raise RuntimeError(
+    "Unable to produce working code"
+)</code></pre>
+        </div>
+
+        <p>There is little reason to introduce a workflow framework for this alone.</p>
+        <p>Explicit state management becomes useful when several operations share substantial state or when message history is carrying information that would be easier to represent as structured application data. A graph framework becomes more useful when the workflow is long-running, needs durable checkpoints, must pause for human input, or has enough execution logic that tracing the control flow through a single loop is becoming difficult.</p>
+        <p>Use the framework abstraction because of those requirements. Do not use it simply because an LLM is involved.</p>
+        <p>In practice, this comes down to how much coordination your workflow needs between steps. In a small loop, you can keep everything in local variables and reason about the flow directly. But as soon as multiple steps need to read and update the same information, that approach starts to break down.</p>
+        <p>State management solves this by making the “memory” of the system explicit. Instead of relying on scattered variables or reconstructing context from a growing message history, you define a structured object that represents everything the workflow needs to know at any point in time. This makes it easier to inspect, debug, and extend the system because the current situation is always visible in one place.</p>
+        <p>It also becomes especially useful in scenarios where execution is not linear or short-lived. For example, if a workflow needs to pause for human approval, resume after a failure, or continue processing after a system restart, the state becomes the single source of truth that allows the system to pick up exactly where it left off. Without this, you end up trying to reconstruct intent from logs or conversation history, which quickly becomes unreliable as complexity grows.</p>
+        <p>This is why state management is not just an implementation detail in graph-based systems. It is the foundation that allows workflows to move beyond simple loops into something that can be paused, resumed, inspected, and reliably extended over time.</p>
+
+        <h2>Key Takeaways for Building Reliable LLM Workflows</h2>
+        <p>Before reaching for a graph framework, identify the actual execution problem.</p>
+        <p>Ask:</p>
+        <ol>
+          <li>What information must survive from one step to the next?</li>
+          <li>Which of that information belongs in model context?</li>
+          <li>What operation should run next?</li>
+          <li>What conditions cause the workflow to stop, retry, or escalate?</li>
+          <li>What happens to the state if the process fails halfway through?</li>
+        </ol>
+
+        <p>For a small agent, ordinary Python may answer all five questions clearly.</p>
+        <p>As the workflow grows, explicit state management can make those answers easier to represent and test. A graph framework adds another layer when the workflow also needs durable execution, interruption, resumption, or more structured orchestration.</p>
+        <blockquote>
+          Start with the loop.<br />
+          Model the state.<br />
+          Add abstractions when the code gives you a reason to.
+        </blockquote>
+      </section>
+    </article>
+  </main>
+
+  <footer class="container" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--pico-muted-border-color);">
+    <small class="secondary">© <script>document.write(new Date().getFullYear())</script> ZFRQBL</small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+
+    document.querySelectorAll('.copy-btn').forEach(button => {
+      button.addEventListener('click', () => {
+        const container = button.closest('.code-container');
+        const code = container.querySelector('code').innerText;
+        navigator.clipboard.writeText(code).then(() => {
+          button.innerText = 'Copied!';
+          setTimeout(() => button.innerText = 'Copy', 2000);
+        });
+      });
+    });
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+</body>
+</html>
