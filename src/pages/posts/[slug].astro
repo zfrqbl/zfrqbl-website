@@ -1,0 +1,34 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+
+const formattedDate = post.data.pubDate.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric'
+});
+---
+
+<BaseLayout title={post.data.title || "Note Permalink"}>
+  <article>
+    <header style="margin-bottom: 1.5rem;">
+      <span class={`badge badge-${post.data.type}`}>{post.data.type}</span>
+      <time style="display: block; font-size: 0.85rem; color: var(--pico-muted-color); margin-top: 0.5rem;">
+        {formattedDate}
+      </time>
+      {post.data.title && <h1 style="margin-top: 0.5rem;">{post.data.title}</h1>}
+    </header>
+    <Content />
+  </article>
+</BaseLayout>
