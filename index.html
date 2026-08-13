@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ZFRQBL</title>
+  <meta name="description" content="Independent software engineer writing about artificial intelligence, software architecture, and building systems." />
+  
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <!-- Theme Detection (FOUC Guard) -->
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+
+  <!-- Cloudflare Web Analytics Token Placeholder -->
+  <!-- <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "YOUR_CLOUDFLARE_BEACON_TOKEN"}'></script> -->
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="container">
+    <nav>
+      <ul>
+        <li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li>
+      </ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary" aria-label="Toggle theme" style="padding: 0.25rem 0.5rem; font-size: 0.85rem;">
+            🌙 / ☀️
+          </button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container">
+    <section style="margin-bottom: 2.5rem;">
+      <h1 style="font-size: 2.25rem; margin-bottom: 0.5rem;">ZFRQBL</h1>
+      <p class="secondary" style="font-size: 1.1rem; max-width: 65ch;">
+        Independent software engineer writing about artificial intelligence, software architecture, and technical workflows.
+      </p>
+    </section>
+
+    <section>
+      <!-- Feed Header & Filter Controls -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;" class="filter-container">
+        <h2 style="font-size: 1.5rem; margin-bottom: 0;">Feed</h2>
+        <div style="display: flex; gap: 0.4rem;">
+          <button class="filter-btn outline" data-filter="all">All</button>
+          <button class="filter-btn outline secondary" data-filter="essay">Essays</button>
+          <button class="filter-btn outline secondary" data-filter="note">Notes</button>
+        </div>
+      </div>
+
+      <!-- Feed Container -->
+      <div id="feed-list">
+        
+        <!-- Feed Item 1: Essay -->
+        <article class="feed-item" data-type="essay">
+          <div class="meta-line">
+            <span class="badge badge-essay">essay</span>
+            <time datetime="2026-08-15" class="secondary" style="font-size: 0.85rem;">Aug 15, 2026</time>
+          </div>
+          <h3 style="margin-bottom: 0.5rem; font-size: 1.25rem;">
+            <a href="/essays/agent-pipeline" class="contrast">Building an Autonomous Agent Pipeline with Agno and FastAPI</a>
+          </h3>
+          <p class="secondary" style="margin-bottom: 0; font-size: 0.95rem;">
+            A deep dive into asynchronous agent orchestration, state persistence, and event handling in Python.
+          </p>
+        </article>
+
+        <!-- Feed Item 2: Note -->
+        <article class="feed-item" data-type="note">
+          <div class="meta-line">
+            <span class="badge badge-note">note</span>
+            <time datetime="2026-08-10" class="secondary" style="font-size: 0.85rem;">Aug 10, 2026</time>
+          </div>
+          <h3 style="margin-bottom: 0.5rem; font-size: 1.25rem;">
+            <a href="/notes/quick-sqlite-tip" class="contrast">Quick Tip: Enabling WAL Mode in SQLite Connections</a>
+          </h3>
+          <p class="secondary" style="margin-bottom: 0; font-size: 0.95rem;">
+            Preventing concurrent write locking errors during multi-threaded database read/writes.
+          </p>
+        </article>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="container" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--pico-muted-border-color);">
+    <small class="secondary">
+      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
+    </small>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    // Theme Toggle Handler
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+
+    // Zero-Dependency Feed Filter Script
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const filter = btn.dataset.filter;
+        
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.add('secondary'));
+        btn.classList.remove('secondary');
+
+        document.querySelectorAll('.feed-item').forEach(item => {
+          const type = item.dataset.type;
+          item.style.display = (filter === 'all' || type === filter) ? 'block' : 'none';
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>
