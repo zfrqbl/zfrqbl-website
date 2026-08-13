@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <style>
+    text { fill: #1c1d22; font-family: -apple-system, sans-serif; font-weight: 800; font-size: 70px; }
+    @media (prefers-color-scheme: dark) {
+      text { fill: #f1f5f9; }
+    }
+  </style>
+  <text x="50%" y="72%" text-anchor="middle">Z</text>
+</svg>
