@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+# Grant write permissions to GITHUB_TOKEN to commit and push changes
+permissions:
+  contents: write
+
 jobs:
   sitemap:
     runs-on: ubuntu-latest
