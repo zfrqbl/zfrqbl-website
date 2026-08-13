@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Building an Autonomous Agent Pipeline with Agno and FastAPI — ZFRQBL</title>
+  <meta name="description" content="A deep dive into asynchronous agent orchestration, state persistence, and event handling." />
+  
+  <!-- Open Graph / Social Sharing Meta -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Building an Autonomous Agent Pipeline with Agno and FastAPI" />
+  <meta property="og:description" content="A deep dive into asynchronous agent orchestration, state persistence, and event handling." />
+  <meta property="og:url" content="https://zfrqbl.com/essays/agent-pipeline" />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul>
+        <li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li>
+      </ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary" aria-label="Toggle theme" style="padding: 0.25rem 0.5rem; font-size: 0.85rem;">
+            🌙 / ☀️
+          </button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article class="essay-content">
+      <header style="margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <small style="text-transform: uppercase; font-weight: bold; font-size: 0.75rem;" class="secondary">Essay</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-08-15" class="secondary" style="font-size: 0.85rem;">August 15, 2026</time>
+        </div>
+        <h1>Building an Autonomous Agent Pipeline with Agno and FastAPI</h1>
+      </header>
+
+      <section>
+        <p>Orchestrating multi-agent systems requires clean separation between execution state and communication protocols.</p>
+
+        <div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-python">from fastapi import FastAPI
+from pydantic import BaseModel
+
+app = FastAPI(title="Agent Pipeline API")
+
+class AgentState(BaseModel):
+    session_id: str
+    active_agent: str
+    memory_buffer: list[str] = []
+
+@app.post("/execute")
+async def run_step(state: AgentState):
+    # Process agent state
+    return {"status": "success", "next_agent": "reviewer"}</code></pre>
+        </div>
+
+        <p>When building these systems, reliability comes down to strict input validation and clean boundary interfaces.</p>
+      </section>
+    </article>
+  </main>
+
+  <footer class="container" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--pico-muted-border-color);">
+    <small class="secondary">© <script>document.write(new Date().getFullYear())</script> ZFRQBL</small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+
+    document.querySelectorAll('.copy-btn').forEach(button => {
+      button.addEventListener('click', () => {
+        const container = button.closest('.code-container');
+        const code = container.querySelector('code').innerText;
+        navigator.clipboard.writeText(code).then(() => {
+          button.innerText = 'Copied!';
+          setTimeout(() => button.innerText = 'Copy', 2000);
+        });
+      });
+    });
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+</body>
+</html>
