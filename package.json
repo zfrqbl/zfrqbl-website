@@ -12,9 +12,8 @@
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.13",
     "@astrojs/rss": "^4.0.0",
-    "@expressive-code/astro": "^0.38.0",
     "@picocss/pico": "^2.0.6",
-    "astro": "^5.7.0"
+    "astro": "^5.7.0",
+    "astro-expressive-code": "^0.38.0"
   }
 }
-
