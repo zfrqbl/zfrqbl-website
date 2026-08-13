@@ -1,0 +1,40 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+
+const formattedDate = post.data.pubDate.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric'
+});
+---
+
+<article class="feed-card">
+  <div class="feed-card-header">
+    <span class={`badge badge-${post.data.type}`}>{post.data.type}</span>
+    <time class="feed-card-date">{formattedDate}</time>
+  </div>
+
+  {post.data.type === 'note' ? (
+    <div>
+      <Content />
+      <p style="margin-top: 0.5rem; font-size: 0.85rem;">
+        <a href={`/posts/${post.slug}`}>Permalink →</a>
+      </p>
+    </div>
+  ) : (
+    <div>
+      <h3 style="margin-bottom: 0.4rem;">
+        <a href={`/posts/${post.slug}`}>{post.data.title}</a>
+      </h3>
+      {post.data.description && <p>{post.data.description}</p>}
+      <a href={`/posts/${post.slug}`}>Read Article →</a>
+    </div>
+  )}
+</article>
