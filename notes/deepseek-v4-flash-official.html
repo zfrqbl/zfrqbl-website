@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DeepSeek V4 Flash Is Official: What the 0731 Build Actually Changes — ZFRQBL</title>
+  <meta name="description" content="DeepSeek promoted V4-Flash from preview to production-candidate. Same 284B/13B architecture, re-post-trained, now beating V4-Pro on agentic benchmarks." />
+  
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="DeepSeek V4 Flash Is Official: What the 0731 Build Actually Changes" />
+  <meta property="og:description" content="DeepSeek promoted V4-Flash from preview to production-candidate. Same 284B/13B architecture, re-post-trained, now beating V4-Pro on agentic benchmarks." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/deepseek-v4-flash-official" />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary" aria-label="Toggle theme" style="padding: 0.25rem 0.5rem; font-size: 0.85rem;">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article>
+      <header style="margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <small style="text-transform: uppercase; font-weight: bold; font-size: 0.75rem;" class="secondary">Note</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-08-15" class="secondary" style="font-size: 0.85rem;">August 15, 2026</time>
+        </div>
+        <h1>DeepSeek V4 Flash Is Official: What the 0731 Build Actually Changes</h1>
+      </header>
+
+      <section>
+        <p>DeepSeek promoted V4-Flash from preview to production-candidate on July 31. The model you call with <code>deepseek-v4-flash</code> now points to the 0731 build — same 284B-parameter CSA+HCA backbone with 13B activated, re-post-trained for agentic tasks, not rebuilt from scratch.</p>
+
+        <h2>What you get</h2>
+        <p>The 0731 checkpoint beats V4-Pro preview on all nine agentic benchmarks DeepSeek publishes. That matters less for raw capability than it does for cost: Flash costs a fraction of Pro and uses 4× fewer activated parameters. If your pipeline runs agents, evals, or long-context work, Flash is now the default — not a compromise.</p>
+
+        <div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code># It stays the same API call
+model="deepseek-v4-flash"</code></pre>
+        </div>
+
+        <h2>The economics that matter</h2>
+        <p>Below the headline, the real story is caching. V4-Flash hits 98% cache-hit rates on repeated agent pipelines — think multi-turn conversations, cron-driven evals, batch scoring tasks. At that rate, your marginal cost per request drops to near-zero. DeepSeek's pricing page already assumes you'll cache aggressively, and the response-time improvement (sub-second hits vs several-second misses) compounds across 50+ calls per session.</p>
+
+        <h2>What else shipped</h2>
+        <ul>
+          <li><strong>Responses API</strong> — native structured-output mode, no JSON schema gymnastics</li>
+          <li><strong>Codex integration</strong> — straight-through code execution without a separate sandbox wrapper</li>
+          <li><strong>MIT open weights</strong> — same day as the API promotion, on Hugging Face</li>
+          <li><strong>DSpark</strong> — speculative-decoding module attached to the API endpoint; on-prem serve requires manual setup</li>
+        </ul>
+
+        <h2>Should you migrate now?</h2>
+        <p>If you already target <code>deepseek-v4-flash</code>, you migrated on July 31 without noticing — the API endpoint switched silently. If you held back on V4-Pro waiting for the "real" model, this is it. The only reason to wait for Pro proper is if you need the full 49B active parameters for a task that genuinely can't fit in 13B (rare outside domain-specific RAG at high recall thresholds).</p>
+
+        <p class="secondary" style="font-size: 0.85rem; border-top: 1px solid var(--pico-muted-border-color); padding-top: 1rem;">
+          Sources: <a href="https://api-docs.deepseek.com/updates/">DeepSeek API Changelog</a>, 
+          <a href="https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-0731">Model Card</a>, 
+          <a href="https://huggingface.co/blog/ResterChed/deepseek-v4-flash-official-release">Deep Dive Analysis</a>
+        </p>
+      </section>
+    </article>
+  </main>
+
+  <footer class="container" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--pico-muted-border-color);">
+    <small class="secondary">© <script>document.write(new Date().getFullYear())</script> ZFRQBL</small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+
+    document.querySelectorAll('.copy-btn').forEach(button => {
+      button.addEventListener('click', () => {
+        const container = button.closest('.code-container');
+        const code = container.querySelector('code').innerText;
+        navigator.clipboard.writeText(code).then(() => {
+          button.innerText = 'Copied!';
+          setTimeout(() => button.innerText = 'Copy', 2000);
+        });
+      });
+    });
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+</body>
+</html>
