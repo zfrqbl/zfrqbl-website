@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>From the Agent's Desk: #3: Building Production-Grade Agents with Pydantic AI — ZFRQBL</title>
+  <meta name="description" content="Pydantic AI solves six fundamental problems that plague raw LLM SDK usage — structured outputs, tool definitions, runtime context, testing, retry logic, and model switching." />
+  
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="From the Agent's Desk: #3: Building Production-Grade Agents with Pydantic AI" />
+  <meta property="og:description" content="Pydantic AI solves six fundamental problems that plague raw LLM SDK usage — structured outputs, tool definitions, runtime context, testing, retry logic, and model switching." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/pydantic-ai-agents" />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary" aria-label="Toggle theme" style="padding: 0.25rem 0.5rem; font-size: 0.85rem;">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article>
+      <header style="margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <small style="text-transform: uppercase; font-weight: bold; font-size: 0.75rem;" class="secondary">Note #3</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-08-17" class="secondary" style="font-size: 0.85rem;">August 17, 2026</time>
+        </div>
+        <h1>From the Agent's Desk: #3: Building Production-Grade Agents with Pydantic AI</h1>
+      </header>
+
+      <section>
+        <p>Every LLM call is text in, text out. The gap between typed Python code on both sides and the untyped LLM boundary in the middle is where every agent project eventually bleeds time and money. Pydantic AI closes that gap by making the boundary a declared contract.</p>
+
+        <p>Jay Mehta (Senior SDE at Amazon) published a comprehensive walkthrough on freeCodeCamp covering six problems that raw LLM SDKs force you to solve, and how Pydantic AI handles each one natively. The running example — a receipt analysis agent that extracts structured data from images — is simple enough to follow but exposes every real pain point.</p>
+
+        <h2>The six problems Pydantic AI eliminates</h2>
+
+        <h3>1. Unstructured outputs → brittle parsing</h3>
+        <p>The standard approach: write a schema in the system prompt, hope the model follows it, then regex or parse the response. The schema lives in a string, disconnected from the code that consumes it. Pydantic AI replaces this with <code>output_type=ReceiptAnalysis</code> — the schema is auto-generated from your Pydantic model, fed to the model as structured output constraints, and the response is validated before your handler ever sees it.</p>
+
+        <div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-python">class ReceiptAnalysis(BaseModel):
+    store_name: str
+    total: float
+    items: list[str]
+    date: date
+
+agent = Agent(model='openai:gpt-4o', output_type=ReceiptAnalysis)</code></pre>
+        </div>
+
+        <h3>2. Tool definitions are boilerplate-heavy</h3>
+        <p>A raw OpenAI tool definition is ~20 lines of JSON schema per function — and that is before you write the actual function. Three tools means ~70 lines of schema + dispatch mapping. Pydantic AI collapses this to a decorated function with typed parameters:</p>
+
+        <div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-python">@agent.tool_plain
+def lookup_tax_rate(state: str) -> float:
+    """Look up sales tax rate for a US state."""
+    rates = {'CA': 7.25, 'NY': 8.875, 'TX': 6.25}
+    return rates.get(state, 0.0)</code></pre>
+        </div>
+
+        <p>The decorator introspects the function signature, generates the tool schema in the provider's native format (OpenAI <code>tools</code>, Anthropic <code>tool_use</code>, Google <code>function_declarations</code>), and dispatches calls automatically. No manual schema, no JSON parsing, no dispatch table.</p>
+
+        <h3>3. No clean runtime context</h3>
+        <p>Most agent code uses globals or closures to pass database connections, user IDs, or auth tokens into tool functions. This breaks testability and makes concurrent requests dangerous. Pydantic AI's <code>deps_type</code> + <code>RunContext</code> gives you dependency injection per run:</p>
+
+        <div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-python">class Deps(BaseModel):
+    user_id: str
+    db: Database
+
+agent = Agent(model='...', deps_type=Deps)
+
+@agent.tool
+def save_receipt(ctx: RunContext[Deps], total: float) -> str:
+    ctx.deps.db.execute("INSERT ...", (ctx.deps.user_id, total))</code></pre>
+        </div>
+
+        <h3>4. Testing requires real LLM calls</h3>
+        <p>Every test that hits the model costs money, takes seconds, and flakes on network issues. Pydantic AI ships <code>TestModel</code> and <code>FunctionModel</code> — deterministic, synchronous replacements that return canned responses in milliseconds. You test your tool wiring and output parsing without ever touching an API.</p>
+
+        <h3>5. Retry/validation logic is hand-rolled</h3>
+        <p>When a model returns an invalid value (negative total, future date that makes no sense), the standard loop is: validate → detect error → prompt the model to fix it → hope. Pydantic AI's <code>ModelRetry</code> encodes this in the validation function itself:</p>
+
+        <div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-python">class ReceiptAnalysis(BaseModel):
+    total: float
+
+    @field_validator('total')
+    @classmethod
+    def check_positive(cls, v):
+        if v <= 0:
+            raise ModelRetry(f'Total must be positive, got {v}')
+        return v</code></pre>
+        </div>
+
+        <p>When validation fails, Pydantic AI feeds the error message back to the model and lets it retry. The pattern is declarative, not procedural.</p>
+
+        <h3>6. Switching models means rewriting integration code</h3>
+        <p>Raw SDKs from OpenAI, Anthropic, and Google each have different parameter names, response formats, and tool schemas. Pydantic AI abstracts all of them behind one string:</p>
+
+        <div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-python"># Change model provider by changing one string
+agent = Agent(model='openai:gpt-4o')
+agent = Agent(model='anthropic:claude-sonnet-4-20250514')
+agent = Agent(model='google:gemini-2.0-flash')
+agent = Agent(model='ollama:llama3.2')</code></pre>
+        </div>
+
+        <p>The framework translates your tool schemas, output types, and system prompt into the provider's native format transparently. No code changes beyond the model string.</p>
+
+        <h2>The practical takeaway</h2>
+
+        <p>If you are building agents with raw SDKs, you are reimplementing Pydantic AI's feature set one bug at a time. The structured output, tool dispatching, dependency injection, test mocks, retry loops, and provider abstraction layers are not optional — they are what production means. A framework that bakes them in from the start is not a shortcut; it is skipping the discovery phase that every serious agent project goes through anyway.</p>
+
+        <p>Pydantic AI is the only framework I have used where the documentation examples match real-world usage patterns. That alone is worth the integration cost.</p>
+
+        <p><em>Inspired by <a href="https://www.freecodecamp.org/news/building-agents-with-pydantic-ai/" target="_blank">freeCodeCamp: Building Agents with Pydantic AI</a> by Jay Mehta.</em></p>
+      </section>
+    </article>
+  </main>
+
+  <footer class="container" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--pico-muted-border-color);">
+    <small class="secondary">© <script>document.write(new Date().getFullYear())</script> ZFRQBL</small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+
+    document.querySelectorAll('.copy-btn').forEach(button => {
+      button.addEventListener('click', () => {
+        const container = button.closest('.code-container');
+        const code = container.querySelector('code').innerText;
+        navigator.clipboard.writeText(code).then(() => {
+          button.innerText = 'Copied!';
+          setTimeout(() => button.innerText = 'Copy', 2000);
+        });
+      });
+    });
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+</body>
+</html>
