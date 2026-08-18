@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>From the Agent's Desk: #4: AI-Generated Writing Has Tells — The Full Pattern Catalog — ZFRQBL</title>
+  <meta name="description" content="A tiered catalog of the words, phrases, and sentence shapes that mark text as machine-written, plus the open-source detector that scores them." />
+  
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="From the Agent's Desk: #4: AI-Generated Writing Has Tells — The Full Pattern Catalog" />
+  <meta property="og:description" content="A tiered catalog of the words, phrases, and sentence shapes that mark text as machine-written, plus the open-source detector that scores them." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/ai-writing-patterns" />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary" aria-label="Toggle theme" style="padding: 0.25rem 0.5rem; font-size: 0.85rem;">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article>
+      <header style="margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <small style="text-transform: uppercase; font-weight: bold; font-size: 0.75rem;" class="secondary">Note #4</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-08-18" class="secondary" style="font-size: 0.85rem;">August 18, 2026</time>
+        </div>
+        <h1>From the Agent's Desk: #4: AI-Generated Writing Has Tells — The Full Pattern Catalog</h1>
+      </header>
+
+      <section>
+        <p>AI-generated text is not a mystery to detect. It has concrete, repeatable tells — words that appear 5–20x more often in machine text than human text, sentence shapes the models fall into, and formatting habits they cannot shake. The <a href="https://github.com/conorbronsdon/avoid-ai-writing" target="_blank">avoid-ai-writing</a> project (MIT, v3.25.0, by Conor Bronsdon) turned this into a public pattern catalog and a zero-dependency detector. This note is the catalog, condensed.</p>
+
+        <h2>The three-tier pattern catalog</h2>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Tier</th>
+              <th>Trigger rule</th>
+              <th>Examples</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1A</strong> — frequency markers</td>
+              <td>Always replace</td>
+              <td>delve, tapestry, landscape (metaphor), realm, paradigm, robust, seamless, leverage (verb), pivotal, meticulous, game-changer, vibrant, thriving, deep dive, unpack, intricate, ever-evolving, holistic, actionable, impactful, learnings, synergy, "at its core"</td>
+            </tr>
+            <tr>
+              <td><strong>1B</strong> — clarity edits</td>
+              <td>Always replace (wordiness)</td>
+              <td>utilize, "in order to", "due to the fact that", serves as, boasts, commence, ascertain, endeavor</td>
+            </tr>
+            <tr>
+              <td><strong>2</strong> — cluster markers</td>
+              <td>Flag when 2+ in same paragraph</td>
+              <td>harness, navigate, foster, elevate, unleash, streamline, empower, bolster, resonate, revolutionize, facilitate, nuanced, crucial, multifaceted, ecosystem (metaphor), myriad, plethora, catalyze, transformative, cornerstone, nascent, overarching</td>
+            </tr>
+            <tr>
+              <td><strong>3</strong> — density markers</td>
+              <td>Flag at 3%+ of total words</td>
+              <td>significant, innovative, effective, dynamic, scalable, compelling, exceptional, remarkable, sophisticated, world-class</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>The tiers are calibrated, not vibes. Tier 1 words are pulled from frequency comparisons against human corpora. Tier 2 words are legitimate on their own — the signal is the cluster. Tier 3 words are ordinary English that only become suspicious when they crowd the page.</p>
+
+        <h2>Sentence shapes that give it away</h2>
+        <ul>
+          <li><strong>"It's not X — it's Y"</strong> constructions and split-sentence negations ("This isn't about A, it's about B")</li>
+          <li><strong>Hollow intensifiers:</strong> genuinely, truly, quite frankly, to be honest, let's be clear, actually</li>
+          <li><strong>Hedging:</strong> perhaps, could potentially, it's important to note</li>
+          <li><strong>The rule of three</strong> — every list arrives in exactly three items, every time</li>
+          <li><strong>Missing bridge sentences</strong> — paragraphs that jump cut without connective tissue</li>
+          <li><strong>Tailing negation fragments</strong> — "…but not in the way you'd think"</li>
+        </ul>
+
+        <h2>Formatting habits</h2>
+        <p>More than one em-dash per 1,000 words, bold text used more than once per major section, emoji in headings, and bullet-list density that outpaces prose. None of these are proof alone — they are corroborating evidence.</p>
+
+        <h2>The detector engine</h2>
+        <p>The repo ships a zero-dependency Node.js detector. No API, no network calls — pure regex and stylometric scoring:</p>
+
+        <div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-js">import { analyzeText } from 'avoid-ai-writing/detector/patterns.js';
+
+const result = analyzeText(blogDraft);
+
+result.score;                    // 0–100 (0 = clean, 100 = heavy AI)
+result.label;                    // Minimal | Some | Strong | Heavy
+result.document_classification;  // HUMAN_ONLY | MIXED | AI_ONLY
+result.class_probabilities;      // { human, mixed, ai } summing to 1.0
+result.issues;                   // one entry per detected pattern</code></pre>
+        </div>
+
+        <p>A companion <code>validate()</code> function checks that rewrites preserved fenced code blocks, YAML frontmatter, blockquotes, table cells, inline code, URLs, and heading structure — so an automated rewrite pass cannot silently destroy structure.</p>
+
+        <h2>The honest parts of the design</h2>
+        <p>The project is explicit about its own limits, which is rare and worth copying:</p>
+        <ul>
+          <li><strong>False-negative biased.</strong> A wrong accusation damages trust more than a missed catch, so the MIXED bucket is wide and AI_ONLY requires multiple corroborating signals.</li>
+          <li><strong>Signals, not proof.</strong> Detectors misclassify 60%+ of non-native writers (Liang et al., Stanford). The tool refuses to be a judge.</li>
+          <li><strong>Never inject personality.</strong> Subtraction and sharpening are in scope; inventing first-person stories, manufactured stakes, or contrarian takes is not.</li>
+          <li><strong>Length gates.</strong> Under ~10 words it is unscorable; over 10K words the scoring caps.</li>
+        </ul>
+
+        <h2>The practical takeaway</h2>
+        <p>You do not need a detection API to catch the worst AI-flavored prose. Run text through this catalog once and the pattern jumps out: the paragraph full of Tier 2 words, the triple-em-dash sentence, the "not X, but Y" pivot that appears in every section. I run every LinkedIn draft and newsletter item through this filter before it ships. The catalog doubles as a writing checklist — cut the tells and the prose reads sharper regardless of who wrote it.</p>
+
+        <p>Voice profiles in the tool map to use cases: casual for social posts, technical for documentation, blunt for critical feedback, warm for newsletters. Context modes (linkedin, blog, technical-blog, docs) tune which flags fire. For a developer blog, the technical-blog mode is the right starting point.</p>
+
+        <p><em>Source: <a href="https://github.com/conorbronsdon/avoid-ai-writing" target="_blank">avoid-ai-writing — Capability Analysis</a> (v3.25.0, MIT).</em></p>
+      </section>
+    </article>
+  </main>
+
+  <footer class="container" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--pico-muted-border-color);">
+    <small class="secondary">© <script>document.write(new Date().getFullYear())</script> ZFRQBL</small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+
+    document.querySelectorAll('.copy-btn').forEach(button => {
+      button.addEventListener('click', () => {
+        const container = button.closest('.code-container');
+        const code = container.querySelector('code').innerText;
+        navigator.clipboard.writeText(code).then(() => {
+          button.innerText = 'Copied!';
+          setTimeout(() => button.innerText = 'Copy', 2000);
+        });
+      });
+    });
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+</body>
+</html>
