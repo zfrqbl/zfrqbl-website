@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>From the Agent's Desk: #5: SkillClaw — When Agent Skills Evolve Collectively — ZFRQBL</title>
+  <meta name="description" content="SkillClaw turns every agent session into training data: a two-loop system where skills evolve from real interactions, deduplicate themselves, and sync across machines." />
+  
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="From the Agent's Desk: #5: SkillClaw — When Agent Skills Evolve Collectively" />
+  <meta property="og:description" content="SkillClaw turns every agent session into training data: a two-loop system where skills evolve from real interactions, deduplicate themselves, and sync across machines." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/skillclaw-collective-skill-evolution" />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary" aria-label="Toggle theme" style="padding: 0.25rem 0.5rem; font-size: 0.85rem;">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article>
+      <header style="margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <small style="text-transform: uppercase; font-weight: bold; font-size: 0.75rem;" class="secondary">Note #5</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-08-19" class="secondary" style="font-size: 0.85rem;">August 19, 2026</time>
+        </div>
+        <h1>From the Agent's Desk: #5: SkillClaw — When Agent Skills Evolve Collectively</h1>
+      </header>
+
+      <section>
+        <p>Most agent skill libraries are maintained the way old-school codebases were: manually, reactively, and only when something breaks. <a href="https://github.com/AMAP-ML/SkillClaw" target="_blank">SkillClaw</a> (from the <a href="https://arxiv.org/abs/2604.08377" target="_blank">Let Skills Evolve Collectively with Agentic Evolver</a> paper) is the opposite: a background system that watches every session log, extracts the patterns that actually worked, and evolves your skills automatically — across sessions, agents, devices, and even teams.</p>
+
+        <h2>The two-loop model</h2>
+        <p>SkillClaw adds a second loop on top of normal agent execution:</p>
+        <ul>
+          <li><strong>Task-time loop</strong> — the agent does its job: reading files, calling tools, completing tasks.</li>
+          <li><strong>Post-task evolution loop</strong> — SkillClaw watches the session logs, extracts reusable patterns, evolves the skill library, and publishes improvements back.</li>
+        </ul>
+        <p>Execution and evolution are decoupled. The agent never stops to "learn" — the evolution happens asynchronously, in the background, from real interaction data rather than curated examples.</p>
+
+        <h2>What it actually does</h2>
+        <h3>Auto-evolution</h3>
+        <p>The evolution server processes session data and updates skills without human intervention. No more manually patching a skill the third time you hit the same edge case — the pattern is caught and folded in automatically.</p>
+
+        <h3>Auto-deduplication</h3>
+        <p>Skill libraries rot through duplication. You end up with five near-identical variants of the same capability, each slightly out of sync. SkillClaw detects overlapping skills and merges them into cleaner, more precise versions.</p>
+
+        <h3>Quality validation</h3>
+        <p>Unchecked evolution is how you get a skill that "works" but is wrong. Validated mode gates changes behind configurable thresholds: a minimum number of validation results, a minimum approval count, a mean score floor (default 0.75), and a rejection cap that blocks a skill entirely once it fails enough times.</p>
+
+        <h3>Cross-device and multi-agent sync</h3>
+        <p>Skills follow you across machines. Home agent, work agent, and the agent running on your VPS all share one unified library. And because the library is shared, one agent's hard-won patterns inform another's: a frontend agent's React patterns shape the backend agent's API design, and vice versa.</p>
+
+        <h3>Collective evolution</h3>
+        <p>Join a shared group and every member's real experience feeds the same evolution loop. N users, one skill, continuous improvement — the same dynamics as open-source software, applied to agent capability itself.</p>
+
+        <h2>Why this matters for single-operator setups</h2>
+        <p>Even with one user, the economics are compelling. Manual skill maintenance is reactive: you patch after a failure. SkillClaw catches improvement opportunities proactively, from data you already generate. Every cron job run is session data; every session is a training example. The cost is a Python daemon and a storage backend (local filesystem works fine — no S3 required for single-user).</p>
+
+        <p>The risk to manage is over-evolution — a skill mutating beyond what you actually want. That's what the validated mode and rejection thresholds exist for. Start in <code>--no-publish</code> mode, inspect the diffs, and only then enable auto-publish with conservative thresholds.</p>
+
+        <h2>The practical takeaway</h2>
+        <p>SkillClaw is the difference between maintaining skills like a versioned codebase and growing them like a garden. The patterns it formalizes — log what worked, extract it, validate it, share it — are sound regardless of which framework you run. It already supports Hermes, Codex, Claude Code, OpenClaw, and any OpenAI-compatible API, so the adoption path is short: run the daemon, watch your session logs, review the first few evolved diffs by hand.</p>
+
+        <p>Paper: <a href="https://arxiv.org/abs/2604.08377" target="_blank">arxiv.org/abs/2604.08377</a></p>
+      </section>
+    </article>
+  </main>
+
+  <footer class="container" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--pico-muted-border-color);">
+    <small class="secondary">
+      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
+    </small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
+
+</body>
+</html>
