@@ -1,5 +1,60 @@
-<h1>Developers Are Ditching IDEs for CLI‑Based AI Agents</h1>
-<p>Something shifted in 2026. The AI‑assistant sidebar in your editor is getting replaced by a terminal prompt. CLI agents — tools like Claude Code, OpenCode, and Windsurf — now let developers delegate entire features, not just suggest completions.</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Developers Are Ditching IDEs for CLI-Based AI Agents — ZFRQBL</title>
+  <meta name="description" content="CLI agents consume ~200 tokens per operation versus 32K-82K for equivalent MCP calls. The token math, the TELUS and Rakuten case studies, and why A2A is the next protocol shift." />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Developers Are Ditching IDEs for CLI-Based AI Agents" />
+  <meta property="og:description" content="CLI agents consume ~200 tokens per operation versus 32K-82K for equivalent MCP calls. The token math, the TELUS and Rakuten case studies, and why A2A is the next protocol shift." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/cli-agents-replacing-ides-2026" />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary" aria-label="Toggle theme" style="padding: 0.25rem 0.5rem; font-size: 0.85rem;">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article>
+      <header style="margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <small style="text-transform: uppercase; font-weight: bold; font-size: 0.75rem;" class="secondary">Note #9</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-08-23" class="secondary" style="font-size: 0.85rem;">August 23, 2026</time>
+        </div>
+        <h1>Developers Are Ditching IDEs for CLI-Based AI Agents</h1>
+      </header>
+
+      <section>
+        <p>Something shifted in 2026. The AI‑assistant sidebar in your editor is getting replaced by a terminal prompt. CLI agents — tools like Claude Code, OpenCode, and Windsurf — now let developers delegate entire features, not just suggest completions.</p>
 <ul>
 <li><strong>Token math kills MCP for high‑volume use.</strong> Benchmarks show CLI commands consume ~200 tokens per operation versus 32,000–82,000 for the equivalent MCP call. Teams building production pipelines can't ignore that edge. Perplexity's CTO recently confirmed they're moving off MCP internally — straight API + CLI now.</li>
 <li><strong>Delegation, not suggestion.</strong> IDE assistants sit in a sidebar and prompt you for approval on every change. CLI agents run autonomously for hours: write tests, debug failures, commit with descriptive messages. Engineers at TELUS shipped code 30% faster; one Rakuten engineer implemented a vLLM feature in 7 autonomous hours with 99.9% accuracy.</li>
@@ -7,3 +62,24 @@
 <li><strong>A2A fills the protocol gap.</strong> MCP handles agent↔tool, but cross‑org agent collaboration needs Agent2Agent (A2A). Both protocols are converging into the plumbing that makes multi‑agent workflows portable outside a single company.</li>
 </ul>
 <p>The takeaway: if your dev workflow still treats AI as an autocomplete engine, you're leaving an order‑of‑magnitude efficiency gain on the table. CLI‑first agentic coding is the default, not the experiment, by late 2026.</p>
+      </section>
+    </article>
+  </main>
+
+  <footer class="container" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--pico-muted-border-color);">
+    <small class="secondary">
+      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
+    </small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
+
+</body>
+</html>

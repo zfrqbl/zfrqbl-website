@@ -1,3 +1,79 @@
-<h1>DeepSeek‑v4 Flash Vision Expansion</h1>
-<p>DeepSeek has just announced its new Vision‑V4 flash expansion, a lightweight model distilled from the full Vision‑V4 family. By compressing the param count to 185 M and leveraging flash memory techniques, the model can run on edge devices with 8 GB of RAM, opening up real‑time inference in consumer‑grade GPUs and even some ARM SoCs.</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DeepSeek-v4 Flash Vision Expansion — ZFRQBL</title>
+  <meta name="description" content="DeepSeek V4 Flash extends its capabilities into vision: what the expansion changes for multimodal agent pipelines and where it fits in the model lineup." />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="DeepSeek-v4 Flash Vision Expansion" />
+  <meta property="og:description" content="DeepSeek V4 Flash extends its capabilities into vision: what the expansion changes for multimodal agent pipelines and where it fits in the model lineup." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/deepseek-v4-flash-vision-exp" />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary" aria-label="Toggle theme" style="padding: 0.25rem 0.5rem; font-size: 0.85rem;">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article>
+      <header style="margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <small style="text-transform: uppercase; font-weight: bold; font-size: 0.75rem;" class="secondary">Note #7</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-08-22" class="secondary" style="font-size: 0.85rem;">August 22, 2026</time>
+        </div>
+        <h1>DeepSeek-v4 Flash Vision Expansion</h1>
+      </header>
+
+      <section>
+        <p>DeepSeek has just announced its new Vision‑V4 flash expansion, a lightweight model distilled from the full Vision‑V4 family. By compressing the param count to 185 M and leveraging flash memory techniques, the model can run on edge devices with 8 GB of RAM, opening up real‑time inference in consumer‑grade GPUs and even some ARM SoCs.</p>
 <p>In benchmarks, the flash‑version retains ~95 % of the zero‑shot accuracy on the OpenAI Vision benchmarks, while cutting inference latency by 40 %. Integration is straightforward: import the tiny package, provide a token, and pipe the image through the same prompt interface as the full model. It’s a promising step for AI‑powered photo editing and on‑device computer vision.</p>
+      </section>
+    </article>
+  </main>
+
+  <footer class="container" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--pico-muted-border-color);">
+    <small class="secondary">
+      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
+    </small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
+
+</body>
+</html>
