@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agentic AI's Reality Check: From Pilot to Proof — ZFRQBL</title>
+  <meta name="description" content="Gartner says 40% of enterprise apps will ship task-specific agents by end of 2026 — and that 40% of agentic projects will be canceled by 2027. Why the gap between pilots and proof defines this year." />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Agentic AI's Reality Check: From Pilot to Proof" />
+  <meta property="og:description" content="Gartner says 40% of enterprise apps will ship task-specific agents by end of 2026 — and that 40% of agentic projects will be canceled by 2027. Why the gap between pilots and proof defines this year." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/agentic-ai-pilot-to-proof" />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary" aria-label="Toggle theme" style="padding: 0.25rem 0.5rem; font-size: 0.85rem;">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article>
+      <header style="margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <small style="text-transform: uppercase; font-weight: bold; font-size: 0.75rem;" class="secondary">Note #10</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-08-24" class="secondary" style="font-size: 0.85rem;">August 24, 2026</time>
+        </div>
+        <h1>Agentic AI's Reality Check: From Pilot to Proof</h1>
+      </header>
+
+      <section>
+        <p>The numbers finally agree on something: agentic AI is past the demo phase. Gartner expects 40% of enterprise applications to ship with task-specific AI agents by the end of 2026 — up from under 5% in 2025. McKinsey puts 23% of organizations at scaling agentic AI somewhere in the business, with another 39% experimenting. The build-out is real.</p>
+<p>But here's the tension nobody in the keynote circuit likes to sit with: Gartner also predicts over 40% of agentic AI projects will be canceled by the end of 2027. Same firm, same forecast cycle, both directions. That gap between "we deployed an agent" and "the agent actually pays for itself" is the whole game in 2026.</p>
+<h2>The ROI awakening</h2>
+<p>Vendors and analysts keep landing on the same phrase: promise to proof. Pilots are cheap; production is where costs, latency, and hallucination budgets show up. Organizations doing this well measure agent outcomes the way they'd measure any automation — processing time, error rates, throughput, cost per task — instead of counting "agents launched" as a vanity metric. SS&amp;C Blue Prism's 2026 trend list literally leads with "The ROI Awakening," and that ordering is the signal.</p>
+<h2>Human + agent teams, not replacement</h2>
+<p>Capgemini projects that 38% of organizations will have AI agents working as team members inside human teams by 2028. The interesting detail from practitioners: human approval gates aren't bottlenecks, they're quality control points. One architect put it plainly — in a proof of concept, business judgment at the approval gate adds real value to automated decisions. The old "AI replaces us" framing is dying; the useful question is where the handoff points live.</p>
+<h2>Governance comes first</h2>
+<p>Gartner's most recent CFO guidance (August 2026) is blunt: pilot governance before you scale agents. That's the reverse of the order most teams attempt. They build, then bolt on controls when something goes sideways. The cheaper path is defining permissions, audit trails, and escalation rules before the agent ever touches a production system. It's the boring work, and it's the differentiator.</p>
+<h2>Takeaways</h2>
+<ul>
+<li><strong>Measure outcomes, not agent counts.</strong> If you can't state the cost per completed task, you don't have a pilot — you have a science project.</li>
+<li><strong>Design approval gates in from day one.</strong> Human-in-the-loop is a feature when it's deliberate, a tax when it isn't.</li>
+<li><strong>Expect the culling.</strong> A 40% cancellation rate isn't failure; it's portfolio management. The survivors will be the agents tied to a measured business outcome.</li>
+</ul>
+      </section>
+    </article>
+  </main>
+
+  <footer class="container" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--pico-muted-border-color);">
+    <small class="secondary">
+      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
+    </small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
+
+</body>
+</html>
