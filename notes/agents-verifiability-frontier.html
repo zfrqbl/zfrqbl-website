@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Why AI Agents Only Stick Where You Can Verify the Output — ZFRQBL</title>
+  <meta name="description" content="The jagged frontier isn't random. Agents automate fastest where something checks their work — a compiler, a test suite, a structured pipeline. What verifiability explains about the 2026 agent boom." />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Why AI Agents Only Stick Where You Can Verify the Output" />
+  <meta property="og:description" content="The jagged frontier isn't random. Agents automate fastest where something checks their work — a compiler, a test suite, a structured pipeline. What verifiability explains about the 2026 agent boom." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/agents-verifiability-frontier" />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary" aria-label="Toggle theme" style="padding: 0.25rem 0.5rem; font-size: 0.85rem;">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article>
+      <header style="margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <small style="text-transform: uppercase; font-weight: bold; font-size: 0.75rem;" class="secondary">Note #11</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-08-25" class="secondary" style="font-size: 0.85rem;">August 25, 2026</time>
+        </div>
+        <h1>Why AI Agents Only Stick Where You Can Verify the Output</h1>
+      </header>
+
+      <section>
+        <p>There's a pattern underneath the 2026 agent boom that nobody states plainly: agents get deployed for real only where something can check their work. The researchers call the weird capability gaps the "jagged frontier" — a model is brilliant at one task and embarrassingly bad at the one next to it. My read: the frontier isn't jagged randomly. It follows verification.</p>
+<h2>Coding agents win because the compiler is a referee</h2>
+<p>Look at the case studies that actually have numbers. Rakuten gave Claude Code a gnarly task in vLLM — a 12.5 million line open-source codebase — and it ran autonomously for seven hours and finished with 99.9% numerical accuracy. TELUS reports teams shipping 30% faster and saving over 500,000 hours. Those aren't vibes. Every edit the agent made was checked by a compiler and a test suite before anyone called it done. That's the whole trick.</p>
+<p>Code is the ideal agent domain because verification is free and instant. The machine tells you if the answer is wrong, no human judgment required. You don't need to trust the agent; you need to trust the tests.</p>
+<h2>Where it falls apart</h2>
+<p>Now flip it. Customer experience. Gartner says 60% of brands will use agentic AI for one-to-one CX by 2028, and there are real wins — a European energy provider picked up +18% CSAT. But how do you verify "the customer felt heard"? You can't. You get a survey weeks later and a churn curve you can't attribute. The verification is lagging, noisy, and full of confounders.</p>
+<p>Same story in commerce. Agents are expected to handle roughly 20% of e-commerce tasks this year — order status, refunds, reorders. The tasks that work are the ones with a system of record behind them. "Did the refund post?" is checkable. "Would you like to browse?" is not.</p>
+<h2>Verification needs ground truth</h2>
+<p>One more wrinkle: agents without live data hallucinate about 35% more than agents with fresh context. That's not a model-quality stat, that's a verification stat. An agent answering from a stale snapshot has no way to check itself against reality. The fix isn't a bigger model — it's a data pipeline.</p>
+<p>This is also why browser automation is exploding (the market's projected to grow 45% year over year). Web workflows are verifiable: did the form submit, did the order go through, did the page change state. There's an oracle at the end of every click.</p>
+<h2>What this means if you're building</h2>
+<ul>
+<li><strong>Pick workflows with built-in oracles.</strong> Compilers, test suites, structured pipelines, systems of record. If the output can't be checked by a machine, expect the agent to drift.</li>
+<li><strong>Design the verification, not just the agent.</strong> The teams winning at this treat approval gates and audit trails as part of the product, not a compliance afterthought. Human review is a verification mechanism, and a good one.</li>
+<li><strong>Assume jaggedness.</strong> Just because an agent nails one step doesn't mean the adjacent step works. The adjacent step probably has a fuzzier verification story. That's the tell.</li>
+</ul>
+<p>I'm not 100% sure verification is the whole explanation. Some of it is context window size, some of it is training data density. But it's the pattern I keep seeing: the agents that survive contact with production are the ones someone — or something — can check.</p>
+      </section>
+    </article>
+  </main>
+
+  <footer class="container" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--pico-muted-border-color);">
+    <small class="secondary">
+      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
+    </small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
+
+</body>
+</html>
