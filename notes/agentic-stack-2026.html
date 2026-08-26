@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The 2026 Agentic Stack: CLI Agents, Orchestration, and the ROI Reckoning — ZFRQBL</title>
+  <meta name="description" content="The 2026 trend reports agree: agents had to prove ROI. CLI agents beat IDEs on token economics, multi-agent orchestration went standard, and deterministic guardrails replaced vibes." />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The 2026 Agentic Stack: CLI Agents, Orchestration, and the ROI Reckoning" />
+  <meta property="og:description" content="The 2026 trend reports agree: agents had to prove ROI. CLI agents beat IDEs on token economics, multi-agent orchestration went standard, and deterministic guardrails replaced vibes." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/agentic-stack-2026" />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary" aria-label="Toggle theme" style="padding: 0.25rem 0.5rem; font-size: 0.85rem;">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article>
+      <header style="margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <small style="text-transform: uppercase; font-weight: bold; font-size: 0.75rem;" class="secondary">Note #12</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-08-26" class="secondary" style="font-size: 0.85rem;">Aug 26, 2026</time>
+        </div>
+        <h1>The 2026 Agentic Stack: CLI Agents, Orchestration, and the ROI Reckoning</h1>
+      </header>
+
+      <section>
+        <p>2025 was the year everyone talked about AI agents. 2026 is the year the bills came due. Gartner already predicts over 40% of agentic AI projects will be canceled by the end of 2027, and the trend reports out this quarter all circle the same shift: from promise to proof. Leaders aren't asking whether the demo works anymore. They're asking what it saves, how fast it processes, and whether error rates actually drop.</p>
+
+        <h2>CLI agents beat IDEs — delegation beats suggestion</h2>
+        <p>The biggest development-side shift of 2026 is command-line agents replacing IDE sidebars. The distinction that matters: delegation over suggestion. An IDE assistant proposes a change and waits for approval. A CLI agent runs for hours, coordinates edits across dozens of files, executes shell commands to verify its work, and commits with a descriptive message. You pair-program with an IDE assistant; you delegate to a CLI agent.</p>
+        <p>The numbers back it up. TELUS teams using Claude Code shipped engineering code 30% faster and banked over 500,000 saved hours. Rakuten handed Claude Code a genuinely nasty task — implementing activation vector extraction in vLLM, a codebase with 12.5 million lines across multiple languages — and it finished in seven hours of autonomous work at 99.9% numerical accuracy. HN and Reddit threads show developers walking away from "AI-enhanced IDEs" for terminal agents, and Perplexity's CTO said internally they're moving off MCPs toward plain APIs and CLIs.</p>
+
+        <h2>The token economics nobody wants to talk about</h2>
+        <p>Why the CLI shift? Cost. Benchmarks put CLI agents at roughly 200 tokens per command versus 32,000 to 82,000 tokens for the equivalent MCP operation. When you run production pipelines, that's not a rounding error — that's your whole context budget. MCP isn't dead, though. After an early-2026 backlash it surged back for the things it does uniquely well: OAuth flows, multi-tenant setups, enterprise governance. Firecrawl saw a 35% MCP usage jump in a single month. The emerging split: MCP for agent-to-tool and agent-to-data, A2A for agent-to-agent across company boundaries.</p>
+
+        <h2>Multi-agent systems stopped being exotic</h2>
+        <p>Single-agent workflows are giving way to coordinated teams: an orchestrator agent delegates to specialized sub-agents running in parallel, each with its own context. The results are concrete. Fountain cut candidate screening time 50% and onboarding 40% with hierarchical orchestration — one customer's staffing cycle went from weeks to under 72 hours. Zapier runs 800+ internal agents with 89% adoption across the org. The infrastructure coordinating all of it — tool execution, memory, state persistence across sessions — is what practitioners now call an agent harness, and it's becoming the default architecture.</p>
+
+        <h2>Guardrails go deterministic</h2>
+        <p>Enterprise buyers won't ship agents that <em>usually</em> work. Salesforce's Agent Script lets builders define explicit if/then workflows so sequence and outcomes stay consistent, shifting from agents that usually do the right thing to agents that always hit the target outcome. The other lever is small language models doing narrow jobs: Salesforce's HyperClassifier handles topic classification 30 times faster than the general-purpose model it replaced, and they cut LLM calls from four to two before the first response token. Speed, cost, determinism — that's the production triad.</p>
+
+        <h2>The pattern underneath</h2>
+        <p>Run all of this through one lens and it's the same story as <a href="/notes/agents-verifiability-frontier" class="contrast">last week's note</a>: agents only stick where something verifies the output. Compilers, test suites, checkable business outcomes. The stack is consolidating fast — CLI for cost, orchestration for scope, deterministic layers for trust — and the teams pulling ahead treat agent orchestration as a skill, not a feature.</p>
+      </section>
+    </article>
+  </main>
+
+  <footer class="container" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--pico-muted-border-color);">
+    <small class="secondary">
+      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
+    </small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
+
+</body>
+</html>
