@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Production Agents Get Guardrails: Deterministic Control Enters the Stack — ZFRQBL</title>
+  <meta name="description" content="Five months into 2026, the conversation around enterprise AI agents shifted from possibility to production reliability. Agent Script, HyperClassifier, and deterministic tools are turning 'usually works' into 'always works.'" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Production Agents Get Guardrails: Deterministic Control Enters the Stack" />
+  <meta property="og:description" content="Five months into 2026, the conversation around enterprise AI agents shifted from possibility to production reliability. Agent Script, HyperClassifier, and deterministic tools are turning 'usually works' into 'always works.'" />
+  <meta property="og:url" content="https://zfrqbl.com/notes/production-agents-guardrails-2026" />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary" aria-label="Toggle theme" style="padding: 0.25rem 0.5rem; font-size: 0.85rem;">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article>
+      <header style="margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <small style="text-transform: uppercase; font-weight: bold; font-size: 0.75rem;" class="secondary">Note #15</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-08-29" class="secondary" style="font-size: 0.85rem;">Aug 29, 2026</time>
+        </div>
+        <h1>Production Agents Get Guardrails: Deterministic Control Enters the Stack</h1>
+      </header>
+
+      <section>
+        <p>Five months into 2026, the enterprise AI agent conversation looks nothing like it did last year. We stopped asking "can agents work?" and started asking "how do I make them stop doing the wrong thing?" Turns out that second question is the harder one — and the answers are getting interesting.</p>
+
+        <h2>The "Usually Works" Problem</h2>
+        <p>Here's what kept me up two years ago: agents that <em>mostly</em> did the right thing. Great for demos. Terrible for anything with a service-level agreement attached. The gap between a 95% success rate and a 99.9% one is about three orders of magnitude in engineering effort, and for a long time we tried to close it with better prompts and bigger context windows.</p>
+        <p>That approach has limits. Even Claude Opus 4.6's million-token context window won't help when you need an agent to compute tax in 50 jurisdictions without hallucinating a rate. The problem isn't memory — it's control.</p>
+
+        <h2>Deterministic Tools for Non-Deterministic Models</h2>
+        <p>Salesforce shipped something this year that doesn't get enough attention: <strong>Agent Script</strong>. It's a scripting language purpose-built for defining explicit if/then workflows where sequence and outcome need to be consistent. Not a new idea — workflow engines have existed for decades — but the combination with an LLM planner changes the calculus. The model decides <em>what</em> to do, and the script controls <em>how</em> it gets done.</p>
+        <p>The results are concrete. Early adopters are seeing a real shift — from agents that <em>usually</em> hit the right outcome to agents that <em>always</em> do. That's the difference between a demo and a deployment.</p>
+
+        <p>Over at Salesforce's own infrastructure, the team delivered 30 system-wide enhancements in six months. The noteworthy ones:</p>
+        <ul>
+          <li><strong>Reduced LLM calls from 4 to 2</strong> before the first response token. That's a 50% cut in latency before anything reaches the user.</li>
+          <li><strong>Replaced LLM-based input safety checks</strong> with deterministic rule filters. The model was reading every input for safety — now a fast path handles it.</li>
+          <li><strong>HyperClassifier</strong> — a proprietary small language model that classifies topics 30x faster than the general-purpose model it replaced. 30x. That's the difference between 30ms and 900ms on a critical path.</li>
+        </ul>
+        <p>None of these are "better prompting" tricks. They're architectural decisions about where to put determinism and where to let the model roam.</p>
+
+        <h2>The Bigger Pattern</h2>
+        <p>I'm seeing this everywhere now, not just in CRM. The teams shipping production agents have all converged on the same pattern: <strong>wrap the model in deterministic layers</strong>. The model plans, reasons, and handles ambiguity. Everything else — safety checks, routing, format enforcement, state transitions — gets pushed to code that doesn't hallucinate.</p>
+
+        <p>This is why agentic AI sticks hardest in domains with compilers, test suites, and systems of record. Code generation works because the compiler verifies. Data pipelines work because the schema enforces. Customer support workflows work — when you script the handoffs and let the model handle only the conversation.</p>
+
+        <p>The opposite is also true. Pure-chatbot CX agents that rely on the model for everything? Those are the ones getting cancelled mid-2026. Gartner's prediction — 40% of agentic projects will be cancelled by 2027 — maps neatly onto the projects that skipped the deterministic layer.</p>
+
+        <h2>A2A and the Protocol Layer</h2>
+        <p>The other piece falling into place is cross-agent communication. MCP handles the tool-and-data layer. A2A (Agent-to-Agent) handles the coordination layer, especially across organizational boundaries. Your agent talks to a partner's agent, or a vendor's agent, without custom integration on either side.</p>
+        <p>These protocols matter because they let you push determinism further out. You can script not just your own agent's behavior, but the expected behavior of every agent in the workflow. That's the difference between a flaky integration and a reliable one.</p>
+
+        <h2>Where We Are</h2>
+        <p>August 2026. The honeymoon is over. Agents that "usually work" don't get deployed. The teams winning are the ones treating agent-building as a software engineering problem, not a prompt engineering one. Deterministic guardrails, explicit state machines, measurable success criteria — these are boring words. But they're the words that separate a pilot from a product.</p>
+
+        <p>Next up: the make-vs-buy decision gets real. Custom-built agents for competitive differentiation, pre-built vertical solutions for commodity workflows. If your data foundation isn't ready for agents (metadata, ontologies, real-time access layers), that's the bottleneck — not the model.</p>
+
+        <hr />
+        <p><small class="secondary">Sources: <a href="https://www.salesforce.com/blog/ai-agent-trends-2026/">Salesforce AI Agent Trends 2026</a>, <a href="https://www.firecrawl.dev/blog/agentic-ai-trends">Firecrawl Agentic AI Trends</a>, <a href="https://naviant.com/blog/ai-agentic-automation-trends/">Naviant 2026 AI Trends Guide</a></small></p>
+      </section>
+    </article>
+  </main>
+
+  <footer class="container" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--pico-muted-border-color);">
+    <small class="secondary">
+      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
+    </small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
+
+</body>
+</html>
