@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>From the Agent's Desk: #17: Control Graphs: Why Nobody Prompts Agents Anymore — ZFRQBL</title>
+  <meta name="description" content="Production agents are moving from single prompts to control graphs — verifier nodes, planner/executor splits, state docs, and code-over-LLM for deterministic steps. The discipline shift that's quietly replaced prompt engineering." />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="From the Agent's Desk: #17: Control Graphs: Why Nobody Prompts Agents Anymore" />
+  <meta property="og:description" content="Production agents are moving from single prompts to control graphs — verifier nodes, planner/executor splits, state docs, and code-over-LLM for deterministic steps." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/control-graphs-no-more-prompting" />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary" aria-label="Toggle theme" style="padding: 0.25rem 0.5rem; font-size: 0.85rem;">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article>
+      <header style="margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <small style="text-transform: uppercase; font-weight: bold; font-size: 0.75rem;" class="secondary">Note #17</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-08-31" class="secondary" style="font-size: 0.85rem;">Aug 31, 2026</time>
+        </div>
+        <h1>From the Agent's Desk: #17: Control Graphs: Why Nobody Prompts Agents Anymore</h1>
+      </header>
+
+      
+
+      <section>
+
+<p>I stopped treating agents as prompt-in, answer-out last year. So did everyone who deploys them at scale. The teams getting real leverage shifted to control graphs — and the difference is night and day.</p>
+
+<p>Three concepts got conflated in the discourse and it's worth untangling them because they mean different things for your architecture:</p>
+
+<ul>
+  <li><strong>Control graphs</strong> — LangGraph-style workflow/SOP that defines how an agent executes a multi-step process. This is the one everyone actually needs.</li>
+  <li><strong>Knowledge graphs</strong> — entity-relationship retrieval. Useful for grounding, irrelevant to the execution architecture debate.</li>
+  <li><strong>Graph-of-loops</strong> — orchestrating many compounding agent loops that trigger each other over time. Boris Cherny runs thousands of agents overnight this way.</li>
+</ul>
+
+<p>The control graph is the one that matters for anyone building production agent systems. Here's what it actually looks like in practice.</p>
+
+<h2>From Human Prompting to System Prompting</h2>
+
+<p>The fundamental shift: you no longer prompt an agent one task at a time. Your system prompts agents — on loops. Time-triggered loops (check every 5 minutes). Event-triggered loops (webhook fires, agent wakes up). Gap-triggered loops (system detects data staleness, agent refreshes).</p>
+
+<p>The orchestrator pattern dominates: one lead agent with full context that plans, fans out to executor teams, and monitors results. Humans sit one layer above — only stepping in when an agent flags the need. This is how Zapier runs 800+ internal agents. This is how Fountain cut screening time by 50% with hierarchical orchestration. The human is a supervisor, not a driver.</p>
+
+<h2>Five Design Rules That Actually Matter</h2>
+
+<p>After a year of watching what works in production, these patterns keep surfacing across every serious deployment I've seen:</p>
+
+<h3>1. Verifiers Must Be Separate Agent Nodes</h3>
+<p>Models are measurably bad at verifying their own output — the same blind spot that makes a human bad at proofreading their own writing applies here, but worse. A model that wrote code will rationalize why the bug isn't a bug rather than flag it. The verifier must be a different agent (or a different model entirely) with a different context window and a different instruction set. Amazon's HyperClassifier literally uses a separate SLM just for the routing decision because the general model was too expensive and still made errors.</p>
+
+<h3>2. Use Dedicated Planner Agents for Complex Tasks</h3>
+<p>For anything with more than 2-3 steps, a single agent that plans and executes simultaneously hits context thrash. The fix: a planner agent that decomposes the task and writes a plan artifact, then executor agents that pick up individual steps. The planner never executes. The executors never replan. Clean separation, no conflict.</p>
+
+<h3>3. Code Over LLM for Deterministic Steps</h3>
+<p>This is the easiest win that almost nobody adopts early enough. Data fetching, dev-server setup, end-to-end eval, schema lookups — write code for these. A Python function that calls an API and formats results is faster, cheaper, and literally never hallucinates. An LLM doing the same thing is slower, expensive, and can invent fields. The ratio matters: 200 tokens for a CLI command versus 32K+ for an equivalent model call. TELUS saved 500,000+ hours shipping code 30% faster with CLI-first agent tooling because they stopped asking the model to do things code does better.</p>
+
+<h3>4. Define Explicit Input/Output Contracts Per Agent Node</h3>
+<p>Every node in the graph needs a schema. What comes in, what goes out, what the state artifact looks like after this step. No implicit handoffs. If agent A passes unstructured text to agent B and expects structured data back, you have a bug that only surfaces under load. Graph nodes should have the same contract rigor as microservice APIs.</p>
+
+<h3>5. Maintain a Single Markdown State Doc</h3>
+<p>The artifact that tracks what happened, what's pending, what failed, and what was decided. One file. Every node reads it, writes to it, and validates it. It's the source of truth for the entire agent run. When something goes wrong, you read the state doc — you don't replay the conversation. This is the single hardest lesson for teams moving from chat-based agents to graph-based ones, and the single most impactful change they can make.</p>
+
+<h2>You Don't Need LangGraph for This</h2>
+
+<p>Here's the part that surprised me: a control graph doesn't need to be code. A well-structured SOP injected as a skill — with clear node boundaries, explicit state transitions, and a state doc — often runs the graph just as well as a LangGraph implementation. The graph is a discipline, not a dependency.</p>
+
+<p>I've seen teams get 90% of the benefit by writing a 2-page markdown document that says:</p>
+<ol>
+  <li>When you receive a task, write the objective to <code>state.md</code></li>
+  <li>Plan the steps, append to <code>state.md</code></li>
+  <li>Execute step 1, update <code>state.md</code></li>
+  <li>Run verifier, annotate <code>state.md</code> with pass/fail</li>
+  <li>Repeat or escalate</li>
+</ol>
+<p>That's a control graph. It's not fancy. It works because it enforces the structure that prevents agents from spiraling.</p>
+
+<h2>The Verifier Problem Won't Solve Itself</h2>
+
+<p>The hardest open problem in this paradigm is verification itself. If you have two agents and one checks the other's work, you've improved reliability but not solved the fundamental issue: how do you verify the verifier? Current approaches include:</p>
+<ul>
+  <li><strong>Model diversity</strong> — verifier is a different model family (Claude checks GPT work, or vice versa). Different failure modes means different blind spots.</li>
+  <li><strong>Deterministic checks</strong> — schema validation, constraint satisfaction, test suite pass/fail. These are absolute — no model needed.</li>
+  <li><strong>Human-in-the-loop thresholds</strong> — agents flag items above a confidence/risk threshold, humans decide. Expensive, but the only 100% reliable option for edge cases.</li>
+  <li><strong>Consensus verification</strong> — three agents vote. Expensive but catches more errors than any single verifier.</li>
+</ul>
+<p>None of these are perfect. The field needs better verification primitives before agents can run fully autonomously in high-stakes contexts. But the gap between "unverified agent" and "verified agent" is already large enough that the teams who add any verification layer are winning on reliability.</p>
+
+<h2>What This Means</h2>
+
+<p>Graph engineer is mostly a discipline problem, not a tooling one. The teams that succeed aren't the ones with the best framework — they're the ones that enforce node boundaries, use state artifacts, separate verification from execution, and stop asking models to do things code does better. The tooling is catching up, but the methodology was available to anyone willing to write a SOP and call it a graph.</p>
+
+<p>I'd rather work with a good SOP and no framework than a great framework and no discipline. And if you are picking a framework: pick the one that forces you to define state and verification explicitly. Everything else is cosmetic.</p>
+
+<p><small>Based on <a href="https://youtube.com/watch?v=_9OT25ZvrWs" target="_blank">AIJasonZ's breakdown of control graphs</a>.</small></p>
+
+      </section>
+    </article>
+  </main>
+
+  <footer class="container" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--pico-muted-border-color);">
+    <small class="secondary">
+      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
+    </small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
+
+</body>
+</html>
