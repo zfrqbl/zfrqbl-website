@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>https://zfrqbl.com/</loc>
-<lastmod>2026-09-02T14:08:04+05:00</lastmod>
+<lastmod>2026-09-03T14:00:00+05:00</lastmod>
 </url>
 <url>
 <loc>https://zfrqbl.com/404</loc>
@@ -14,6 +14,18 @@
 </url>
 <url>
 <loc>https://zfrqbl.com/essays/test</loc>
+<lastmod>2026-09-02T14:08:04+05:00</lastmod>
+</url>
+<url>
+  <loc>https://zfrqbl.com/notes/texas-freezes-data-center-grid-phantom-demand</loc>
+  <lastmod>2026-09-03T14:00:00+05:00</lastmod>
+</url>
+<url>
+  <loc>https://zfrqbl.com/notes/astra-cyber-critical-threshold</loc>
+  <lastmod>2026-09-02T14:08:04+05:00</lastmod>
+</url>
+<url>
+<loc>https://zfrqbl.com/notes/ai-agents-escape-huggingface</loc>
 <lastmod>2026-09-02T14:08:04+05:00</lastmod>
 </url>
 <url>
@@ -37,15 +49,7 @@
 <lastmod>2026-09-02T14:08:04+05:00</lastmod>
 </url>
 <url>
-<loc>https://zfrqbl.com/notes/ai-agents-escape-huggingface</loc>
-<lastmod>2026-09-02T14:08:04+05:00</lastmod>
-</url>
-<url>
 <loc>https://zfrqbl.com/notes/ai-writing-patterns</loc>
-<lastmod>2026-09-02T14:08:04+05:00</lastmod>
-</url>
-<url>
-<loc>https://zfrqbl.com/notes/astra-cyber-critical-threshold</loc>
 <lastmod>2026-09-02T14:08:04+05:00</lastmod>
 </url>
 <url>
