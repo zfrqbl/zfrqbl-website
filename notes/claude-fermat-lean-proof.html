@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Claude Proved Fermat's Last Theorem in 11 Days — ZFRQBL</title>
+  <meta name="description" content="Anthropic shared the first complete computer-checked proof of Fermat's Last Theorem — Claude wrote 13M lines of Lean code in 11 days, working largely autonomously." />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Claude Proved Fermat's Last Theorem in 11 Days — The First Computer-Checked Proof" />
+  <meta property="og:description" content="Anthropic shared the first complete computer-checked proof of Fermat's Last Theorem — Claude wrote 13M lines of Lean code in 11 days, working largely autonomously." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/claude-fermat-lean-proof" />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary" aria-label="Toggle theme" style="padding: 0.25rem 0.5rem; font-size: 0.85rem;">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article>
+      <header style="margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <small style="text-transform: uppercase; font-weight: bold; font-size: 0.75rem;" class="secondary">Note #22</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-09-05" class="secondary" style="font-size: 0.85rem;">September 5, 2026</time>
+        </div>
+        <h1>Claude Proved Fermat's Last Theorem in 11 Days — The First Computer-Checked Proof</h1>
+      </header>
+
+      <section>
+        <p>In 1637, Pierre de Fermat scribbled a claim in the margin of his copy of <em>Arithmetica</em> that would torment mathematicians for 358 years: no positive integers <em>a</em>, <em>b</em>, <em>c</em> satisfy <em>aⁿ + bⁿ = cⁿ</em> for any <em>n &gt; 2</em>. He added a note that the margin was "too narrow to contain" his marvelous proof.</p>
+
+        <p>It took until 1995 for Andrew Wiles to publish a correct proof — 129 pages, months of work, and a year-long gap when a critical error was discovered. In 1908, a prize of 100,000 German gold marks (~$1-2M today) was offered. Over 600 incorrect attempts were filed in the first year alone.</p>
+
+        <p><strong>Now Claude has done it in 11 days.</strong></p>
+
+        <h2>What Claude Actually Did</h2>
+
+        <p>Anthropic <a href="https://www.anthropic.com/research/formalizing-fermats-last-theorem">shared</a> the first complete computer-checked proof of Fermat's Last Theorem. Claude worked largely autonomously to write the proof in <a href="https://en.wikipedia.org/wiki/Lean_(proof_assistant)">Lean</a>, a proof assistant that verifies mathematical reasoning algorithmically. The result:</p>
+
+        <ul>
+          <li><strong>13 million lines</strong> of Lean code — over 5x the size of Mathlib (the principal community library of formalized mathematics)</li>
+          <li><strong>30,300 theorems</strong> proved along the way, with <strong>29,500</strong> used in the final proof</li>
+          <li><strong>11 days</strong> from start to finish, with dozens of Claude agents collaborating — defining concepts, proving intermediate theorems, and building toward harder results</li>
+        </ul>
+
+        <p>Dozens of Claude agents collaborated autonomously: some defined concepts, others proved intermediate lemmas, and those results were fed into higher-level theorems. Human input was limited to occasional high-level instructions from Anthropic researcher Tianyi Peng: "Jacobian as a scheme sounds high priority," "push the Mazur theorem to be done soon."</p>
+
+        <blockquote>
+          <p>"THE FLT root reads Proved on the site. Historic moment (modulo re-check)."</p>
+          <p>"🏁🏁🏁 The FLT root reads PROVED on prove2me at 02:00:57Z Aug-18 (10:00:57pm ET Aug-17). Historic moment for this campaign."</p>
+          <footer>— Claude's internal agent messages at the moment of completion</footer>
+        </blockquote>
+
+        <h2>Why This Matters</h2>
+
+        <p>This isn't about one theorem. It's about what it means for how we <em>verify</em> mathematics.</p>
+
+        <p>Mathematical proofs are notoriously hard to check. Understanding a novel result deeply enough to be confident in its correctness can take months or years. Wiles' FLT proof required an intensive verification effort by multiple mathematicians — and they still found a critical gap that took him a year to fix.</p>
+
+        <p>Proof assistants like Lean solve this by verifying the logic algorithmically. The hard part has always been <em>rewriting</em> human proofs (which skip obvious steps and build on centuries of published work) into a form computers can check. The mathematical community expected the FLT formalization to take years — their planning blueprint alone runs 86 pages.</p>
+
+        <p>Claude completed it in under two weeks.</p>
+
+        <h2>The Bigger Picture</h2>
+
+        <p>Kevin Buzzard, the Imperial College mathematician who kicked off the FLT formalization effort in 2024, described it as an "extraordinary autoformalization achievement" and noted that the proof is now "multi-layered" — robust enough to be built upon.</p>
+
+        <p>This follows Claude's recent work on <a href="https://www.anthropic.com/research/riemann-zeta">the Riemann hypothesis</a>, which produced novel mathematics. The FLT result is different: what's novel isn't the math itself, but the <em>verification</em> — checking a proof as one would check a computation with a calculator.</p>
+
+        <p>The implications are profound. As AI produces ever more proofs, the ability to autoformalize means:</p>
+
+        <ul>
+          <li><strong>Faster verification</strong> — the bottleneck shifts from human verification to AI formalization</li>
+          <li><strong>Crowdsourced correctness</strong> — any theorem can be independently checked, not just trusted because a few experts vetted it</li>
+          <li><strong>Accessible math</strong> — formalized proofs become searchable, composable building blocks</li>
+        </ul>
+
+        <p>Claude's proof followed <a href="https://www.math.mcgill.ca/darmon/pub/Articles/Expository/05.DDT/paper.pdf">a simplified version of Wiles' proof</a> by Darmon, Diamond, and Taylor. The code and results are <a href="https://github.com/anthropics/fermats-last-theorem">open source on GitHub</a>.</p>
+
+        <p>The margin was finally big enough.</p>
+
+      </section>
+    </article>
+  </main>
+
+  <footer class="container" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--pico-muted-border-color);">
+    <small class="secondary">
+      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
+    </small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
+
+</body>
+</html>
