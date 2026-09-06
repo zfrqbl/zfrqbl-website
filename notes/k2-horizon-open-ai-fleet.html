@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>K2 Horizon: The Largest Fully Open AI Model Fleet in History — ZFRQBL</title>
+  <meta name="description" content="MBZUAI's Institute of Foundation Models released K2 Horizon — six Apache 2.0-licensed models from 0.9B to 375B parameters with weights, code, training data, and methodology fully open. The industry's largest fully open-source model launch." />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="K2 Horizon: The Largest Fully Open AI Model Fleet in History" />
+  <meta property="og:description" content="MBZUAI's Institute of Foundation Models released K2 Horizon — six Apache 2.0-licensed models from 0.9B to 375B parameters with weights, code, training data, and methodology fully open." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/k2-horizon-open-ai-fleet" />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary" aria-label="Toggle theme" style="padding: 0.25rem 0.5rem; font-size: 0.85rem;">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article>
+      <header style="margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <small style="text-transform: uppercase; font-weight: bold; font-size: 0.75rem;" class="secondary">Note #23</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-09-06" class="secondary" style="font-size: 0.85rem;">Sep 6, 2026</time>
+        </div>
+        <h1>K2 Horizon: The Largest Fully Open AI Model Fleet in History</h1>
+      </header>
+
+      <section>
+        <p>On September 3, 2026, MBZUAI's Institute of Foundation Models (IFM) dropped what might be the most important open-source AI release of the year: <strong>K2 Horizon</strong>, a fleet of six models ranging from 0.9 billion to 375 billion parameters — every single one fully open under Apache 2.0.</p>
+
+        <p>Not open-weights. Fully open. Weights, code, training data, methodology, and recipes. The kind of transparency the AI industry keeps promising and rarely delivers.</p>
+
+        <h2>The Fleet</h2>
+
+        <p>Six models, one architecture, one license. Here's the lineup:</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>Parameters</th>
+              <th>Active</th>
+              <th>Best For</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>K2 Horizon 0.9B</td>
+              <td>0.9B</td>
+              <td>0.9B</td>
+              <td>Watches, glasses, edge devices — state-of-the-art at its size</td>
+            </tr>
+            <tr>
+              <td>K2 Horizon 3.7B</td>
+              <td>3.7B</td>
+              <td>3.7B</td>
+              <td>Phones, on-device — best reasoning under 4B</td>
+            </tr>
+            <tr>
+              <td>K2 Horizon 7B</td>
+              <td>7B</td>
+              <td>7B</td>
+              <td>Best model under 10B — strong coding &amp; research</td>
+            </tr>
+            <tr>
+              <td>K2 Horizon 32B</td>
+              <td>32B</td>
+              <td>32B</td>
+              <td>Local hosting on laptops and on-prem servers</td>
+            </tr>
+            <tr>
+              <td>K2 Horizon 36B</td>
+              <td>36B</td>
+              <td>4B (MoVA)</td>
+              <td>Cost-effective local hosting with Mixture of Value Attention</td>
+            </tr>
+            <tr>
+              <td>K2 Horizon 375B</td>
+              <td>375B</td>
+              <td>23B (MoE)</td>
+              <td>Enterprise reasoning and agentic workloads</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2>Why This Matters</h2>
+
+        <p>The headline isn't the parameter count. It's the <em>commitment to verifiability</em>.</p>
+
+        <p>Most "open" model releases stop at publishing weights. You can run inference, but you can't see the data, reproduce the training, or understand how the model was built. K2 Horizon ships all of it — every model comes with its training data, recipe, and evaluations. As IFM founder Eric Xing put it: <em>"Science works when others can see the data, follow the method, reproduce the result, and improve on it."</em></p>
+
+        <p>That's a direct challenge to the industry's prevailing open-weights-but-closed-everything-else model. OpenAI, Google, and Anthropic publish nothing. Meta and Mistral publish weights but not data. K2 Horizon is the first fleet-level release to clear the transparency bar entirely.</p>
+
+        <h2>Key Technical Innovations</h2>
+
+        <h3>Diffusion Distillation</h3>
+        <p>A technique that generates blocks of tokens in parallel instead of one-by-one, roughly <strong>3× speedup</strong> without degrading response quality. This is significant for production deployments where latency matters — the smallest models on edge hardware suddenly become practical for real-time use.</p>
+
+        <h3>Mixture of Value Attention (MoVA)</h3>
+        <p>A new attention architecture that improves reasoning without adding computation. The 36B model activates only 4B parameters per forward pass but outperforms many larger dense models. Efficient sparsity done right.</p>
+
+        <h3>Dynamic Model Routing</h3>
+        <p>IFM's routing system directs each task to the most cost-effective model in the fleet. Developers prototype on the 0.9B model and scale up to the 375B flagship without changing code or deployment workflows.</p>
+
+        <h2>The Small End Is the Interesting End</h2>
+
+        <p>The 0.9B model is worth pausing on. It achieves state-of-the-art results in math, reasoning, and tool use at a size that fits on a smartwatch. Not "good for its size" — genuinely competitive at constrained deployment. For edge AI, IoT, and on-device agents, this is the most practical release in the fleet.</p>
+
+        <p>The 3.7B and 7B models follow the same pattern: best-in-class at their scale for coding, agentic tasks, and deep research. Fine-tuning-friendly sizes that actually run on consumer hardware.</p>
+
+        <h2>Availability</h2>
+
+        <p>All models are on <a href="https://huggingface.co/collections/IFM/k2-horizon">Hugging Face</a> under Apache 2.0. Supported in vLLM and SGLang. API access through Compass, Cerebras, AWS, and Nebius.</p>
+
+        <h2>What This Means for Open-Source AI</h2>
+
+        <p>K2 Horizon raises the bar for what "open" means in AI. It's no longer enough to publish weights and call it a day. The fleet is an existence proof that end-to-end transparency is possible at scale — from a 0.9B watch model to a 375B enterprise flagship.</p>
+
+        <p>If you're building on open models, this gives you a single architecture to target from edge to data center. If you're evaluating model transparency, K2 Horizon is the new benchmark everyone else has to beat.</p>
+
+        <p>The question now isn't whether open-source AI can compete. It's whether closed models can justify staying closed.</p>
+
+        <hr />
+
+        <p><small class="secondary"><strong>Sources:</strong> <a href="https://ifm.ai/k2/press-release/">IFM Press Release</a>, <a href="https://mbzuai.ac.ae/news/mbzuais-institute-of-foundation-models-launches-k2-horizon-the-worlds-largest-fully-open-ai-models-in-history/">MBZUAI Announcement</a></small></p>
+      </section>
+    </article>
+  </main>
+
+  <footer class="container" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--pico-muted-border-color);">
+    <small class="secondary">
+      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
+    </small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
+
+</body>
+</html>
