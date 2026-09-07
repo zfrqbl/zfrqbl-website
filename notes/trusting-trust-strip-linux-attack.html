@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trusting-Trust Attack Proven Against Every Linux Binary via strip — ZFRQBL</title>
+  <meta name="description" content="New research extends Ken Thompson's classic compiler attack to GNU strip — proving that trusting-trust is a threat against any binary-transforming build utility, not just compilers." />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Trusting-Trust Attack Proven Against Every Linux Binary via strip" />
+  <meta property="og:description" content="New research extends Ken Thompson's classic compiler attack to GNU strip — proving that trusting-trust is a threat against any binary-transforming build utility, not just compilers." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/trusting-trust-strip-linux-attack" />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary" aria-label="Toggle theme" style="padding: 0.25rem 0.5rem; font-size: 0.85rem;">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article>
+      <header style="margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <small style="text-transform: uppercase; font-weight: bold; font-size: 0.75rem;" class="secondary">Note #24</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-09-07" class="secondary" style="font-size: 0.85rem;">Sep 7, 2026</time>
+        </div>
+        <h1>Trusting-Trust Attack Proven Against Every Linux Binary via strip</h1>
+      </header>
+
+      <section>
+
+        <h2>The Attack That Was Supposed to Be Only a Compiler Problem</h2>
+
+        <p>In 1984, Ken Thompson accepted his Turing Award with a lecture titled <em>"Reflections on Trusting Trust"</em> — a triad of escalating revelations that ended with a bombshell: a compromised compiler can not only backdoor every program it compiles, but <em>reproduce the backdoor in subsequent builds of itself</em>. The poisoned compiler checks for the compiler source code and injects the backdoor into the newly built binary, meaning a malicious seed compiler could be removed from the source tree and the backdoor would persist forever.</p>
+
+        <p>For four decades, the conventional wisdom held that the trusting-trust attack was uniquely dangerous to <em>compilers</em> — the one program sophisticated enough to recognize and subvert its own source during compilation.</p>
+
+        <p><strong>That was wrong.</strong></p>
+
+        <h2>What the New Paper Shows</h2>
+
+        <p>A paper on arXiv (2607.24888) by Aman Sharma and colleagues constructs a complete trusting-trust attack around <strong>GNU strip</strong> — an ordinary build utility that does <em>neither</em> inspect <em>nor</em> generate source code. Strip just removes debugging symbols and sections from ELF binaries. It's about as unassuming as a build tool gets.</p>
+
+        <p>Using only manipulations of finished ELF files, the researchers show that:</p>
+
+        <ul>
+          <li>A single tampered <code>strip</code> binary injected into the NixOS bootstrap seed implants a payload that propagates through successive generations of strip itself.</li>
+          <li>The backdoor survives into the final standard environment <em>after the seed leaves the dependency closure</em> — the original compromised binary can be deleted, and the infection continues.</li>
+          <li>On a real nixpkgs revision, the attack builds a complete graphical installer without any build failures and backdoors <strong>almost every binary</strong> in the distribution.</li>
+          <li>Each subverted package can then execute arbitrary malicious behavior — exfiltrating data, installing backdoors, or modifying system behavior.</li>
+        </ul>
+
+        <h2>Why This Matters Beyond Compilers</h2>
+
+        <p>The result massively expands the trusting-trust threat model. If a trivial binary-stripping utility can carry the attack, then so can <em>any</em> tool in the build pipeline that transforms binaries: linkers, object-file manipulators, static analyzers, packers, even <code>objcopy</code> or <code>patchelf</code>.</p>
+
+        <p>The practical implication is that binary reproducibility and bootstrapping transparency are not just compiler concerns. Every stage of the software supply chain that touches binary artifacts is a potential vector for trusting-trust attacks. A single compromised tool in the bootstrap path can subvert everything built on top of it — and reproduce itself so that removing the source of the compromise doesn't remove the infection.</p>
+
+        <h2>Defense and Mitigation</h2>
+
+        <p>The paper's construction uses NixOS as a case study because NixOS has one of the most transparent bootstrap chains in the Linux ecosystem — yet it still falls to this attack. Defenses include:</p>
+
+        <ul>
+          <li><strong>Binary-level provenance tracking</strong> — verifying that every binary in the build chain corresponds to its source, not just at the compiler level but at every binary-manipulation step.</li>
+          <li><strong>Diverse double-compilation</strong> — using two independent compilers to verify that build outputs match, extended to all binary-transforming tools.</li>
+          <li><strong>Minimal bootstrap seeds</strong> — reducing the trusted computing base to the smallest possible set of hand-audited binaries.</li>
+          <li><strong>Formal verification of build tools</strong> — proving that strip and similar utilities have no hidden functionality.</li>
+        </ul>
+
+        <p>The paper is a reminder that Thompson's 1984 insight wasn't about compilers. It was about <em>trust</em> — and how the entire chain of tooling that transforms our code is a chain of trust that we rarely verify.</p>
+
+        <p style="margin-top: 2rem;">
+          <small class="secondary">
+            <strong>Source:</strong> <a href="https://arxiv.org/abs/2607.24888">arXiv 2607.24888 — Trusting-Trust Attack against an Entire Linux Distribution through Binary Manipulation</a>
+          </small>
+        </p>
+
+      </section>
+    </article>
+  </main>
+
+  <footer class="container" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--pico-muted-border-color);">
+    <small class="secondary">
+      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
+    </small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
+
+</body>
+</html>
