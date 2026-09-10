@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Modern Python Developer’s Trap: When Code Looks Right but Isn’t — ZFRQBL</title>
+  <meta name="description" content="Python has not changed because AI can write it. The engineering challenge has shifted toward verifying semantics, architecture, dependencies, performance, and security." />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The Modern Python Developer’s Trap: When Code Looks Right but Isn’t" />
+  <meta property="og:description" content="Python has not changed because AI can write it. The engineering challenge has shifted toward verifying semantics, architecture, dependencies, performance, and security." />
+  <meta property="og:url" content="https://zfrqbl.com/essays/the-modern-python-developers-trap-when-code-looks-right-but-isnt" />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary" aria-label="Toggle theme" style="padding: 0.25rem 0.5rem; font-size: 0.85rem;">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+<article class="essay">
+    <header class="essay-header">
+        <p class="eyebrow">ESSAY • September 2026</p>
+        <h1>The Modern Python Developer’s Trap: When Code Looks Right but Isn’t</h1>
+        <p class="dek">
+            AI can produce Python faster than ever. It cannot verify the assumptions,
+            architecture, performance characteristics, or security boundaries hidden
+            inside that code.
+        </p>
+    </header>
+
+    <p>
+        Python has always rewarded developers who understand how the language actually
+        behaves. That matters even more now that code can be produced by humans,
+        autocomplete systems, and autonomous coding agents.
+    </p>
+
+    <p>The source of the code has changed. The failure modes have not.</p>
+
+    <p>
+        A generated function can still misuse a data structure. An agent can still
+        introduce an N+1 query. A developer can still swallow an exception, leak a
+        resource, or build an abstraction nobody needs. The difference is that
+        AI-assisted development makes it possible to introduce more code, across more
+        files, at a higher speed.
+    </p>
+
+    <p>That changes the engineering problem.</p>
+
+    <p>
+        The important question is no longer simply whether code can be produced quickly.
+        It is whether the developer can verify what that code assumes, what it changes,
+        what it depends on, and how it behaves when reality differs from the happy path.
+    </p>
+
+    <p>
+        This is a collection of common Python and development-workflow traps viewed
+        through that lens.
+    </p>
+
+    <h2>1. Python Has Sharp Edges</h2>
+
+    <p>
+        Some Python mistakes are not syntax mistakes. The code is perfectly valid Python.
+        The problem is that the developer has misunderstood one of the language's
+        semantics or chosen an operation that does not match the problem.
+    </p>
+
+    <p>
+        These mistakes are particularly easy for AI-assisted development to reproduce
+        because a language model can generate idiomatic-looking code without necessarily
+        understanding the invariant the code must preserve.
+    </p>
+
+    <h3>Don't Check What You Are About to Do Unless the Check Matters</h3>
+
+    <p>Python's EAFP style, "Easier to Ask Forgiveness than Permission," is often misunderstood.</p>
+    <p>It does not mean "always use exceptions."</p>
+
+    <p>
+        It means that when the operation itself provides a reliable way to determine
+        whether something can be done, it can be clearer to perform the operation and
+        handle the expected failure than to perform a separate pre-check.
+    </p>
+
+    <p>Consider a dictionary lookup:</p>
+
+    <pre><code class="language-python">def process_user_data(user_record: dict[str, str]) -> str | None:
+    """Return a normalized email address when one is present."""
+    if "email" not in user_record:
+        return None
+
+    return user_record["email"].lower()</code></pre>
+
+    <p>
+        This is perfectly reasonable code. There is no need to replace every
+        <code>if</code> with a <code>try</code> block simply because Python supports EAFP.
+    </p>
+
+    <p>But if the operation is already the thing you need to perform, a pre-check can be unnecessary:</p>
+
+    <pre><code class="language-python">def get_email(user_record: dict[str, str]) -> str:
+    """Return a normalized email address or raise KeyError if it is absent."""
+    return user_record["email"].lower()</code></pre>
+
+    <p>The caller can handle the missing key if that is an expected condition:</p>
+
+    <pre><code class="language-python">try:
+    email = get_email(user_record)
+except KeyError:
+    email = None</code></pre>
+
+    <p>There is another option when a missing value is part of the normal contract:</p>
+
+    <pre><code class="language-python">def get_email(user_record: dict[str, str]) -> str | None:
+    """Return a normalized email address when the field exists."""
+    email = user_record.get("email")
+    return email.lower() if email is not None else None</code></pre>
+
+    <p>The choice depends on the contract.</p>
+
+    <ul>
+        <li>Use <code>.get()</code> when a missing key naturally means "no value."</li>
+        <li>Use <code>try</code>/<code>except</code> when the operation is expected to succeed and the exception represents a condition the caller can handle.</li>
+        <li>Use an explicit membership check when the distinction between "missing" and "present" matters before the lookup.</li>
+    </ul>
+
+    <p>
+        The anti-pattern is not the <code>if</code>. The anti-pattern is performing
+        defensive checks mechanically without considering the operation's actual contract.
+    </p>
+
+    <h3>Choose the Data Structure for the Operation</h3>
+
+    <p>A list is a sequence. It is not a universal lookup table.</p>
+
+    <p>This becomes expensive when membership testing happens repeatedly:</p>
+
+    <pre><code class="language-python">def filter_users(
+    all_users: list[str],
+    banned_users: list[str],
+) -> list[str]:
+    """Return users who are not present in the banned-user list."""
+    return [
+        user
+        for user in all_users
+        if user not in banned_users
+    ]</code></pre>
+
+    <p>
+        If there are <code>N</code> users and <code>M</code> banned users, each membership
+        test can scan the list. In the worst case, the work is proportional to
+        <code>N × M</code>.
+    </p>
+
+    <p>For repeated membership tests, a set is normally more appropriate:</p>
+
+    <pre><code class="language-python">def filter_users(
+    all_users: list[str],
+    banned_users: list[str],
+) -> list[str]:
+    """Return users who are not present in the banned-user set."""
+    banned = set(banned_users)
+
+    return [
+        user
+        for user in all_users
+        if user not in banned
+    ]</code></pre>
+
+    <p>
+        Building the set costs O(M). Average-case membership testing in a hash table is
+        O(1), so the expected total work becomes O(N + M).
+    </p>
+
+    <blockquote><p>Choose the data structure based on the operation you perform most often.</p></blockquote>
+
+    <p>
+        A large percentage of performance problems are not caused by exotic algorithms.
+        They come from using a reasonable data structure for the wrong job.
+    </p>
+
+    <h3><code>is</code> Tests Identity. <code>==</code> Tests Equality.</h3>
+
+    <p>This mistake is common because some incorrect <code>is</code> comparisons appear to work.</p>
+
+    <pre><code class="language-python">def check_status(status: str) -> bool:
+    """Return whether status contains the expected value."""
+    return status is "COMPLETED"</code></pre>
+
+    <p>That is wrong.</p>
+
+    <p>
+        <code>is</code> tests object identity. It asks whether two expressions refer to
+        the same object. <code>==</code> tests equality. It asks whether two objects
+        compare as equal.
+    </p>
+
+    <pre><code class="language-python">def check_status(status: str) -> bool:
+    """Return whether status contains the expected value."""
+    return status == "COMPLETED"</code></pre>
+
+    <p>
+        Object identity is appropriate when identity itself has meaning. The classic
+        example is <code>None</code>:
+    </p>
+
+    <pre><code class="language-python">def has_value(value: str | None) -> bool:
+    """Return True when value is not the None singleton."""
+    return value is not None</code></pre>
+
+    <p>
+        You will sometimes see <code>is</code> appear to work with integers or strings
+        because of implementation details such as object interning. That behavior should
+        never be used as a value-comparison mechanism.
+    </p>
+
+    <blockquote>
+        <p>
+            If the question is "does this value equal that value?", use <code>==</code>.
+            If the question is "is this the exact same object?", use <code>is</code>.
+        </p>
+    </blockquote>
+
+    <h3>Let Context Managers Own Resources</h3>
+
+    <p>Resource ownership should be explicit.</p>
+
+    <pre><code class="language-python">def read_log_data(filepath: str) -> str:
+    """Read a text file and return its contents."""
+    file = open(filepath, encoding="utf-8")
+    data = file.read()
+    file.close()
+
+    return data</code></pre>
+
+    <p>
+        If <code>read()</code> raises an exception, <code>close()</code> is never reached.
+    </p>
+
+    <p>The context manager protocol exists to solve exactly this problem:</p>
+
+    <pre><code class="language-python">def read_log_data(filepath: str) -> str:
+    """Read a UTF-8 text file and close it when the operation finishes."""
+    with open(filepath, encoding="utf-8") as file:
+        return file.read()</code></pre>
+
+    <p>
+        The <code>with</code> statement ensures that the file is closed when control
+        leaves the block, including when the block exits because of an exception or an early return.
+    </p>
+
+    <p>The same ownership principle applies to:</p>
+
+    <ul>
+        <li>files</li>
+        <li>database connections</li>
+        <li>locks</li>
+        <li>temporary files</li>
+        <li>network clients</li>
+        <li>transactions</li>
+    </ul>
+
+    <blockquote>
+        <p>Who owns this resource, and what mechanism guarantees that ownership ends correctly?</p>
+    </blockquote>
+
+    <h3>Mutable Default Arguments Are Persistent State</h3>
+
+    <pre><code class="language-python">def append_event(
+    event: str,
+    timeline: list[str] = [],
+) -> list[str]:
+    """Append an event to the supplied timeline."""
+    timeline.append(event)
+    return timeline</code></pre>
+
+    <p>
+        The default list is created when the function definition is evaluated, not each time the function is called.
+    </p>
+
+    <pre><code class="language-python">print(append_event("start"))
+print(append_event("stop"))</code></pre>
+
+    <p>This produces:</p>
+
+    <pre><code class="language-text">['start']
+['start', 'stop']</code></pre>
+
+    <p>The usual solution is a <code>None</code> sentinel:</p>
+
+    <pre><code class="language-python">def append_event(
+    event: str,
+    timeline: list[str] | None = None,
+) -> list[str]:
+    """Append an event to a new or supplied timeline."""
+    if timeline is None:
+        timeline = []
+
+    timeline.append(event)
+    return timeline</code></pre>
+
+    <p>This is not merely a style preference. It follows directly from Python's function-definition semantics.</p>
+
+    <h3>Don't Shadow Built-in Names</h3>
+
+    <pre><code class="language-python">def format_records(list, input):
+    """Format records using a supplied value."""
+    dict = {}
+
+    for item in list:
+        dict[item] = input
+
+    return dict</code></pre>
+
+    <p>
+        <code>list</code>, <code>input</code>, and <code>dict</code> are built-in names.
+        Assigning to them shadows the built-ins in the relevant scope.
+    </p>
+
+    <pre><code class="language-python">def format_records(
+    records: list[str],
+    input_value: str,
+) -> dict[str, str]:
+    """Map each record to the supplied input value."""
+    return {
+        record: input_value
+        for record in records
+    }</code></pre>
+
+    <p>Name the thing according to its role, not merely its Python type.</p>
+
+    <h2>2. Code That Doesn't Survive Growth</h2>
+
+    <p>
+        Python makes it easy to start small. That is a strength. The problem begins when
+        developers preserve the structure of a prototype while adding production responsibilities to it.
+    </p>
+
+    <h3>The Script-to-Monolith Problem</h3>
+
+    <p>A growing script often accumulates:</p>
+
+    <ul>
+        <li>configuration</li>
+        <li>API calls</li>
+        <li>validation</li>
+        <li>business rules</li>
+        <li>persistence</li>
+        <li>logging</li>
+        <li>retries</li>
+        <li>error handling</li>
+    </ul>
+
+    <p>The problem is not that this code lives in one file. The problem is that several responsibilities become coupled together.</p>
+
+    <pre><code class="language-python">from dataclasses import dataclass
+import sqlite3
+
+
+@dataclass(frozen=True)
+class Sale:
+    """Represent a calculated sale value."""
+
+    value: float
+
+
+def calculate_sale_value(amount: float, rate: float = 0.15) -> float:
+    """Apply the configured rate to an amount."""
+    return amount * (1 + rate)
+
+
+def save_sale(database_path: str, sale: Sale) -> None:
+    """Persist a sale in the SQLite database."""
+    with sqlite3.connect(database_path) as connection:
+        connection.execute(
+            "INSERT INTO sales (value) VALUES (?)",
+            (sale.value,),
+        )</code></pre>
+
+    <p>
+        The useful form of separation is to make dependencies visible and isolate behavior that can be tested independently.
+    </p>
+
+    <blockquote><p>Folder structure is not architecture. Dependency boundaries are.</p></blockquote>
+
+    <h3>Don't Build an Architecture for Problems You Don't Have</h3>
+
+    <p>
+        There is nothing technically wrong with an interface and provider abstraction.
+        The question is whether the abstraction is buying anything.
+    </p>
+
+    <pre><code class="language-python">from abc import ABC, abstractmethod
+
+
+class NotificationProvider(ABC):
+    """Define the interface for notification providers."""
+
+    @abstractmethod
+    def send(self, message: str) -> None:
+        """Send a notification."""
+        raise NotImplementedError
+
+
+class EmailNotificationProvider(NotificationProvider):
+    """Send notifications by email."""
+
+    def send(self, message: str) -> None:
+        print(f"Sending email: {message}")</code></pre>
+
+    <pre><code class="language-python">def send_email_notification(
+    message: str,
+    recipient: str,
+) -> None:
+    """Send a notification to one recipient."""
+    if "@" not in recipient:
+        raise ValueError("Invalid recipient email address")
+
+    print(f"Sending email to {recipient}: {message}")</code></pre>
+
+    <blockquote>
+        <p>
+            Introduce abstraction to protect a real boundary or a meaningful variation,
+            not an imaginary future requirement.
+        </p>
+    </blockquote>
+
+    <h3>Make Dependencies Reproducible</h3>
+
+    <pre><code class="language-bash">uv init my_project
+cd my_project
+
+uv add flask requests pydantic
+uv lock</code></pre>
+
+    <p>
+        The important distinction is between declaring requirements and reproducing a tested environment.
+    </p>
+
+    <blockquote>
+        <p>
+            A production build should come from a known dependency resolution, not whatever
+            versions happen to be current when a server is provisioned.
+        </p>
+    </blockquote>
+
+    <p>
+        Every dependency is additional code that your application executes or trusts.
+        Do not add a package simply because an AI assistant suggested an import.
+    </p>
+
+    <h2>3. AI Changes the Failure Rate, Not the Laws of Software</h2>
+
+    <p>
+        AI coding assistants and agents change the economics of writing software. They also change the cost of accepting a bad decision.
+    </p>
+
+    <p>
+        When an agent changes multiple files, adds a dependency, modifies a data model,
+        and introduces helper functions, line-by-line familiarity becomes a poor substitute for verification.
+    </p>
+
+    <h3>Don't Treat Generated Code as Verified Code</h3>
+
+    <pre><code class="language-python">def update_user_profile(user_id, raw_payload):
+    """Update a user profile from untrusted input."""
+    data = eval(raw_payload)
+
+    db.execute(
+        f"UPDATE users SET info = '{data}' WHERE id = {user_id}"
+    )</code></pre>
+
+    <p>This contains multiple problems:</p>
+
+    <ul>
+        <li><code>eval()</code> executes arbitrary Python expressions.</li>
+        <li>The input is not validated against a schema.</li>
+        <li>SQL is constructed through string interpolation.</li>
+        <li>The database dependency is implicit.</li>
+        <li>The authorization boundary is not visible.</li>
+    </ul>
+
+    <pre><code class="language-python">from pydantic import BaseModel, EmailStr
+
+
+class UserProfile(BaseModel):
+    """Represent the fields accepted by a profile update."""
+
+    name: str
+    email: EmailStr
+
+
+def update_user_profile(
+    database,
+    user_id: int,
+    raw_payload: str,
+) -> None:
+    """Validate profile input and update the corresponding user."""
+    profile = UserProfile.model_validate_json(raw_payload)
+
+    database.execute(
+        """
+        UPDATE users
+        SET name = :name, email = :email
+        WHERE id = :id
+        """,
+        {
+            "name": profile.name,
+            "email": profile.email,
+            "id": user_id,
+        },
+    )</code></pre>
+
+    <p>
+        Structured code does not automatically prove the operation is secure.
+        Authorization, transactions, and database behavior still need to be verified.
+    </p>
+
+    <blockquote><p>Don't ask only: "Does this code run?" Ask: "What assumptions does it make?"</p></blockquote>
+
+    <h3>Give Agents Repository Context</h3>
+
+    <p>
+        An agent working from a small snippet can only reason about the information it can see.
+    </p>
+
+    <pre><code class="language-markdown"># Repository conventions
+
+## Logging
+
+Use `src.core.logger.logger` for application logging.
+Do not create module-level logging configuration.
+
+## Validation
+
+Use Pydantic v2 models for externally supplied structured data.
+
+## Formatting
+
+Run Ruff before committing.
+
+## Dependencies
+
+Do not introduce a third-party package when the standard library
+or an existing project dependency provides the required functionality.</code></pre>
+
+    <p>
+        Repository instructions are only one form of context. Tests, type definitions,
+        existing abstractions, configuration, and CI rules also communicate how the system is expected to behave.
+    </p>
+
+    <blockquote>
+        <p>If an architectural rule matters, it should not exist only in someone's memory.</p>
+    </blockquote>
+
+    <h3>Watch for Hallucinated Dependencies</h3>
+
+    <pre><code class="language-python">from json_helpers import parse_json</code></pre>
+
+    <p>
+        The import looks plausible. That is not evidence that the package or API exists.
+    </p>
+
+    <p>Before adding a package:</p>
+
+    <ol>
+        <li>Verify that the package exists.</li>
+        <li>Confirm that it is the intended project.</li>
+        <li>Check whether the standard library already solves the problem.</li>
+        <li>Check whether the repository already has an equivalent dependency.</li>
+        <li>Review whether the dependency is actually necessary.</li>
+        <li>Use a reproducible dependency resolution.</li>
+    </ol>
+
+    <blockquote>
+        <p>AI can suggest dependencies. It should not get to decide what your software supply chain contains.</p>
+    </blockquote>
+
+    <h2>4. Performance Problems Usually Start as Reasonable Code</h2>
+
+    <p>
+        Performance bugs often survive code review because the implementation is logically
+        correct. The problem appears only when the operation is repeated, concurrent, or applied to a larger dataset.
+    </p>
+
+    <h3>Don't Block an Async Event Loop</h3>
+
+    <pre><code class="language-python">import time
+import requests
+
+
+async def fetch_dashboard_data() -> dict:
+    """Fetch dashboard statistics."""
+    time.sleep(2)
+
+    response = requests.get(
+        "https://api.example.com/stats",
+        timeout=10,
+    )
+
+    return response.json()</code></pre>
+
+    <p>
+        <code>time.sleep()</code> blocks the thread. <code>requests.get()</code> performs synchronous I/O.
+    </p>
+
+    <pre><code class="language-python">import httpx
+
+
+async def fetch_dashboard_data(client: httpx.AsyncClient) -> dict:
+    """Fetch dashboard statistics without blocking the event loop."""
+    response = await client.get(
+        "https://api.example.com/stats",
+        timeout=10,
+    )
+    response.raise_for_status()
+
+    return response.json()</code></pre>
+
+    <p>
+        The client is passed into the function rather than created for every request so
+        its lifetime and connection reuse can be managed at the appropriate application boundary.
+    </p>
+
+    <blockquote><p><code>async def</code> does not make blocking operations non-blocking.</p></blockquote>
+
+    <h3>Watch for N+1 Queries</h3>
+
+    <pre><code class="language-python">orders = Order.objects.all()
+
+for order in orders:
+    print(order.customer.name)</code></pre>
+
+    <p>
+        If <code>customer</code> is lazily loaded, the application can issue one query
+        for the orders and additional queries as individual customers are accessed.
+    </p>
+
+    <pre><code class="language-python">orders = Order.objects.select_related("customer")
+
+for order in orders:
+    print(order.customer.name)</code></pre>
+
+    <p>
+        Django's <code>select_related()</code> and <code>prefetch_related()</code>
+        solve different relationship-loading problems. The latter generally performs
+        separate queries and combines the results in Python rather than simply issuing one SQL join.
+    </p>
+
+    <blockquote><p>Don't let a loop determine your database query count accidentally.</p></blockquote>
+
+    <h3>Build Strings According to the Work You Are Doing</h3>
+
+    <pre><code class="language-python">def build_report(rows: list[str]) -> str:
+    """Build a newline-delimited report."""
+    report = ""
+
+    for row in rows:
+        report += row + "\n"
+
+    return report</code></pre>
+
+    <p>A clearer approach when assembling many fragments is to join the pieces:</p>
+
+    <pre><code class="language-python">def build_report(rows: list[str]) -> str:
+    """Build a newline-delimited report."""
+    return "".join(f"{row}\n" for row in rows)</code></pre>
+
+    <p>Or, when a trailing newline is unnecessary:</p>
+
+    <pre><code class="language-python">def build_report(rows: list[str]) -> str:
+    """Build a newline-delimited report."""
+    return "\n".join(rows)</code></pre>
+
+    <p>
+        The point is not that repeated <code>+=</code> is universally quadratic.
+        Python implementations can optimize some concatenation patterns. The stronger
+        recommendation is to use <code>join()</code> when deliberately assembling many
+        fragments rather than relying on implementation-specific behavior.
+    </p>
+
+    <h2>5. Small Style Mistakes Become Expensive at Scale</h2>
+
+    <p>
+        Some practices do not usually bring down a production system by themselves.
+        They do make code harder to inspect, understand, refactor, and automate.
+    </p>
+
+    <h3>Avoid Wildcard Imports</h3>
+
+    <pre><code class="language-python">from math import *
+from numpy import *
+
+result = sqrt(16)</code></pre>
+
+    <p>The source of <code>sqrt()</code> is unclear.</p>
+
+    <pre><code class="language-python">import math
+import numpy as np
+
+
+standard_result = math.sqrt(16)
+array_result = np.sqrt(np.array([16, 25]))</code></pre>
+
+    <p>
+        Explicit namespaces help readers, IDEs, static analyzers, refactoring tools,
+        and AI coding agents reconstruct where a symbol comes from.
+    </p>
+
+    <h3>Catch the Exception You Can Actually Handle</h3>
+
+    <pre><code class="language-python">try:
+    value = int(input("Enter a number: "))
+except:
+    print("Invalid input")</code></pre>
+
+    <p>
+        A bare <code>except</code> catches exceptions derived directly from
+        <code>BaseException</code>, including <code>KeyboardInterrupt</code> and
+        <code>SystemExit</code>.
+    </p>
+
+    <pre><code class="language-python">try:
+    value = int(input("Enter a number: "))
+except ValueError:
+    print("Invalid numerical input.")</code></pre>
+
+    <ol>
+        <li>Catch the specific exception you can handle.</li>
+        <li>Catch a meaningful exception family when appropriate.</li>
+        <li>Catch <code>Exception</code> at deliberate boundaries when the application needs to log, translate, retry, or terminate an operation.</li>
+        <li>Almost never catch <code>BaseException</code>.</li>
+    </ol>
+
+    <blockquote><p>What am I going to do with this failure?</p></blockquote>
+
+    <h2>6. The Better AI Workflow Is Verification, Not Better Prompting</h2>
+
+    <p>
+        Prompt quality matters. Repository context matters. Neither substitutes for verification.
+    </p>
+
+    <pre><code class="language-text">Intent
+  ↓
+Generated implementation
+  ↓
+Tests
+  ↓
+Static analysis
+  ↓
+Type checking
+  ↓
+Dependency/security checks
+  ↓
+Diff review
+  ↓
+CI
+  ↓
+Deployment</code></pre>
+
+    <p>Each layer catches a different class of failure.</p>
+
+    <h3>Tests</h3>
+    <p>
+        Tests ask whether known behavior works. They are useful for edge cases,
+        regression protection, business rules, error behavior, and integration boundaries.
+    </p>
+    <p>Tests can only protect behavior you have actually specified.</p>
+
+    <h3>Type Checking</h3>
+    <p>
+        A type checker can catch mismatched interfaces and inconsistent assumptions.
+        It cannot prove business correctness, authorization, or architectural suitability.
+    </p>
+
+    <h3>Linting and Formatting</h3>
+    <p>
+        Tools such as Ruff catch many classes of style and static-analysis problems.
+        Formatting removes an entire category of human debate. Neither understands your application's business invariants.
+    </p>
+
+    <h3>Dependency Controls</h3>
+    <p>
+        Locking and dependency review improve reproducibility and reduce unnecessary
+        changes to the software supply chain. They do not tell you whether a dependency is architecturally justified.
+    </p>
+
+    <h3>Repository Instructions</h3>
+    <p>
+        Files such as <code>AGENTS.md</code>, project documentation, and contributor
+        guidelines give AI systems useful constraints. They do not enforce those constraints.
+        Tests and CI provide the enforcement mechanism.
+    </p>
+
+    <h3>Human Review</h3>
+
+    <p>Some questions remain contextual:</p>
+
+    <ul>
+        <li>Is this the correct abstraction?</li>
+        <li>Does this preserve the application's invariants?</li>
+        <li>Is the transaction boundary correct?</li>
+        <li>Is authorization enforced at the right point?</li>
+        <li>Does this change fit the architecture?</li>
+        <li>Is the new dependency justified?</li>
+        <li>What happens when this code runs concurrently?</li>
+        <li>What happens when the dataset is 100 times larger?</li>
+    </ul>
+
+    <p>AI can accelerate implementation. It does not remove the need to answer those questions.</p>
+
+    <h2>7. A Practical Review Checklist for AI-Generated Python</h2>
+
+    <p>
+        When reviewing generated or heavily AI-assisted code, do not limit the review to whether the diff looks clean.
+    </p>
+
+    <h3>Correctness</h3>
+    <ul>
+        <li>Does the implementation satisfy the actual requirement?</li>
+        <li>What assumptions does it make about its inputs?</li>
+        <li>What happens when those assumptions are false?</li>
+        <li>Are edge cases represented by tests?</li>
+        <li>Does the error behavior match the application's contract?</li>
+    </ul>
+
+    <h3>Python Semantics</h3>
+    <ul>
+        <li>Are <code>is</code> and <code>==</code> being used correctly?</li>
+        <li>Are mutable defaults avoided?</li>
+        <li>Are resources managed through context managers where appropriate?</li>
+        <li>Are built-in names being shadowed?</li>
+        <li>Are exceptions specific enough?</li>
+        <li>Is the chosen data structure appropriate for the operation?</li>
+    </ul>
+
+    <h3>Architecture</h3>
+    <ul>
+        <li>Does the change introduce a new dependency boundary?</li>
+        <li>Does it bypass an existing abstraction?</li>
+        <li>Has business logic become coupled to I/O?</li>
+        <li>Has a small feature acquired unnecessary layers?</li>
+        <li>Is configuration still isolated from application behavior?</li>
+    </ul>
+
+    <h3>Dependencies</h3>
+    <ul>
+        <li>Did the agent introduce a new package?</li>
+        <li>Does the package actually exist?</li>
+        <li>Is it necessary?</li>
+        <li>Is the repository already solving the same problem?</li>
+        <li>Is the resolved dependency set reproducible?</li>
+    </ul>
+
+    <h3>Performance</h3>
+    <ul>
+        <li>How many database queries does this execute?</li>
+        <li>Is work being repeated unnecessarily?</li>
+        <li>What happens as the input grows?</li>
+        <li>Is a blocking operation running in an async context?</li>
+        <li>Is memory usage proportional to the amount of data being processed?</li>
+    </ul>
+
+    <h3>Security</h3>
+    <ul>
+        <li>Is untrusted data crossing a trust boundary?</li>
+        <li>Is input validated?</li>
+        <li>Is SQL parameterized?</li>
+        <li>Is arbitrary code execution possible?</li>
+        <li>Are authorization checks present?</li>
+        <li>Did the generated code introduce a new attack surface?</li>
+    </ul>
+
+    <h3>AI-Specific Questions</h3>
+    <ul>
+        <li>Did the agent invent a helper that already exists?</li>
+        <li>Did it introduce a library the project does not use?</li>
+        <li>Did it follow repository conventions?</li>
+        <li>Did it modify files outside the intended scope?</li>
+        <li>Did it make assumptions that were not present in the task?</li>
+        <li>Did it preserve existing tests and interfaces?</li>
+        <li>Can you explain every significant part of the diff?</li>
+    </ul>
+
+    <blockquote>
+        <p>If a developer cannot explain a generated change, the change has not really been reviewed.</p>
+    </blockquote>
+
+    <h2>Conclusion: Code Generation Is Cheap. Verification Is the Engineering Work.</h2>
+
+    <p>
+        Python has not become harder because AI can write it. In some respects, Python has become easier to produce.
+    </p>
+
+    <p>The difficult part has moved.</p>
+
+    <p>
+        A developer who writes every line personally still needs to understand Python's
+        object model, resource management, data structures, concurrency model, database behavior, and architectural boundaries.
+    </p>
+
+    <p>
+        A developer who delegates implementation to an AI agent needs to understand those things too.
+    </p>
+
+    <p>The difference is that the second developer can now introduce mistakes much faster.</p>
+
+    <p>
+        The most dangerous generated code is not code that obviously looks broken. It is
+        code that looks reasonable, passes a simple test, follows familiar conventions,
+        and quietly violates an assumption somewhere else in the system.
+    </p>
+
+    <p>That is why the useful question during code review is not:</p>
+
+    <blockquote><p>"Did the AI write this correctly?"</p></blockquote>
+
+    <p>It is:</p>
+
+    <blockquote>
+        <p><strong>What does this code assume, and how have we verified those assumptions?</strong></p>
+    </blockquote>
+
+    <p>
+        That question works for manually written Python, autocomplete-generated functions,
+        and autonomous coding agents alike.
+    </p>
+
+    <p>The tools will continue to change. The engineering obligations will not.</p>
+</article>
+  </main>
+
+  <footer class="container" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--pico-muted-border-color);">
+    <small class="secondary">
+      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
+    </small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
+
+  <script>
+    document.querySelectorAll('.copy-btn').forEach(button => {
+      button.addEventListener('click', () => {
+        const container = button.closest('.code-container');
+        const code = container.querySelector('code').innerText;
+        navigator.clipboard.writeText(code).then(() => {
+          button.innerText = 'Copied!';
+          setTimeout(() => button.innerText = 'Copy', 2000);
+        });
+      });
+    });
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+</body>
+</html>
