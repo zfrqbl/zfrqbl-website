@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rust Is Tier-1 at Microsoft — ZFRQBL</title>
+  <meta name="description" content="Microsoft officially declares Rust a Tier-1 language with the same engineering support as C++ and C#. A definitive enterprise-Rust signal." />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Rust Is Tier-1 at Microsoft" />
+  <meta property="og:description" content="Microsoft officially declares Rust a Tier-1 language with the same engineering support as C++ and C#. A definitive enterprise-Rust signal." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/rust-tier-1-microsoft" />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary" aria-label="Toggle theme" style="padding: 0.25rem 0.5rem; font-size: 0.85rem;">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article>
+      <header style="margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <small style="text-transform: uppercase; font-weight: bold; font-size: 0.75rem;" class="secondary">Note #28</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-09-11" class="secondary" style="font-size: 0.85rem;">Sep 11, 2026</time>
+        </div>
+        <h1>Rust Is Tier-1 at Microsoft — Official Status After Years of Strategic Investment</h1>
+      </header>
+
+      <section>
+        <p>Microsoft has officially elevated Rust to Tier-1 language status, placing it alongside C++, C#, and TypeScript as one of the best-supported languages for internal development. The announcement, published via the Rust Foundation, is the culmination of years of strategic investment — from Azure CTO Mark Russinovich's vision for Rust as the future of native code at Microsoft to millions of dollars poured into the Rust Project.</p>
+
+        <h2>What Tier-1 Means Inside Microsoft</h2>
+        <p>Tier-1 status gives Rust teams a paved path from local development to production: secure toolchain builds, productive developer tooling, quality workflows, deep platform integration, and compliance with Microsoft's SDL (Security Development Lifecycle) requirements. It's not symbolic — it means Rust code ships with the same guarantees as C++ and C#.</p>
+
+        <h2>The Key Technical Investment: rustc_codegen_utc</h2>
+        <p>Microsoft's Rust push is anchored by <strong>rustc_codegen_utc</strong> — an alternative codegen backend that connects the Rust compiler to MSVC's backend (UTC). Instead of maintaining a parallel implementation of every Windows-specific capability, Rust now builds on decades of MSVC platform investment:</p>
+
+        <ul>
+          <li>Binary hardening and code security features</li>
+          <li>Post-link compliance, analysis, and servicing (including Hotpatch)</li>
+          <li>Seamless Rust/C++ interop for hybrid projects</li>
+          <li>Cross-language inlining, optimization, and SPGO (Sample Profile Guided Optimization)</li>
+          <li>Debugging, crash-dump analysis, profiling, diagnostics, and coverage</li>
+        </ul>
+
+        <h2>The Strategic Signal</h2>
+        <p>Rust isn't just tolerated at Microsoft — it's bet on. It's being used across firmware, drivers, kernel and hypervisor components, microservices, and applications. The shared codegen backend means Rust and C++ will co-evolve on a common platform foundation, rather than being siloed into separate toolchains.</p>
+
+        <p>For developers evaluating Rust's enterprise readiness, this is <em>the</em> definitive signal. Windows kernel rewrites in Rust, Azure infrastructure migration, and now first-class tooling support — Microsoft is all-in.</p>
+
+        <p style="margin-top: 2rem; font-style: italic; color: var(--pico-muted-color);">
+          Source: <a href="https://rustfoundation.org/media/guest-post-rust-is-tier-1-language-at-microsoft/">Rust Foundation — Guest Post: Rust Is Tier-1 Language at Microsoft</a>
+        </p>
+      </section>
+    </article>
+  </main>
+
+  <footer class="container" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--pico-muted-border-color);">
+    <small class="secondary">
+      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
+    </small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
+
+</body>
+</html>
