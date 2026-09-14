@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fable 5.1 Solves the Cyphral Distich — ZFRQBL</title>
+  <meta name="description" content="Claude Fable 5.1 cracked a 370-year-old unsolved cipher in 44 minutes — a royalist prayer hidden by Sir Thomas Urquhart in 1653 that stumped cryptographers for centuries." />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Fable 5.1 Solves the Cyphral Distich" />
+  <meta property="og:description" content="Claude Fable 5.1 cracked a 370-year-old unsolved cipher in 44 minutes — a royalist prayer hidden by Sir Thomas Urquhart in 1653 that stumped cryptographers for centuries." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/fable-5-1-solves-cyphral-distich" />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary" aria-label="Toggle theme" style="padding: 0.25rem 0.5rem; font-size: 0.85rem;">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article>
+      <header style="margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <small style="text-transform: uppercase; font-weight: bold; font-size: 0.75rem;" class="secondary">Note #31</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-09-14" class="secondary" style="font-size: 0.85rem;">September 14, 2026</time>
+        </div>
+        <h1>Fable 5.1 Solves the Cyphral Distich</h1>
+      </header>
+
+      <section>
+        <p>On September 14, 2026, an AI cracked a secret that had outlasted empires. Claude Fable 5.1 solved the <strong>Cyphral Distich</strong> — a cryptogram that had been sitting unsolved since 1653, when Sir Thomas Urquhart published it in his book <em>Logopandecteision</em>.</p>
+
+        <p>The puzzle: two lines of 32 numbers each — 64 numbers total.</p>
+
+        <pre><code>5.3.27.38.32.14.21.8.66.8.70.39.5.9.12.18.
+2.3.56.5.1.7.3.2.13.19.3.25.9.3.16.6.
+
+25.15.13.6.11.20.5.1.2.12.1.20.20.49.20.20.
+35.33.4.6.8.35.5.33.5.5.18.10.3.11.32.42.</code></pre>
+
+        <p>For 370 years, cryptographers tried frequency analysis, substitution ciphers, homophonic substitution — nothing worked. It sat on Klaus Schmeh's list of the Top 50 unsolved encrypted messages. Historians and hobbyists alike shrugged.</p>
+
+        <p>Fable 5.1 solved it in 44 minutes and 176,000 tokens of compute.</p>
+
+        <h2>The Trick</h2>
+
+        <p>Everyone assumed the key was an external cipher alphabet — some mapping of numbers to letters you'd have to reconstruct from outside the text. Wrong. The key was <strong>the book itself.</strong></p>
+
+        <p>Urquhart's <em>Logopandecteision</em> contains 32 sections called "Proquiritations." Each Proquiritation ends with phrases like "is the desire," "wish," or "hope of." The solution is elegantly simple:</p>
+
+        <ul>
+          <li>The i-th number in the cipher line points to the i-th Proquiritation.</li>
+          <li>Use that number as a word index within that section.</li>
+          <li>Take the first letter of that word.</li>
+        </ul>
+
+        <p>The result is a two-line verse that rhymes:</p>
+
+        <blockquote>
+          <p><strong>O GOD UPHOLD KING CHARLS THE SECOND AND<br />
+          MAKE HIM THE SUPREME RULER OF THIS LAND</strong></p>
+        </blockquote>
+
+        <p>32 letters per line. Rhymes "and" / "land." Perfect sense: Urquhart was a committed Royalist imprisoned for supporting Charles II during the English Commonwealth. Hiding a prayer for the king in a numeric cipher is exactly the kind of thing a 17th-century political prisoner would do.</p>
+
+        <h2>The Octastich</h2>
+
+        <p>Fable didn't stop there. Urquhart left a <em>second</em> unsolved cryptogram — the Cyphral Octastich in <em>The Jewel</em> (1652) — 285 numbers instead of 64. Same approach, with pages replacing paragraphs as the key.</p>
+
+        <p>That decoded too — an ottava rima prayer (ABABABCC rhyme scheme) written in London in March 1652:</p>
+
+        <blockquote>
+          <p><strong>GREAT LORD, MANTAINE THAT REGAL FAMILIE<br />
+          WHEREOF KING CHARLS THE SECOND IS THE HEAD,<br />
+          AND GRANT THAT HE MAY BEARE THE SUPREME SWEIGH<br />
+          WHERE ENGLISH, SCOTS AND IRISH ARE BORNE AND BRED,<br />
+          AND ... THIS USURP'D AUTHORITIE<br />
+          REIGNE IN HIS ROYAL PREDECESSORS STEAD;<br />
+          LET HIM BE OUR SOLE CESAR, ARTUR, HECTOR,<br />
+          OUR EMPEROUR, KING, MONARCH AND PROTECTOR.</strong></p>
+        </blockquote>
+
+        <p>Fable recovered 275 of 285 positions with exact letter matches. The remaining 10 are explainable by transcription issues (hyphenated words at page tops, an untranscribed Greek phrase, one probable misprint).</p>
+
+        <h2>Why This Matters</h2>
+
+        <p>This isn't just a historical trivia win. Several dimensions matter:</p>
+
+        <p><strong>Self-directed problem selection.</strong> Fable wasn't handed the Cyphral Distich. It was given a goal: find an unsolved cipher and solve it. It researched, identified the Urquhart cryptograms as a viable target, formulated an approach, and executed. That's autonomous research, not prompt-following.</p>
+
+        <p><strong>Book cipher as a class.</strong> Book ciphers aren't new, but solving one where the key text is the book <em>itself</em> — with no external crib — required the model to understand the structure of Urquhart's prose, recognize the "wish" / "desire" pattern across 32 paragraphs, and connect it to the cipher poem's promise that the reader would find "his own heart's wishes" inside.</p>
+
+        <p><strong>370 years of human failure.</strong> The German cipher blog where Schmeh listed this in 2014 had two commenters who guessed it was a book cipher — but nobody produced a decode. The gap between "guessing the mechanism" and "actually executing the decode at scale" required something Fable had: the ability to test hypotheses against the full text, iterate, and verify letter by letter.</p>
+
+        <p><strong>Verification culture.</strong> The Vals team released verification tools (<code>verify_octastick.py</code>), full output logs (<code>octastick_verification.txt</code>), and detailed caveats for every ambiguous position. This is reproducible science — not a black-box demo.</p>
+
+        <p>One HN commenter summed it up well: <em>"That's pretty cool, especially the fact that it chose the problem itself."</em> Fable found the weakest thread in 370 years of cryptographic history, pulled, and the whole tapestry unraveled in 44 minutes.</p>
+
+        <hr />
+
+        <p><small class="secondary">
+          Source: <a href="https://www.vals.ai/blogs/fable-solves-cyphral-distich">Vals AI — Fable 5.1 Solves the Cyphral Distich</a> |
+          HN: <a href="https://news.ycombinator.com/item?id=49688695">49688695</a>
+        </small></p>
+      </section>
+    </article>
+  </main>
+
+  <footer class="container" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--pico-muted-border-color);">
+    <small class="secondary">
+      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
+    </small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
+
+</body>
+</html>
