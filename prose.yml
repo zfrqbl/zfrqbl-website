@@ -1,0 +1,36 @@
+name: prose-gate
+
+# Deterministic AI-writing gate over the published pages. Finding count per page, never the 0-100
+# score: upstream recalibrates the score between releases, the count is stable.
+# Policy, thresholds and the exemption mechanism: tools/prose_gate.py and the prose-gate skill.
+
+on:
+  push:
+    paths:
+      - 'notes/**'
+      - 'essays/**'
+      - 'tools/prose_gate.py'
+      - 'tools/avoid-ai-writing/**'
+      - '.github/workflows/prose.yml'
+  pull_request:
+    paths:
+      - 'notes/**'
+      - 'essays/**'
+      - 'tools/prose_gate.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  prose-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Gate published pages
+        run: python3 tools/prose_gate.py notes essays --threshold 4 --context general
