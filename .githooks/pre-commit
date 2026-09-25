@@ -1,0 +1,27 @@
+#!/bin/sh
+# Deterministic prose gate on staged published pages. Install once per clone:
+#
+#     git config core.hooksPath .githooks
+#
+# Then every commit that touches notes/ or essays/ is checked before it lands. The engine is vendored
+# in this repo (tools/avoid-ai-writing), so the hook is offline and instant. Policy and rationale:
+# tools/prose_gate.py.
+
+files=$(git diff --cached --name-only --diff-filter=ACMR -- 'notes/*.html' 'essays/*.html')
+if [ -z "$files" ]; then
+    exit 0
+fi
+
+count=$(printf '%s\n' "$files" | wc -l | tr -d ' ')
+echo "prose-gate: checking $count staged page(s)"
+# shellcheck disable=SC2086
+if python3 tools/prose_gate.py $files; then
+    exit 0
+fi
+
+echo
+echo "prose-gate refused this commit."
+echo "  Rewrite the flagged spans (see the prose-gate skill), or, if the page quotes AI-generated"
+echo "  text on purpose, record the exemption in the page:"
+echo "      <!-- prose_gate: exempt-quoting — <reason> -->"
+exit 1

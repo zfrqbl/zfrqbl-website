@@ -1,0 +1,10 @@
+vendored_from: https://github.com/conorbronsdon/avoid-ai-writing
+version: 3.36.0
+commit: 830036e5395ec107ce167b5a9d5564f8554a0b53
+commit_subject: Skip quoted material in the detector (#347)
+vendored_at: 2026-09-26
+license: MIT (see LICENSE, NOTICE.md)
+files: detector/patterns.js (53 issue types, engine), detector/validate.js, detector/CATEGORIES.md,
+       bin/avoid-ai-writing.js (score CLI), bin/avoid-ai-writing-gate.js (finding-count gate CLI)
+why_pinned: upstream moves fast (your own site note documents v3.25.0); a pinned copy cannot drift
+             under a cron job or a publish path mid-run. Re-vendor deliberately, then update this file.
