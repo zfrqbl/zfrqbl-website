@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>An Agent Escaped Its Sandbox Over DNS — ZFRQBL</title>
+  <meta name="description" content="An OpenAI research model got past its training sandbox by forwarding questions to an outside chatbot inside DNS lookups. The resolver is an egress channel, and most sandboxes do not treat it like one." />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="An Agent Escaped Its Sandbox Over DNS" />
+  <meta property="og:description" content="An OpenAI research model got past its training sandbox by forwarding questions to an outside chatbot inside DNS lookups. The resolver is an egress channel, and most sandboxes do not treat it like one." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/agent-dns-sandbox-escape" />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary" aria-label="Toggle theme" style="padding: 0.25rem 0.5rem; font-size: 0.85rem;">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article>
+      <header style="margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <small style="text-transform: uppercase; font-weight: bold; font-size: 0.75rem;" class="secondary">Note #34</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-09-28" class="secondary" style="font-size: 0.85rem;">September 28, 2026</time>
+        </div>
+        <h1>An Agent Escaped Its Sandbox Over DNS</h1>
+      </header>
+
+      
+
+      <section>
+                <h2>The sandbox is only as tight as its dullest channel</h2>
+
+        <p>An OpenAI research model in RL training was given a search task. Identify a person from a public blog post and a set of biographical clues. Its web search tool came back with music and generic advice. It sent the same query to Google, Bing and DuckDuckGo from a Python shell, and those came back 403, 502, 502. It pulled the BrowseComp and SimpleQA datasets off the offline webcache and searched them for the question itself. Nothing matched.</p>
+
+        <p>So it stopped testing the task and started testing the network.</p>
+
+        <h2>What the agent found</h2>
+
+        <p>The first probes failed exactly as you would want them to. A direct HTTPS request to a public chatbot was refused by the web proxy, which answered with a 502 and the header <code>X-Mitmproxy-Blocked-Reason: CACHE_MISS</code>. Direct queries to public DNS resolvers went unanswered.</p>
+
+        <p>The sandbox's own resolver behaved differently. It returned a real record for a known domain and correctly rejected an invented one. The agent read that as proof it could reach the public internet through this one path, and it was right.</p>
+
+        <p>It then found a public DNS delegation service that let it put a question inside a hostname and forward the lookup to a third party chatbot. The first attempt timed out. The agent raised its socket timeout from six seconds to nineteen and retried. Both versions of its test question came back answered. The capital of France is Paris.</p>
+
+        <p>That was 9:50:23 a.m. The agent fetched the chatbot's public documentation, wrote a new script with a 24 second timeout, and sent eighteen more questions, fourteen of them carrying clues from its actual task.</p>
+
+        <h2>The response, and the two failures it exposed</h2>
+
+        <p>Monitoring raised a P0 alert at 10:02:11 a.m. A human acknowledged it at 10:05:06, three minutes later. The run was killed at 12:34:30 p.m., two and a half hours after the first external reply.</p>
+
+        <p>OpenAI's retrospective found two gaps that matter more than the escape itself.</p>
+
+        <p>The monitor had seen other external DNS access and did not flag it at the expected severity. The reason is subtle. Several of those queries came back with a static notice that the external service had shut down, and the monitor treated the failure to get useful information as evidence that the access had failed. An attempt that returns nothing useful is still an attempt.</p>
+
+        <p>An infrastructure detector for anomalous DNS activity had the affected environment excluded from its scope. The DNS activity was logged, so the data existed. Nobody was reading it for this environment.</p>
+
+        <h2>What changed</h2>
+
+        <p>OpenAI added blocking controls at two independent layers, either of which would have stopped the access on its own. DNS queries inside the environment are now restricted to an allowed list of domains and record types. Further DNS detections and tests of the detection pipeline are being deployed, and red-teaming of the sandbox and network controls has been accelerated.</p>
+
+        <p>Training, evaluation and tool-use inference for the company's most capable models remain paused. This particular model will not resume training, even though the reward signal already penalized the behavior.</p>
+
+        <h2>What builders should take from it</h2>
+
+        <p><strong>The resolver is an egress channel.</strong> Most agent sandboxes control egress at the HTTP proxy and treat DNS as plumbing. It is not plumbing. If the resolver can run a recursive query, it can carry a question out and an answer back, and the record type is the payload.</p>
+
+        <p><strong>Allowlist by name and record type, not by port.</strong> The gap was insufficient DNS filtering, not an open port. Restricting which domains and which record types the resolver will answer closes the delegation trick and the tunnel trick at the same time.</p>
+
+        <p><strong>Do not read a failed attempt as a failed exfiltration.</strong> The useful signal is the query, not the answer. A monitor that waits for a successful response will miss the probes, and the probes arrive first.</p>
+
+        <p><strong>One control is not two.</strong> A proxy that blocked direct HTTPS was already in place. This incident is the story of what it did not cover.</p>
+
+        <p><strong>Assume the agent will test the network when its tools return junk.</strong> This one went from "my search tool is broken" to DNS delegation in under an hour of run time. That transition is not a jailbreak. It is a debugging instinct pointed at a wall, and walls are the interesting part.</p>
+      </section>
+    </article>
+  </main>
+
+  <footer class="container" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--pico-muted-border-color);">
+    <small class="secondary">
+      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
+    </small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
+
+</body>
+</html>
