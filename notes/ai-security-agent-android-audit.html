@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>An AI Agent Found 24 Android Bugs. Sorting Them Was the Hard Part. — ZFRQBL</title>
+  <meta name="description" content="GitHub Security Lab packaged its audit prompts as small YAML taskflows and reported 24 Android vulnerabilities with them. The findings are real. The severity calls were not, and that is the part worth copying." />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="An AI Agent Found 24 Android Bugs. Sorting Them Was the Hard Part." />
+  <meta property="og:description" content="GitHub Security Lab packaged its audit prompts as small YAML taskflows and reported 24 Android vulnerabilities with them. The findings are real. The severity calls were not, and that is the part worth copying." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/ai-security-agent-android-audit" />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary" aria-label="Toggle theme" style="padding: 0.25rem 0.5rem; font-size: 0.85rem;">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article>
+      <header style="margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <small style="text-transform: uppercase; font-weight: bold; font-size: 0.75rem;" class="secondary">Note #35</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-09-29" class="secondary" style="font-size: 0.85rem;">September 29, 2026</time>
+        </div>
+        <h1>An AI Agent Found 24 Android Bugs. Sorting Them Was the Hard Part.</h1>
+      </header>
+
+      
+
+      <section>
+                <h2>An agent audited Android apps and reported 24 bugs</h2>
+
+        <p>GitHub Security Lab built an open source framework called the Taskflow Agent so security researchers can package the AI prompts they find effective and share them. A taskflow is that package, a small workflow rather than one enormous instruction. One of the team's researchers wrote Android auditing taskflows, ran them against shipping applications, and has reported 24 vulnerabilities so far, a handful of them critical.</p>
+
+        <p>What matters is which parts of the job the model did well and which parts it did badly, because the writeup is direct about both.</p>
+
+        <h2>What the taskflows change</h2>
+
+        <p>Two of the taskflows carry most of the result.</p>
+
+        <p>The first is new and it splits entry points into mobile and non-mobile. Entry points are the places attacker-controlled data can reach, and a repository often holds a mobile app alongside a web server or a desktop tool. Separating them lets the model reason about the right attack surface instead of a blended one.</p>
+
+        <p>The second is an edit to an existing classification step. It now carries an explicit list of vulnerability classes and asks the model to consider them against each entry point and component. Mobile bug classes are less widely known and models are non-deterministic, so the prompt names them. If an earlier step found an intent-based entry point, the list includes confused deputy and insecure broadcasts.</p>
+
+        <p>The writeup also reports that a strict prompt and a broad prompt across multiple runs beat either prompt alone. The strict one catches the obvious classes. The broad one leaves the model room to notice something nobody listed.</p>
+
+        <h2>Two of the findings</h2>
+
+        <p>OsmAnd is a navigation app with more than 10 million downloads on Android. It exports an activity called MapActivity, which handles settings imports and reads four intent extras to control the import. Those extras are named settings_version, silent_import, replace, and export_type_list_key, and they were meant to arrive from an in-process service. Android does not restrict the extras an external caller can attach to an intent aimed at an exported activity, so any installed app can set them.</p>
+
+        <p>With those flags under control, an app with no permissions can import settings into OsmAnd without a notification and without a confirmation prompt. From there the attacker rewrites the map tile URL template to point at their own server and serves the real tiles back, so the map still renders. What comes back to the attacker is the x and y coordinate of every tile the user had loaded. The same bug exposes the origin and destination of planned routes. The user sees nothing change.</p>
+
+        <p>The second finding is in the Wikipedia Android app, which registers the wikipedia:// deeplink. Its handler checks the URI authority with an endsWith call against the base domain, so a host like evil-wikipedia.org passes. The app then opens an attacker-controlled page in a WebView and runs the attacker's JavaScript. The same suffix comparison appears a second time in the app's cookie handling, where it leaks the wikipedia.org cookie list, including a token valid across Wikimedia projects. Chained together, the two make an account takeover.</p>
+
+        <h2>Where the model still needs a human</h2>
+
+        <p>The writeup does not pretend otherwise. The model finds low severity bugs reliably and reports them even when explicitly told not to. Severity estimates are frequently wrong, because the factors that lower severity are hard to see without running the code. A path traversal confined to external storage is a weak finding. If the app's internal storage takes priority over the attacker-written external data, there is no vulnerability at all, and the model can report one anyway. Every finding should be reviewed by a researcher who knows mobile.</p>
+
+        <p>The suggested remedy is to make the model write a proof of concept and run it. That costs more time and more tokens, and the writeup notes the model is strong here. It understood the behavior of security-relevant APIs across languages without access to the language source, and most of the proof-of-concept code it produced needed little correction.</p>
+
+        <h2>What to copy</h2>
+
+        <p>Structure the prompt around the target. Splitting entry points by platform and enumerating vulnerability classes per component is portable to any codebase, and it is what separates a model that audits from a model that summarizes.</p>
+
+        <p>Require a working proof of concept. The writeup's own position is that a security researcher has to review each finding, and the cheapest way to make that review real is to ask for exploit code rather than a plausible paragraph.</p>
+
+        <p>Budget for it. A GitHub Copilot license is required, the prompts consume premium model requests, a run on a medium sized repository can take one to two hours, and the tool calls add up quickly.</p>
+
+        <p>The framework's reason for existing is that a taskflow is a file. One that found a confused deputy bug in one Android app can be run against another.</p>
+      </section>
+    </article>
+  </main>
+
+  <footer class="container" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--pico-muted-border-color);">
+    <small class="secondary">
+      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
+    </small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
+
+</body>
+</html>
