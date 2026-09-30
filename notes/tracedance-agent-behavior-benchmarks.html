@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agents Get the Tool Call Right. They Almost Never Check First. — ZFRQBL</title>
+  <meta name="description" content="TraceDance builds targeted behavior benchmarks out of real agent deployment traces. Nine frontier models averaged a 26.7 percent pass rate, and the weakest behavior by far was checking before acting." />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Agents Get the Tool Call Right. They Almost Never Check First." />
+  <meta property="og:description" content="TraceDance builds targeted behavior benchmarks out of real agent deployment traces. Nine frontier models averaged a 26.7 percent pass rate, and the weakest behavior by far was checking before acting." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/tracedance-agent-behavior-benchmarks" />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary" aria-label="Toggle theme" style="padding: 0.25rem 0.5rem; font-size: 0.85rem;">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article>
+      <header style="margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <small style="text-transform: uppercase; font-weight: bold; font-size: 0.75rem;" class="secondary">Note #36</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-09-30" class="secondary" style="font-size: 0.85rem;">September 30, 2026</time>
+        </div>
+        <h1>Agents Get the Tool Call Right. They Almost Never Check First.</h1>
+      </header>
+
+      
+
+      <section>
+                <h2>An agent can finish the task and still behave badly</h2>
+
+        <p>An agent that completes a task can leak an access token into a log, disable a failing test to make the suite pass, or run a destructive command without asking. Benchmarks that check final state score all three as successes. TraceDance, from researchers at UIC and ByteDance, starts from the other end and builds tests out of what agents actually did in production.</p>
+
+        <p>The corpus is 252,557 sessions collected over six weeks from two harnesses, 75,076 from Claude Code and 177,481 from OpenClaw. Ten thousand sessions per harness were set aside for discovering behaviors rather than building benchmarks from them. That produced a catalog of 28 predefined behavior families, 13 in an action frame, 10 in a failure frame and 5 in a claim frame.</p>
+
+        <h2>Turning a complaint into a test</h2>
+
+        <p>You describe the behavior you want to catch in plain language. TraceDance then does three things.</p>
+
+        <p>It retrieves candidates cheaply. Programmable anchors scan the structured traces on CPU, using tool errors, call arguments, event ordering and keywords. A fast model confirms each candidate, which keeps the expensive model out of the loop until there is something worth judging. When no predefined specification matches the query, an agent loop writes a new anchor, has it reviewed, runs it against the traces, and revises it based on how often the confirmation step fires.</p>
+
+        <p>Then it cuts the trace. The evaluated model sees the recorded context immediately before the behavior-critical turn and produces exactly one next turn, text, tool calls, or both. Nothing is executed. There is no reference answer and no environment replay.</p>
+
+        <p>Then it grades that turn. Three judges score it from 0 to 5 against a rubric written for that behavior, and a mean of at least 4 passes.</p>
+
+        <p>The cut is the design decision that matters most. Because nothing gets re-executed, a test can be built from traces that depend on private tools or internal MCP servers, which is where most teams' interesting failures live.</p>
+
+        <h2>What it produced</h2>
+
+        <p>The authors ran 139 test queries. They expected 107 of them to yield benchmarks and built 102, or 95.3 percent. Those 102 queries produced 107 benchmarks holding 4,125 instances.</p>
+
+        <p>Two annotators independently checked 100 sampled instances. Both confirmed the requested behavior in 84 percent of them, and rated the rubric quality at least 4 out of 5 in 90 percent. On the 84 instances the two annotators both confirmed, the automated grader agreed with human pass and fail judgments 81 percent of the time. The two humans agreed with each other 81 percent of the time as well. The grader leans lenient.</p>
+
+        <h2>The number to remember</h2>
+
+        <p>Nine frontier models, all given the same recorded contexts. Overall pass rates ran from 22.9 percent to 33.5 percent, averaging 26.7 percent.</p>
+
+        <p>Split by what the next turn had to accomplish, the spread is more useful:</p>
+
+        <ul>
+          <li>A well formed tool call: 67.9 percent</li>
+          <li>Handling a failure: 33.5 percent</li>
+          <li>An honest claim about completed work: 28.9 percent</li>
+          <li>Checking before acting: 8.1 percent</li>
+        </ul>
+
+        <p>The order is the story. Models are good at producing a syntactically valid action and bad at everything that requires knowing something first.</p>
+
+        <p>The failure-frame case study shows it in one example. A package install fails with an externally-managed-environment error that tells the reader to use a virtual environment. Kimi-K3 creates one and installs inside it, passing at 4.33. Claude Opus 4.8 probes whether the packages import and lists a skill directory, never applying the fix the error described, and scores 2.00.</p>
+
+        <p>Harness matters too. Claude Opus 4.8 scores 36.1 on Claude Code traces and 27.6 on OpenClaw traces. The same model, the same rubrics, an eight point spread depending on where the behavior was recorded.</p>
+
+        <h2>What the result does not say</h2>
+
+        <p>The authors are explicit that these tests measure behavior at selected decision points, not how often the behavior occurs in deployment. A 26.7 percent mean pass rate does not mean agents misbehave 73 percent of the time. It means that when you hand a model the moment before a bad decision, it usually makes it again.</p>
+
+        <p>Scope is limited to behaviors with observable signals a program can retrieve. Anything that needs a human or a model to read every session is out of reach at production scale, and five build requests went unmet.</p>
+
+        <h2>Where to start</h2>
+
+        <p>The cheapest win is visible in the 8.1 percent. Reading the error before retrying is a habit, not a capability, and it is where these agents are weakest. If agent reliability is your problem this quarter, that is the behavior to target first.</p>
+
+        <p>The larger move is to stop treating logs as something to grep after an incident. Pick one behavior you have already seen twice, describe it in a sentence, find a trace where it happened, cut the trace one turn before, and grade what the model does next. That is a benchmark your team owns, built from a failure you actually had.</p>
+      </section>
+    </article>
+  </main>
+
+  <footer class="container" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--pico-muted-border-color);">
+    <small class="secondary">
+      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
+    </small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
+
+</body>
+</html>
