@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zero-Shot Tabular Models Beat Tuned AutoML. The Default Weights Are Non-Commercial. — ZFRQBL</title>
+  <meta name="description" content="Google Research's TabFM is a 400M-parameter tabular foundation model that predicts in a single forward pass with no tuning. It leads TabArena zero-shot, and its default weights are licensed for non-commercial use only." />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Zero-Shot Tabular Models Beat Tuned AutoML. The Default Weights Are Non-Commercial." />
+  <meta property="og:description" content="Google Research's TabFM is a 400M-parameter tabular foundation model that predicts in a single forward pass with no tuning. It leads TabArena zero-shot, and its default weights are licensed for non-commercial use only." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/tabfm-zero-shot-tabular-foundation-model" />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary" aria-label="Toggle theme" style="padding: 0.25rem 0.5rem; font-size: 0.85rem;">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article>
+      <header style="margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <small style="text-transform: uppercase; font-weight: bold; font-size: 0.75rem;" class="secondary">Note #37</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-10-01" class="secondary" style="font-size: 0.85rem;">October 1, 2026</time>
+        </div>
+        <h1>Zero-Shot Tabular Models Beat Tuned AutoML. The Default Weights Are Non-Commercial.</h1>
+      </header>
+
+      
+
+      <section>
+                <h2>A tabular model that skips the training step</h2>
+
+        <p>Most tabular work still starts the same way. Fit a gradient-boosted tree ensemble, sweep hyperparameters, engineer features, then do it again for the next dataset. AutoML shortens the loop but keeps it per dataset.</p>
+
+        <p>TabFM, from Google Research, removes the loop. It is a 400M-parameter model that treats supervised tabular prediction as in-context learning. Your labeled rows go into the context, and the model predicts on unseen rows in a single forward pass with no task-specific tuning. The paper went up on arXiv on 29 September 2026, and the code is on GitHub with weights on Hugging Face.</p>
+
+        <h2>Why tables needed a different architecture</h2>
+
+        <p>Tokenizing a table is not like tokenizing a sentence. Rows are exchangeable, so swapping two of them must not change the answer. Columns mix continuous values that need numerical resolution with categories that have no natural order. Attention over every cell grows quadratically, which is why in-context tabular models stayed under a thousand rows for years.</p>
+
+        <p>TabFM works around that in four stages.</p>
+
+        <ul>
+          <li>Learned Fourier embeddings project each cell through 32 frequencies per slot, with separate banks for numeric and categorical columns, after dyadic feature grouping pairs each column with its neighbours at fixed offsets.</li>
+          <li>Column-wise induced attention treats rows as the sequence inside each column and compresses them through inducing points, which keeps the cost linear in the number of rows.</li>
+          <li>Row-wise attention runs across features with rotary embeddings on the feature axis, keeping rows permutation-equivariant while still separating channels.</li>
+          <li>Eight learned CLS tokens pool an arbitrary column count into a fixed-width row vector, and a 24-layer predictor mixes across rows once on those pooled vectors instead of once per cell.</li>
+        </ul>
+
+        <p>The mask on that final predictor is the detail worth knowing. Every query row attends only to the labeled context, so predictions are conditionally independent and the query block can be split or reordered without changing the result. Context reaches 16,384 instances, an order of magnitude past the sub-1,000-row regime where this line of work started.</p>
+
+        <h2>Trained on synthetic tables only</h2>
+
+        <p>Open tabular data is scarce and industrial tables are proprietary, so TabFM is pretrained entirely on synthetic tables. Each one comes from a structural causal model, a random directed acyclic graph whose variables propagate through non-linear functions into a mix of continuous and discrete columns. Table shape, categorical share, cardinalities, missing entries, label noise and class balance are randomized together, with the feature axis capped at 100 columns. Training runs a four-stage curriculum that grows context from 2,048 to 16,384 rows while halving batch size, holding compute per step fixed.</p>
+
+        <h2>The benchmark result</h2>
+
+        <p>TabArena holds 51 datasets, 38 for classification and 13 for regression, each evaluated under repeated 10-fold cross-validation. Ratings are Bradley-Terry Elo anchored at Random Forest 1000 and taken as the median over 100 bootstrap rounds, across a pool of 67 method configurations that includes tuned tree ensembles, tuned deep baselines, AutoML systems with four-hour budgets and published tabular foundation models.</p>
+
+        <p>Zero-shot TabFM, with no tuning and no cross-validation, reaches 2055.2 Elo on regression and 1768.6 on classification. The regression margin is comfortable: EXAONE-Tabular at 1973.1, TabPFN-3 at 1866.6, AutoGluon 1.5 extreme at 1851.2, TabICLv2 at 1723.6. Classification is tighter, with EXAONE-Tabular 0.6 Elo behind, but TabFM takes the most outright wins at 5.54 and leaves the least on the table, at 6.10 percent oracle improvability against 9.47 and 10.00 for its two closest rivals. Pooled over both suites it sits at 1785.4 Elo and wins most head-to-head folds against every baseline, 65.7 percent against EXAONE-Tabular, 72.1 percent against AutoGluon 1.5 extreme, 75.9 percent against TabPFN-3 and 79.8 percent against TabICLv2.</p>
+
+        <p>Two extensions run on the same frozen weights. TabFM+ expands each table into cross features and truncated SVD views, then stacks a 32-way ensemble with non-negative least squares and Platt calibration, reaching 1838.0 and 2189.2 Elo. TabFM-Auto goes further and hands the dataset to Gemini 3.8 Flash, which writes, evaluates and revises a Python pipeline around the frozen model, scoring candidates by three-fold cross-validation in a sandbox with no access to test folds and stopping after 96 evaluations or six hours. It reaches 1940.7 and 2392.4 Elo, improves 41 of 51 datasets, and lands at 0.00 percent oracle improvability on regression. The gains come from feature construction rather than tuning, with median error dropping 2.14 percent when a synthesized program changed the table and 0.27 percent when it did not.</p>
+
+        <h2>The license decides more than the benchmark</h2>
+
+        <p>The repository is Apache-2.0, but the quick start downloads weights under a separate license, tabfm-non-commercial-v1.0, restricted to non-commercial and non-production use. The README states that commercial or production use of the default weights is not permitted. A benchmark win you cannot ship is still worth reading, and it is not the same thing as a replacement for your XGBoost pipeline.</p>
+
+        <p>The other limits are structural. Pretraining covers tables of at most 16,384 rows and 100 columns, so larger tables need sampling or length generalization. The scikit-learn estimators expose max_num_features and max_num_rows, listed as defaults of 500 features and 100 context rows, plus n_estimators for ensembling over sampled contexts and inference_batch_size for memory control. Free-text columns get no semantic tokenization, and relational schemas still need joining and flattening before inference.</p>
+
+        <h2>Where to start</h2>
+
+        <p>The cheapest test starts from a baseline you already trust. Take a dataset with a tuned tree model and a held-out split, fit the TabFM classifier on the same training rows, and compare on the same test rows. The scikit-learn interface makes that a short script, and BigQuery has an AI.PREDICT path if the table already lives there.</p>
+
+        <p>Read the weights license before the numbers. Non-commercial terms change what a result means for a team that ships software.</p>
+      </section>
+    </article>
+  </main>
+
+  <footer class="container" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--pico-muted-border-color);">
+    <small class="secondary">
+      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
+    </small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
+
+</body>
+</html>
