@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Failed Agent Rollouts Are Training Data, and the Wins Are Narrower Than the Headline — ZFRQBL</title>
+  <meta name="description" content="The Agent Error Dataset pairs 50,228 agent failures with diagnoses and proposed corrections, then replays the fix against a control retry. Diagnosis training moves Qwen3-8B from 47.2 to 63.6 percent step agreement, and actor repair training helps on one environment while losing on two." />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Failed Agent Rollouts Are Training Data, and the Wins Are Narrower Than the Headline" />
+  <meta property="og:description" content="The Agent Error Dataset pairs 50,228 agent failures with diagnoses and proposed corrections, then replays the fix against a control retry. Diagnosis training moves Qwen3-8B from 47.2 to 63.6 percent step agreement, and actor repair training helps on one environment while losing on two." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/agent-error-dataset-error-aware-training" />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary" aria-label="Toggle theme" style="padding: 0.25rem 0.5rem; font-size: 0.85rem;">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article>
+      <header style="margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <small style="text-transform: uppercase; font-weight: bold; font-size: 0.75rem;" class="secondary">Note #38</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-10-02" class="secondary" style="font-size: 0.85rem;">October 2, 2026</time>
+        </div>
+        <h1>Failed Agent Rollouts Are Training Data, and the Wins Are Narrower Than the Headline</h1>
+      </header>
+
+      
+
+      <section>
+                <h2>The trace you throw away</h2>
+
+        <p>A failed agent run usually ends the same way. Someone reads the trace, changes a prompt or a tool description, and moves on. The rollout gets deleted with the logs.</p>
+
+        <p>The Agent Error Dataset, or AED, argues that the discarded run is the valuable part. An unsuccessful rollout already holds the observations the agent had, the actions it chose and the way the environment answered. Turning that into something you can learn from takes two things a final reward never gives you. One is a decision worth revising. The other is a concrete alternative to test against it.</p>
+
+        <p>The collection holds 50,228 error-diagnosis pairs built from 9,961 source tasks across 33 environments, 19 harness families and 23 policy models in text-based agent systems. Kunlun Zhu, Xuyan Ye, Yibo Li, Cheng Qian, Beibin Li and Heng Ji submitted it to arXiv on 30 September 2026, and the Hugging Face paper page lists it as published the same day.</p>
+
+        <h2>What is in the collection</h2>
+
+        <p>The breadth is the point. The largest harness group is single-turn ReAct at 16,646 pairs, 33.14 percent of the collection. Native tool calls follow at 9,614, then smolagents at 4,614, AutoGen at 4,368, OpenHands at 4,329 and LangGraph at 3,873. A planner-executor multi-agent family adds 2,797, mini-SWE-agent 1,695 and Pydantic AI 1,441. MetaGPT, the OpenAI Agents SDK, CrewAI, LlamaIndex, CAMEL, DSPy, Google ADK and AFlow each sit under 130 pairs.</p>
+
+        <p>On the environment side, BFCL is the single biggest source with 5,521 pairs over 470 source tasks, ahead of ALFWorld at 4,838, AgentBench-DB at 4,407, static Mind2Web at 4,050 and AgentBench-OS at 3,309.</p>
+
+        <p>Two counting details matter before you compare this to anything else. A pair joins one failed execution to one recorded diagnosis, so re-diagnosing the same run adds pairs rather than runs. And the authors treat a run as failed when the environment adapter reports an unsuccessful terminal outcome inside the allowed budget. That is a task outcome, not an error location. Naming an agent error requires a trace-supported decision the agent could have avoided.</p>
+
+        <h2>The five stages</h2>
+
+        <p>AED is produced by the Agentic Error-to-Training pipeline, described in the paper in five stages.</p>
+
+        <ul>
+          <li>Collect natural failures across environments, harnesses and policies, keeping the action and observation traces.</li>
+          <li>Diagnose the error location and the responsible agent, with an explanation that cites the trace and a proposed correction.</li>
+          <li>Ground the diagnosis in the trace the student can see, using structural and semantic checks, and record the proposals that fail.</li>
+          <li>Replay the correction where the environment supports it, against a fresh retry of the original action from the same checkpoint under matched policy, harness, budget and verifier settings.</li>
+          <li>Build separate training views for diagnosis, for recovery and for action preferences, each with its own admission rules.</li>
+        </ul>
+
+        <p>Diagnoses are free text rather than slots in a fixed error taxonomy. Error modes get induced afterwards, which leaves the underlying labels untouched. Stored failures can take extra diagnoses later without new rollouts, and multiple proposals for one failure stay distinct attempts.</p>
+
+        <h2>The replay result and its control arm</h2>
+
+        <p>Across 3,062 matched replay pairs, first-proposal corrections raised verifier pass rates from 18.4 percent to 51.1 percent, a gain of 32.7 points. That is the number everyone will quote.</p>
+
+        <p>The control arm is the reason to read further. The original-action retry also succeeded on a large share of the same pairs, and the paper states that the net paired gain comes from the difference between the discordant cells. Counting every successful correction as an improvement would overstate what happened. The authors keep successful retries and failed corrections for exactly that reason.</p>
+
+        <p>Replay also only exists where the environment can be restored. Imported failures can still contribute diagnosis records when their original environment cannot be re-run, and a successful replay shows recovery under those conditions without establishing a single root cause.</p>
+
+        <h2>Training a diagnosis model</h2>
+
+        <p>The paper fine-tunes Qwen3-8B on a frozen diagnosis release covering 1,656 source tasks. Exact-step agreement with the internal teacher labels moves from 47.2 percent to 63.6 percent, averaged over three seeds on a 943-case holdout. The strongest prompted reference in that comparison scores 54.7 percent, and mean agreement improves at each of four increasing training-set sizes.</p>
+
+        <p>Read the label source before you read the number. The student learns from consensus-generated labels, and the comparison measures agreement with the recorded annotations, conventions and defects included. Public transfer is where it gets thin. The 1,656-task arm improves on Who&amp;When under the paper's unified protocol, but after excluding flagged task overlap the interval includes zero. Under a different public protocol the same training loses both responsible-agent and exact-step accuracy on Who&amp;When, and mean TrajErrBench accuracy stays below the untrained base.</p>
+
+        <h2>Training the actor is messier</h2>
+
+        <p>The acting policy results are the ones to handle with care. Action-only repair training scores 6.67 percentage points higher than success-only training on WebShop-lite. Repair-containing recipes score higher on WebShop-lite and lower on TextQuest, and every TextQuest loss survives the paper's multiplicity adjustment. On the real ALFWorld and ScienceWorld environments the preventive arm loses to the untrained policy.</p>
+
+        <p>The authors are blunt about the limits. The recipes differ in task pools, exposure and optimizer updates, so the contrast measures the whole recipe rather than repair supervision on its own. The comparison is single-seed, and reflection added no detected benefit over action-only targets.</p>
+
+        <h2>What to take from it today</h2>
+
+        <ul>
+          <li>Keep traces, not just scores. Re-diagnosing a stored failure costs nothing in environment time, and the diagnosis is what makes the failure reusable.</li>
+          <li>Grade your evidence. The paper's E2 grade requires at least two trials per arm, every treatment continuation passing and every matched control failing. A correction that passes while the original action also passes on retry is weaker evidence than it looks.</li>
+          <li>Do not treat a collection as a training set. Membership in AED does not imply training eligibility or a verified repair, and the paper keeps the collection index separate from its frozen experiment populations.</li>
+        </ul>
+
+        <p>Two caveats for anyone planning to build on this. The diagnosis experiments use an earlier frozen release whose construction omitted policy system prompts and tool lists, so the inputs are incomplete in a way the authors do not claim to have fixed. And the data is not public yet. The paper states that code, checkpoints and data are planned for release after acceptance, subject to source licenses, privacy review and possible redaction, because repository-based tasks can carry contributor names and email addresses in code comments and issue text.</p>
+
+        <p>The loop itself is the transferable part. Capture the failure, name the decision, ground the explanation in what the agent could see, test the fix against a control retry, and only then decide whether to train on it. Most teams skip straight from the trace to the prompt edit.</p>
+      </section>
+    </article>
+  </main>
+
+  <footer class="container" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--pico-muted-border-color);">
+    <small class="secondary">
+      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
+    </small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
+
+</body>
+</html>
