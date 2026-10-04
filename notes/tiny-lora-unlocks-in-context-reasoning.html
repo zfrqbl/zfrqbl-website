@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Model Isn't Too Shallow. It Stops Reading Too Early. — ZFRQBL</title>
+  <meta name="description" content="Thirteen base models from 0.6B to 32B all stop following in-context references after three lines, and extra depth does not help. A rank-8 LoRA at one early layer, with every base weight frozen, took Qwen3-8B from 15.5% to 99% on 24-line chains." />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The Model Isn't Too Shallow. It Stops Reading Too Early." />
+  <meta property="og:description" content="Thirteen base models from 0.6B to 32B all stop following in-context references after three lines, and extra depth does not help. A rank-8 LoRA at one early layer, with every base weight frozen, took Qwen3-8B from 15.5% to 99% on 24-line chains." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/tiny-lora-unlocks-in-context-reasoning" />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary" aria-label="Toggle theme" style="padding: 0.25rem 0.5rem; font-size: 0.85rem;">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article>
+      <header style="margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <small style="text-transform: uppercase; font-weight: bold; font-size: 0.75rem;" class="secondary">Note #40</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-10-04" class="secondary" style="font-size: 0.85rem;">October 4, 2026</time>
+        </div>
+        <h1>The Model Isn't Too Shallow. It Stops Reading Too Early.</h1>
+      </header>
+
+      
+
+      <section>
+                <h2>Every base model tested stops after three references, and 65,537 parameters fix it</h2>
+
+        <p>Give a model a chain of references in its prompt. K = apple, B = K, D = B, and so on, then ask it to print the last one. A group at Georgia Institute of Technology ran this across thirteen base models between 0.6B and 32B parameters. Every one of them followed between 1.4 and 3.6 lines and then guessed.</p>
+
+        <p>The interesting part is not the failure. It is what extra depth did. OLMo-3-32B has twice the layers of OLMo-3-7B and both landed at about 2.6 lines. DeepSeek-V4-Flash, a 292B mixture-of-experts model, reached 4.0 lines and was close to chance by six.</p>
+
+        <p>So depth does not buy reference following. Something else is going on.</p>
+
+        <h2>The model is not out of capacity. It stops using the capacity it has</h2>
+
+        <p>The paper's title says the models stop thinking too early, and the mechanism backs that up. By default each line passes on which chain it belongs to for only two or three hops. The question resolves a pointer or two itself, and a late layer copies whatever answer it lands on.</p>
+
+        <p>The middle layers can carry much longer relays. They just are not doing it.</p>
+
+        <p>That gap is what the authors exploit. They add a rank-8 LoRA to the residual stream at the input of one early layer and train only three small tensors, A, B and a scale. Every weight of the base model stays frozen. The whole adapter is 65,537 parameters, under 0.01% of Qwen3-8B. A penalty holds the model's ordinary behaviour in place, and WikiText perplexity moves from 10.14 to 10.148.</p>
+
+        <p>Qwen3-8B went from 15.5% exact accuracy on 24-line chains to 99%. A LoRA trained on longer programs answers 98% of 40-line chains and 88% of 48-line ones. Re-running the layers it touches lifts 64-line chains from 34% to 92%.</p>
+
+        <h2>What happens with looped models</h2>
+
+        <p>Looped transformers reuse the same weight-tied layers several times per forward pass. Ouro-1.4B is one of them, with 24 layers and four recurrent steps.</p>
+
+        <p>Frozen, the loops barely help. Ouro's reach is 0, 1.6, 2.3, 2.2 and 2.2 lines after one to five loops. Adding the LoRA makes each loop count. Ouro-1.4B then follows 60 lines after four loops and at least 160 after eight.</p>
+
+        <p>If you run looped or recurrent-depth models, that is the useful part. The compute is already being spent. The adapter is what makes each loop count.</p>
+
+        <h2>Placement matters more than form</h2>
+
+        <p>The adapter only works while it can still start the relay. In Qwen3-8B, moving it from layer 20 to layer 21 drops reach from 20.5 lines to 5.2.</p>
+
+        <p>The authors tested four different small changes at layer 14 and again at layer 26. A residual-stream LoRA at 65,537 parameters. A LoRA across all seven projections at 606,208. A FLAS-style low-rank flow at three steps. A full FLAS flow block at 168M parameters. At layer 14 all four extended the chain, scoring between 90.0 and 96.5. At layer 26, past the relay's layers, all four sat at chance, between 52.5 and 56.0.</p>
+
+        <p>A 168M-parameter flow block and a 65,537-parameter LoRA land within a few points of each other in the right place, and both do nothing in the wrong one.</p>
+
+        <p>The authors also built a way to find that place in advance. A measurement on the frozen model, which they call the cutoff layer, located the last useful intervention layer within a preregistered tolerance in three of four held-out models.</p>
+
+        <h2>Three ablations back the relay</h2>
+
+        <p>Cutting each line's attention to its parent line in layers 14 to 22 of Qwen3-8B returns 6-, 8- and 12-line chains to chance, at 53%, 48% and 55%. The same cut after the relay leaves 100%, 100% and 98%.</p>
+
+        <p>Removing the ten heads that read the parent line drops 16-line accuracy from 89% to 53%. Ten random heads from the same layers leave 83%.</p>
+
+        <p>The authors also trained small looped transformers from scratch on the same task, and those models learned the same relay. Whatever this circuit is, it is not an artifact of one checkpoint.</p>
+
+        <h2>Beyond the toy programs</h2>
+
+        <p>On chains of fictional facts, a Qwen3-8B LoRA raised exact match from 41.2% to 97.4%. Six-hop questions, longer than anything in training, went from 23% to 88%.</p>
+
+        <p>On MuSiQue, a multi-hop QA benchmark where each hop depends on the answer to the previous one, a LoRA trained on the benchmark added 11.4, 9.4 and 17.9 exact-match points to Qwen3-8B, OLMo-3-7B and Llama-3.1-8B at the earliest layer tested, and 11.7 points to Ouro-1.4B. At the latest layer tested it added little in the standard models.</p>
+
+        <p>The same placement result shows up on a real benchmark, which is what makes it worth acting on.</p>
+
+        <h2>What this means if you are building on these models</h2>
+
+        <p>The practical claim is narrow and testable. Before concluding that a model cannot do something, check whether it can do it and simply is not.</p>
+
+        <p>Three things in the paper are reusable without training anything from scratch.</p>
+
+        <p>Task-specific LoRAs are cheap enough to try. 65,537 parameters is a rounding error next to a full fine-tune, the base weights never move, and the headline adapter trains in about 16 minutes on one A100, so you can keep the original model for everything else.</p>
+
+        <p>Where you put the adapter decides whether it works. The same change that extends chains at layer 14 does nothing at layer 26.</p>
+
+        <p>A frozen-model measurement can tell you where to put it. The cutoff layer predicted the limit in three of four held-out models, which means the diagnostic can run before the training time is spent.</p>
+
+        <p>A default answer from a prompt is an understatement of what the model can do. That is the part worth carrying into the next evaluation.</p>
+      </section>
+    </article>
+  </main>
+
+  <footer class="container" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--pico-muted-border-color);">
+    <small class="secondary">
+      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
+    </small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
+
+</body>
+</html>
