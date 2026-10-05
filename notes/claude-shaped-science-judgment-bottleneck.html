@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Calculation Was Automatable. The Judgment Was Not. — ZFRQBL</title>
+  <meta name="description" content="A Harvard physicist and 19 co-authors produced 36 manuscripts across 18 fields in three months using an open-source harness around Claude. The results only became science after domain experts redirected them, which is the part agent builders should study." />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The Calculation Was Automatable. The Judgment Was Not." />
+  <meta property="og:description" content="A Harvard physicist and 19 co-authors produced 36 manuscripts across 18 fields in three months using an open-source harness around Claude. The results only became science after domain experts redirected them, which is the part agent builders should study." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/claude-shaped-science-judgment-bottleneck" />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary" aria-label="Toggle theme" style="padding: 0.25rem 0.5rem; font-size: 0.85rem;">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article>
+      <header style="margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <small style="text-transform: uppercase; font-weight: bold; font-size: 0.75rem;" class="secondary">Note #41</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-10-05" class="secondary" style="font-size: 0.85rem;">October 5, 2026</time>
+        </div>
+        <h1>The Calculation Was Automatable. The Judgment Was Not.</h1>
+      </header>
+
+      
+
+      <section>
+                <h2>A Harvard physicist automated the calculations and found the hard part somewhere else</h2>
+
+        <p>Over three months this year, Matthew Schwartz, a professor of theoretical physics at Harvard, and 19 co-authors produced 36 manuscripts across 18 fields. The harness behind that output is open source, runs with Claude or Gemini or ChatGPT, and is small enough for one person to operate. The volume is not the interesting part. What the domain experts had to do before any of it counted as science is.</p>
+
+        <p>Schwartz published the account as a guest post on Anthropic's blog on 1 October, and the post discloses that he was a visiting researcher at Anthropic during the project.</p>
+
+        <h2>The impedance mismatch</h2>
+
+        <p>He starts with his own field. In December he used Claude Opus 4.5 as a research assistant and described it as a strong graduate student at twenty times the speed. He also had to correct every sentence, steer it off irrelevant threads, and pull it back from dead ends.</p>
+
+        <p>His diagnosis is that current models are good at science without being scientists. Two systems that each work fine, badly matched, so most of what one sends never arrives at the other. Physicists call that an impedance mismatch, and it is a more useful description of the problem than the model not being smart enough.</p>
+
+        <p>The fix was not a better prompt. It was a different class of problem.</p>
+
+        <h2>What a Claude-shaped problem looks like</h2>
+
+        <p>Schwartz built BootLoops, a harness for exact calculations in quantitative science. He compares it to Claude Code or Codex as a harness for a model, with one difference that matters to anyone building on top of a lab's API. BootLoops does not care which model runs it. The tools are ported to a common framework with a common index, and the model underneath can be swapped.</p>
+
+        <p>The first assignment was a port of his own work. Claude reproduced results from one of his papers in about 20 minutes, where the code Schwartz wrote to do the same thing had taken him weeks. It then pointed out that his approach was inefficient and that a better algorithm existed.</p>
+
+        <p>The easy problems ran out quickly. Amplitudes simple enough for the semi-numerical bootstrap are also simple enough for humans, and most of them were already done. So he pushed the harness one family of functions harder, from logarithms to elliptic integrals, a class where only a handful of results exist and none had been reached this way. Claude generalised the machinery it had ported and started landing integrals. The tally was 30 computed end to end, fifteen reproducing known results and fifteen never computed before.</p>
+
+        <h2>Checkability is what makes the autonomy safe</h2>
+
+        <p>This worked because the answers could be checked without trusting the model, not because the model was trusted.</p>
+
+        <p>A BootLoops result counts as solved only when its full functional form is known and a Python script can evaluate it to arbitrary precision on a laptop. Two independent routes compute the same quantity and have to agree to 30 digits, sometimes 100, at points that entered no fit. Predictions are sealed beforehand with a SHA fingerprint, so a result cannot be edited afterwards to make a test pass. The project site names reward hacking as the threat and treats the seal as the defence.</p>
+
+        <p>The same discipline applies to the model's own reviews. Claude is described as eager to please, so the harness runs skeptical agents against finished work. Agents are made to download and read papers rather than answer from memory, with confirmation that they did. Results get checked by several agents independently, because agents with different histories catch different errors. The instruction is to iterate until no corrections remain rather than to collect a list of them.</p>
+
+        <h2>Then it walked into other fields</h2>
+
+        <p>Science reuses its equations, so a method built for one area tends to find work waiting in another. The integrals BootLoops was good at map onto Bayesian evidence integrals in population genetics and phylogenetics, and finite-field methods from Feynman integral reduction have uses in evolutionary biology.</p>
+
+        <p>In ecology, an equation Rampal Etienne published in 2005 had gone twenty years without being solvable at scale. Claude recognised it as BootLoops-shaped and solved it. Applied to the Barro Colorado Island census, the most studied forest plot on earth, the mix of tree species changes 4.5 times faster than neutral theory allows.</p>
+
+        <p>Schwartz took that result to James O'Dwyer, a plant biology professor who works on neutral theory. O'Dwyer's assessment was that the technical feat was impressive and that ecologists would likely shrug at the finding. They had already observed, more qualitatively, that neutral theory could not keep up with real forests. His better question was what remains once the neutral prediction is subtracted, which is where the selection, competition and species differences live. The successor model that came out of that conversation is the one all three of them stand behind.</p>
+
+        <p>That exchange is the whole story in miniature. The calculation was correct. The question was not yet worth answering.</p>
+
+        <h2>The bottleneck moved, and it did not disappear</h2>
+
+        <p>BootLoops 1.0 covers applications from cosmology to linguistics, along with an audit of standard population-genetics software against an exact evaluation and a fit to roughly 730,000 human exomes. None of that came from a model deciding what mattered.</p>
+
+        <p>Schwartz is blunt about the consequences. He would have called a Python for engineers course essential two years ago and calls it unnecessary now. Building machine-learning models for physical phenomena is work the model takes over, so even learning how neural networks work has limited returns. Why apply for three years of grant funding for a calculation that might be finished overnight.</p>
+
+        <p>He is just as clear about the failure modes. Claude declares victory too early, and "done, with one asterisk" usually means not done. It misjudges how long work will take, brute-forces instead of finding the elegant route, and can reach a wrong conclusion from a correct calculation. Automated checks are not reliable on their own. It also drifts toward old, heavily cited debates rather than new questions, and the work was compute- and token-intensive.</p>
+
+        <p>His summary of the division of labour is four words. Supply the taste.</p>
+
+        <h2>What this means if you are building agents</h2>
+
+        <p>The pattern is not specific to physics.</p>
+
+        <p>Shape the task to the model. The impedance mismatch framing is the reusable idea. When an agent underperforms, the first question is whether the task is the shape a model is good at, not whether the model needs a longer prompt.</p>
+
+        <p>Make the output checkable to a hard standard. Autonomy scales with verification, not with trust. A check that cannot be gamed, like two independent routes agreeing to 30 digits or a prediction sealed before the run, is what lets a harness run unattended. Where you cannot build one, the agent needs a person at the end of it.</p>
+
+        <p>Keep the judgment outside the loop. The experts did not review output for errors. They changed what the project was trying to do. That is a different job, and it is the one the model cannot take.</p>
+
+        <p>The 36 manuscripts are a weaker claim than the headline suggests. Ground Truth's read is that the index describes a manuscript pipeline rather than 36 peer-reviewed discoveries, and the project site marks some entries as preliminary or in preparation. The lesson does not depend on the count. It depends on the sequence, where a model produced a correct answer, an expert said the answer was boring, and the redirection is what produced the science.</p>
+      </section>
+    </article>
+  </main>
+
+  <footer class="container" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--pico-muted-border-color);">
+    <small class="secondary">
+      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
+    </small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
+
+</body>
+</html>
