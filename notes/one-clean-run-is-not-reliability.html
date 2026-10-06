@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>One Clean Run Is Not Reliability — ZFRQBL</title>
+  <meta name="description" content="Microsoft and Hugging Face ran 507 business workflows 20 times each and graded the database state instead of the chat. Most models solve a task at least once and then fail it the next time, and four in five failures are tool handling rather than reasoning." />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="One Clean Run Is Not Reliability" />
+  <meta property="og:description" content="Microsoft and Hugging Face ran 507 business workflows 20 times each and graded the database state instead of the chat. Most models solve a task at least once and then fail it the next time, and four in five failures are tool handling rather than reasoning." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/one-clean-run-is-not-reliability" />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary" aria-label="Toggle theme" style="padding: 0.25rem 0.5rem; font-size: 0.85rem;">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article>
+      <header style="margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <small style="text-transform: uppercase; font-weight: bold; font-size: 0.75rem;" class="secondary">Note #42</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-10-06" class="secondary" style="font-size: 0.85rem;">October 6, 2026</time>
+        </div>
+        <h1>One Clean Run Is Not Reliability</h1>
+      </header>
+
+      
+
+      <section>
+                <h2>One clean run is not reliability</h2>
+
+        <p>A support agent gets a customer's refund request. It pulls the order, checks tracking, looks up the profile, searches the policy twice, opens a ticket and documents the timeline. Nine tool calls, no errors. Then it closes the ticket as resolved and asks whether there is anything else it can help with.</p>
+
+        <p>The required end state was on hold. The carrier exception was still open, so the case was not resolved and the customer never got a real answer. Nothing in the transcript looks broken. A grader reading tool calls sees nine well-formed ones. The database disagrees.</p>
+
+        <p>That example comes from ThinkingBox, a benchmark the Microsoft Copilot Studio team built with Toloka and academic collaborators and published as a joint Microsoft and Hugging Face blog on 3 October. The paper is on arXiv (2608.19741), the code is MIT-licensed, the 507-task dataset is on Hugging Face under CDLA-Permissive-2.0, and the whole thing runs through the OpenEnv interface. The numbers below are measured, not asserted.</p>
+
+        <h2>What it actually grades</h2>
+
+        <p>ThinkingBox does not score the conversation or the tool calls. Each of the 507 policy-conditioned workflows defines a starting backend state, a user goal, the available MCP tools, a domain policy and executable checks over the terminal state. Retail, auto insurance, travel, neobank internal IT and consulting support. A simulated user holds private context and releases it only when asked. Every attempt gets an isolated MCP session with freshly initialized state, so two runs of the same task never share a row or a cached tool result. That isolation is what makes repetition meaningful.</p>
+
+        <p>The benchmark reports three numbers. pass@1 is the share of attempts that succeeded, the number most leaderboards publish. pass@20 is the share of tasks solved at least once in twenty tries. Observed 20/20 is the share solved on every single attempt, counted literally with no smoothing.</p>
+
+        <h2>One success is not reliability</h2>
+
+        <p>On pass@1 the results read like an ordinary capability ranking. Claude Opus 5.5 leads at 67.16% overall, and Kimi-K3 is the strongest open-weight model at 57.37%.</p>
+
+        <p>The repeat numbers tell a different story. Only three models keep most of their single-attempt score across twenty runs. GPT-6 Astra retains 78%, and Claude Opus 5.5 and Claude Opus 5 each retain 71%. GLM-5.1, Kimi-K2.6 and DeepSeek-V4-Pro each keep about 8%.</p>
+
+        <p>Breadth and consistency also come apart. Kimi-K3 solves 93.89% of the benchmark at least once, 476 of 507 tasks and the broadest coverage in the field, but passes only 13.41% of tasks on all twenty attempts. Claude Opus 5 solves fewer tasks at least once, 79.09%, and completes 47.53% of the benchmark every time. If the work touches real records, pass@20 is the wrong column.</p>
+
+        <p>A newer model does not fix it. Claude Opus 5.5 scores higher than Claude Opus 5 on every-attempt average and passes exactly the same number of tasks on all twenty attempts, 241. Half a point of headline accuracy bought no additional dependability.</p>
+
+        <h2>Why they fail</h2>
+
+        <p>Roughly four in five failures are tool handling, not reasoning. Tool usage accounts for 79.9% of failed traces, wrong state updates 10.3%, incomplete user resolutions 7.0%, and 2.9% of failures take no state-changing action at all.</p>
+
+        <p>The pattern is consistent. Agents get far enough to attempt the workflow and then fail to recover from tool errors, failed preconditions or empty lookups. In a common-set ablation covering 121,680 valid trials across twelve models, 79,853 attempts failed the executable checks, and 67.24% of those failures terminated cleanly with a state-changing tool call and no reported error. The trajectory looked fine. The state was wrong.</p>
+
+        <p>Difficulty also moves by domain. Retail averages 59.52% pass@1 across the models tested. Auto insurance averages 33.83%.</p>
+
+        <h2>Dependability has a price</h2>
+
+        <p>Cost per successful attempt rewards a model that is cheap and often right. Cost per dependable task, the cost of the full twenty-run campaign divided by the tasks passed every time, rewards a model that is right consistently.</p>
+
+        <p>GPT-5.6 Sol is cheapest per single success at $0.127. GPT-5.4 is cheapest per dependable task at $6.80, but only 128 of 507 tasks clear the bar. Claude Opus 5.5 reaches the joint-highest 241 dependable tasks at $7.80. Claude Opus 5 also passes 241 and costs $13.30 to do it. The cheapest way to get a right answer is not the cheapest way to get a dependable one.</p>
+
+        <h2>What to do about it</h2>
+
+        <p>The benchmark's own advice is the production advice. Check the terminal state before you commit, not the model's summary of it. Classify tool and system errors so retries target the recoverable ones instead of everything. Cut the tool surface to what the workflow needs. Require human approval on the changes you cannot cheaply reverse.</p>
+
+        <p>The line from the post is worth keeping. A trajectory is a claim. Database state is the evidence. Repetition is the trust test.</p>
+
+        <p>None of those fixes were measured for lift on this benchmark, which is the point. The environment is public and the same checks are runnable, so a reliability claim can be tested instead of argued about.</p>
+      </section>
+    </article>
+  </main>
+
+  <footer class="container" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--pico-muted-border-color);">
+    <small class="secondary">
+      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
+    </small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
+
+</body>
+</html>
