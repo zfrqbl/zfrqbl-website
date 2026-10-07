@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tenant Isolation Is Verified, Not Assumed — ZFRQBL</title>
+  <meta name="description" content="Cloudflare disclosed a cross-tenant data exposure in Containers and Sandboxes. A storage flag called skip_block_zeroing let a container read 60 KiB of another tenant's leftover bytes from a reused 64 KiB block, and the fix needed two halves, not one." />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Tenant Isolation Is Verified, Not Assumed" />
+  <meta property="og:description" content="Cloudflare disclosed a cross-tenant data exposure in Containers and Sandboxes. A storage flag called skip_block_zeroing let a container read 60 KiB of another tenant's leftover bytes from a reused 64 KiB block, and the fix needed two halves, not one." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/tenant-isolation-is-verified-not-assumed" />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary" aria-label="Toggle theme" style="padding: 0.25rem 0.5rem; font-size: 0.85rem;">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article>
+      <header style="margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <small style="text-transform: uppercase; font-weight: bold; font-size: 0.75rem;" class="secondary">Note #43</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-10-07" class="secondary" style="font-size: 0.85rem;">October 7, 2026</time>
+        </div>
+        <h1>Tenant Isolation Is Verified, Not Assumed</h1>
+      </header>
+
+      
+
+      <section>
+                <h2>Tenant isolation is verified, not assumed</h2>
+
+        <p>A container gets a writable root disk. It writes four kilobytes into it. Later, a raw read of that same disk returns sixty kilobytes the container never wrote, and some of those bytes belong to whoever used that block before.</p>
+
+        <p>That is the bug Cloudflare disclosed on 4 September. Oren Yomtov, a researcher at Accomplish, reported it through the bug bounty program. Cloudflare Containers and Cloudflare Sandboxes both ran on the affected storage path, and the company says it fixed the issue with no customer action required.</p>
+
+        <p>The mechanism is worth understanding because it is not a Cloudflare mistake. It is a storage default that any multi-tenant platform can inherit.</p>
+
+        <h2>What thin provisioning does to a deleted disk</h2>
+
+        <p>Cloudflare Containers give each container a writable root disk built on Linux device mapper thin provisioning. Each container runs inside its own Firecracker virtual machine, and the disk appears to the guest as <code>/dev/vdc</code>.</p>
+
+        <p>Thin provisioning allocates physical storage only when a virtual disk writes to a region it has not used before. The affected pools used a 64 KiB block size. When a container's root disk was deleted, its physical blocks went back into a pool shared across customer accounts.</p>
+
+        <p>The pool had one option set: <code>skip_block_zeroing</code>.</p>
+
+        <p>That option does what its name says. When a previously used 64 KiB block is reassigned, a full-block write replaces everything in it. A smaller write does not. Write 4 KiB and the remaining 60 KiB keeps whatever the block's previous owner left behind.</p>
+
+        <p>The kernel documentation describes the same tradeoff. If you are not zeroing newly allocated data, it suggests a much larger block size, in the region of 128 MiB, because the cost of clearing blocks is the reason the option exists at all.</p>
+
+        <h2>The exploit is small</h2>
+
+        <p>Reading an unmapped region of a fresh thin disk returns zeroes, so the first attempt reveals nothing. The trick is to force allocation.</p>
+
+        <p>The proof of concept found 64 KiB-aligned regions that corresponded to free space in the guest's ext4 filesystem, then wrote one aligned 4 KiB block into each region. Each write triggered allocation of a shared 64 KiB block. Because zeroing was off, the untouched 60 KiB could still hold another container's bytes. A raw read of <code>/dev/vdc</code> then surfaced them.</p>
+
+        <p>The researchers used ext4 directory block checksums to tell their own test filesystem's blocks apart from blocks that came from somewhere else. Across six production placements they examined 5,614 testable directory blocks. None belonged to their filesystem. Checksum analysis attributed 2,700 distinct foreign directory inodes.</p>
+
+        <p>Residual data showed up on 18 of 24 placements and 20 of 22 underlying nodes, across four continents. The recovered block types included directory structures, database pages and structurally complete SQLite databases.</p>
+
+        <h2>What it was not</h2>
+
+        <p>The disclosure is careful about the limits, and they matter. The technique could not target a specific customer, workload, host or data. Residual bytes were not guaranteed to be present. An attacker could not reach an actively attached disk or modify another customer's live data, and Cloudflare found no evidence anyone else used the vector. The researchers deleted the recovered data after submitting it.</p>
+
+        <p>Those caveats make the bug less dangerous than the headline suggests. They do not make it less instructive. A cross-tenant read is a cross-tenant read, and the boundary that failed was a configuration flag, not an exotic exploit.</p>
+
+        <h2>The fix had two halves</h2>
+
+        <p>Cloudflare's first move was to remove <code>skip_block_zeroing</code> from the thin pool configuration across the fleet. That restored the default behavior of clearing blocks before exposing them, and the researchers confirmed their proof of concept stopped working.</p>
+
+        <p>That was not enough. Zeroing new allocations does not sanitize blocks already mapped into existing thin devices. Those mappings lived in running container disks and in each host's cache of prepared snapshots for OCI image layers. A new container could inherit a mapping from a cached layer without allocating the block again, and the residual bytes in its unused regions stayed readable.</p>
+
+        <p>So Cloudflare retired every running container disk and removed every cached image snapshot created before the fix. They drained hosts off-peak, restarted the virtual machines on each host, and cleared each host's image cache so that disks and layers were recreated with zeroed allocations.</p>
+
+        <p>The lesson generalizes. A data-isolation fix has two halves. The allocation path is the obvious one. The already-materialized state is the one that gets missed, and it is the half that stays exploitable after you think you have shipped the patch.</p>
+
+        <p>The timeline is the other thing worth copying. Report at 15:26 UTC, incident opened at 18:45, runtime fix merged at 21:27, pool changes merged at 22:03, rollout started at 23:15. Roughly eight hours from disclosure to rollout. The full cleanup of cached snapshots finished on 19 September.</p>
+
+        <h2>Why builders should care</h2>
+
+        <p>Every AI product that runs untrusted code is now a multi-tenant storage problem. Agent sandboxes, code interpreters, browser tools and evaluation harnesses all execute someone else's bytes on infrastructure someone else owns. Cloudflare Sandboxes, the product built on Containers, is exactly that shape, and it was in scope for this bug.</p>
+
+        <p>The practical rule is that isolation is a property you verify, not one you inherit by picking a provider. Three habits follow from that.</p>
+
+        <p>Do not treat "our platform isolates tenants" as a fact about your system. It is a claim about a configuration, and configurations change between versions, regions and instance types.</p>
+
+        <p>Encrypt tenant data at rest with keys the storage layer cannot read. Residue you cannot decrypt is residue that does not leak, and it is the one control that survives a bug you did not find.</p>
+
+        <p>Read the raw device in your own test suite. The proof of concept is not exotic. A container that writes aligned small blocks and then reads back the surrounding bytes will tell you whether the platform zeroes its allocations.</p>
+
+        <p>None of this is an argument against multi-tenant platforms. The economics of running one tenant per host are brutal, and Cloudflare's response was fast and transparent. It is an argument against trusting a boundary you have never tested. The block that leaked was 60 KiB of storage the new tenant never wrote and never asked for.</p>
+      </section>
+    </article>
+  </main>
+
+  <footer class="container" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--pico-muted-border-color);">
+    <small class="secondary">
+      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
+    </small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
+
+</body>
+</html>
