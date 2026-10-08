@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Move Quality Is Not Explanation Quality — ZFRQBL</title>
+  <meta name="description" content="A 4B chess model reaches 2697 Elo, beats GPT-5.6-Sol by 600 points, and still scores below a 1822-Elo model on conceptual coherence. Its own self-improvement loop is the reason the paper gives." />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Move Quality Is Not Explanation Quality" />
+  <meta property="og:description" content="A 4B chess model reaches 2697 Elo, beats GPT-5.6-Sol by 600 points, and still scores below a 1822-Elo model on conceptual coherence. Its own self-improvement loop is the reason the paper gives." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/move-quality-is-not-explanation-quality" />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary" aria-label="Toggle theme" style="padding: 0.25rem 0.5rem; font-size: 0.85rem;">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article>
+      <header style="margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <small style="text-transform: uppercase; font-weight: bold; font-size: 0.75rem;" class="secondary">Note #45</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-10-08" class="secondary" style="font-size: 0.85rem;">October 8, 2026</time>
+        </div>
+        <h1>Move Quality Is Not Explanation Quality</h1>
+      </header>
+
+      
+
+      <section>
+                <h2>Move quality is not explanation quality</h2>
+
+        <p>A chess engine tells you the move and nothing else. A language model tells you why, and often gets the move wrong. A paper posted to arXiv on 2 October 2026 puts a 4-billion-parameter model in the gap between the two, and its most useful result is not the win.</p>
+
+        <p>Queen is an encoder-decoder model. The encoder is Leela, the 240-million-parameter BT5 network from the Lc0 family, which plays at near-superhuman strength without any search. The decoder is SmolLM3-3B, an instruction-tuned general model with almost no chess training. A cross-attention bridge joins them. For any position the finished model emits three things: a recommended move, a predicted principal variation, and prose explaining both.</p>
+
+        <h2>2,697 Elo against 2,071</h2>
+
+        <p>The playing strength is the number everyone will quote. Every model under evaluation played 32 games against a ladder of eight engines, and the ratings are anchored to the Lichess scale through the known strength of the Leela networks. Queen reaches 2697. Gemini-3.1-Pro reaches 2201. GPT-5.6-Sol, run at a high reasoning budget, reaches 2071. The median Grandmaster's Lichess blitz rating is 2730. The Leela encoder on its own, with no language attached to it at all, is 2987.</p>
+
+        <p>A 600-point gap to Sol is an expected 97.4 percent win rate. The 450-point gap to Gemini is 94.6 percent.</p>
+
+        <h2>Substantiation is not the weak point</h2>
+
+        <p>The paper splits explanation quality into three parts. Accuracy asks whether the recommended move is any good. Substantiation asks whether the explanation backs the move with a line that holds. Coherence asks whether the prose is any good.</p>
+
+        <p>Substantiation is measured with two numbers on 1,000 tactical puzzles and 1,000 positions taken from human games: the share of predicted principal variations containing no mistakes, and the share where the first move alone is mistake-free. A mistake is a move that drops the expected win rate by ten percent or more against a Stockfish oracle.</p>
+
+        <ul>
+          <li>Queen: 68.8 percent and 91.6 percent on puzzles, 66.6 and 97.1 on general positions.</li>
+          <li>Gemini-3.1-Pro: 66.9 and 82.5, then 63.0 and 89.0.</li>
+          <li>GPT-5.6-Sol: 65.1 and 81.9, then 61.5 and 86.8.</li>
+          <li>GPT-5.6-Luna: 35.6 and 53.5, then 47.1 and 73.6.</li>
+        </ul>
+
+        <p>The 4B model leads both metrics, and leads the first-move numbers by nine points over Gemini. C1-4B, a same-size model from earlier work trained by distilling a chess master, cannot produce a principal variation at all and scores 43.2 and 38.8 percent on first moves.</p>
+
+        <h2>Coherence is where it loses</h2>
+
+        <p>The prose was scored by a GPT-5.6-Sol judge on a five-point scale across three axes. Structural coherence asks whether the explanation works through the right alternatives. Conceptual coherence asks whether it uses motifs such as forks and pins correctly, without inventing them. Fluency asks whether it reads well.</p>
+
+        <table><thead><tr><th>Model</th><th>Structural</th><th>Conceptual</th><th>Fluency</th></tr></thead><tbody>
+          <tr><td>Queen</td><td>3.51</td><td>2.76</td><td>4.45</td></tr>
+          <tr><td>Gemini-3.1-Pro</td><td>3.55</td><td>3.30</td><td>4.98</td></tr>
+          <tr><td>GPT-5.6-Sol</td><td>3.51</td><td>3.61</td><td>4.99</td></tr>
+          <tr><td>GPT-5.6-Luna</td><td>2.82</td><td>2.94</td><td>4.96</td></tr>
+          <tr><td>C1-4B</td><td>2.48</td><td>2.16</td><td>4.94</td></tr>
+        </tbody></table>
+
+        <p>Read that table against the rating list. Queen beats Luna by 875 points and still scores below it on conceptual coherence, 2.76 against 2.94. It has the lowest fluency in the table. Its structural coherence ties with Sol, and the paper offers a partial reason the number is not higher: Queen analyses 30.0 ply on average where Sol analyses 23.8, so the judge has more material to find fault with.</p>
+
+        <p>The authors name the cause. Each round of self-improvement distills a search tree into the weights, which is what lifts structural coherence over time, and the same consolidation step is where invented motifs survive and get reinforced. Conceptual coherence stays low. They call it a limitation of the method rather than something they solved.</p>
+
+        <h2>The loop that produced both effects</h2>
+
+        <p>Training has two phases. In the first, the encoder and the decoder are frozen and only the bridge learns, through a question-and-answer curriculum that moves from naming pieces on squares, to legal moves and captures, to reconstructing a board after a supplied sequence of moves, and finally to reasoning about that reconstructed board. The model picks up dedicated tokens for all 64 squares and 12 piece types along the way, since "bishop" and "knight" carry unhelpful meanings in a general text corpus.</p>
+
+        <p>The second phase is where the interesting behaviour comes from. The model is seeded with 15,000 positions explained by GPT-5.6-Sol, filtered for illegal moves and mistakes. Then come seven rounds of what the paper calls a natural-language analogue of the Bellman update. Each round samples around 400,000 root positions from games against Stockfish, human games on Lichess, and Lichess puzzles. For each root, the current model proposes three candidate moves and explains the position after each one. If any child explanation recommends a mistake, the root is thrown out and the process recurses into that child, for up to five attempts. The three surviving child explanations are consolidated into one explanation of the root by Qwen3.8-27B, filtered against Stockfish by comparing the principal variations at their first divergence, and distilled back into the model.</p>
+
+        <p>The rating path across those rounds is 1782, 2024, 2187, 2346, 2539, 2434, 2559, 2697. Nine hundred and fifteen points in seven iterations, and one regression at the sixth. Self-improvement here is not monotonic.</p>
+
+        <h2>Verbalization debt</h2>
+
+        <p>The gap between the encoder alone at 2987 and the full model at 2697 is what the paper calls verbalization debt: the cost of expressing latent expert knowledge in language. It is worth naming, because the same gap will appear anywhere an explanation layer is bolted onto a strong silent model.</p>
+
+        <p>The architectural detail most worth copying is small. The bridge is Flamingo-style gated cross-attention, with one change. Flamingo feeds the decoder only the encoder's final hidden state, and this model pairs each decoder layer with the encoder layer at the same depth, so the decoder can read earlier representations too. The ablations found the Flamingo bridge beat a LLaVA-style design, and SmolLM3-3B beat Qwen3-4B and Gemma3-4B as the decoder, with Gemma3 falling to 79.8 percent on the hardest curriculum stage.</p>
+
+        <h2>What to take from it</h2>
+
+        <p>If you put a language layer over an expert system, measure the language separately from the expert. A model that recommends better moves is not automatically a better teacher, and the two scores can move in opposite directions inside the same checkpoint. Queen is the strongest player in its own evaluation and the least fluent writer in it.</p>
+
+        <p>The second lesson is about self-improvement loops. The same consolidation step that turns a search tree into better structure also preserves whatever the model invented along the way, so the loop can harden a hallucination while it improves the analysis. Anyone running a distillation loop over generated explanations is running that risk, and a coherence score that is not tracked per iteration will not show it.</p>
+
+        <p>The scope is narrower than the framing suggests. This is one domain with one encoder family, the coherence scores come from a frontier language model reading on a five-point scale rather than from human raters, and the Elo estimates come from 32 games per model. The recipe is what generalises. Any domain that already has a silent expert encoder, from games to robotics to computer use, can attempt the same bridge, and should expect the same split between the move and the explanation.</p>
+      </section>
+    </article>
+  </main>
+
+  <footer class="container" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--pico-muted-border-color);">
+    <small class="secondary">
+      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
+    </small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
+
+</body>
+</html>
