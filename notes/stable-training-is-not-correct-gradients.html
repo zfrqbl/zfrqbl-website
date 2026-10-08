@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stable Training Is Not Correct Gradients — ZFRQBL</title>
+  <meta name="description" content="A 450M-parameter transformer trained fine for 25 billion tokens, then its gradient norm grew a thousandfold with no NaN and it finished 0.2 nats behind an identical FP32 run. The cause is a BF16 rounding error in FlashAttention-3's backward that breaks a conservation law in the attention gradient, and no forward-pass fix can reach it." />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Stable Training Is Not Correct Gradients" />
+  <meta property="og:description" content="A 450M-parameter transformer trained fine for 25 billion tokens, then its gradient norm grew a thousandfold with no NaN and it finished 0.2 nats behind an identical FP32 run. The cause is a BF16 rounding error in FlashAttention-3's backward that breaks a conservation law in the attention gradient, and no forward-pass fix can reach it." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/stable-training-is-not-correct-gradients" />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary" aria-label="Toggle theme" style="padding: 0.25rem 0.5rem; font-size: 0.85rem;">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article>
+      <header style="margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <small style="text-transform: uppercase; font-weight: bold; font-size: 0.75rem;" class="secondary">Note #44</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-10-08" class="secondary" style="font-size: 0.85rem;">October 8, 2026</time>
+        </div>
+        <h1>Stable Training Is Not Correct Gradients</h1>
+      </header>
+
+      
+
+      <section>
+                <h2>Stable training is not correct gradients</h2>
+
+        <p>A 450-million-parameter transformer trained for 25 billion tokens with nothing to report. Loss down, gradient norm flat. Then, over the next few billion tokens, the gradient norm climbed by a factor of a thousand, the loss drifted up and never recovered, and the run finished 0.2 nats worse than an identical model trained with FP32 attention. No overflow. No NaN. The curve looked like an ordinary late-training wobble, the kind a team blames on data, or learning rate, or luck.</p>
+
+        <p>It was a numerical error in the attention backward. A paper by Junlin Chen (arXiv 2609.34272, 28 September 2026) takes the failure apart and finds two separate rounding problems in BF16 FlashAttention-3, one of them already known and one that no earlier fix could reach.</p>
+
+        <h2>The fault lives in two layers</h2>
+
+        <p>The authors freeze the model at 33.6 billion tokens and recompute only the attention backward of two layers, 5 and 11, in FP32. Every forward activation and the loss stay bitwise identical. The model gradient norm falls by more than two orders of magnitude. Almost all of the gradient the run had been following was numerical noise produced by two backward passes.</p>
+
+        <p>Those two layers had drifted into a bad regime. Their attention logits had grown by orders of magnitude while the other 22 layers stayed moderate, and nearly every query had put almost all of its weight on a single key.</p>
+
+        <h2>One known cause, and why the fix stopped short</h2>
+
+        <p>Part of the problem was already documented. A fused multiply-add in the forward softmax merges the scaling and the row-maximum subtraction into one rounded operation, so the largest score no longer maps exactly to zero. It had been filed as an extreme-input NaN case, shipped as an off-by-default option in FlashAttention-2, and never made it into FlashAttention-3.</p>
+
+        <p>Repairing the forward, by subtracting the unscaled row maximum before scaling, removes the thousandfold growth. Training then finishes stably. That looked like the whole answer until the authors measured the query gradient, which was still wrong by more than its own size. The repaired run still drove those two layers into extreme attention. Stable training is not evidence of correct gradients.</p>
+
+        <h2>A conservation law the cast breaks</h2>
+
+        <p>An exact attention backward obeys a conservation law. The gradient of the softmax scores sums to zero along every row, and that zero sum is what cancels the common part of the keys. It is why the query gradient depends only on how the keys differ from one another, never on where they sit as a group. Shift every key by the same amount and the gradient does not move.</p>
+
+        <p>FlashAttention-3 rounds the score gradient to BF16 before multiplying it with the keys, and rounding does not preserve a zero sum. The small leftover row sum is harmless while keys are small and attention is spread out. Multiply it by the keys and it becomes a spurious term proportional to the mean key. The authors call it the leak. Late in training, keys get large and attention gets sharp, and both changes enlarge the leak. When a row concentrates on a single key, the true gradient is nearly zero, so the leak stops being a correction and becomes the signal.</p>
+
+        <p>This is why the earlier remedies stall. A forward repair, FP32 outputs and dynamic shifting all act before the cast. Key smoothing subtracts the average key, which shrinks the mean the leak multiplies but leaves the broken sum intact. It delayed the blow-up by about 3 billion tokens in these runs and did not prevent it.</p>
+      </section>
+    </article>
+  </main>
+
+  <footer class="container" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--pico-muted-border-color);">
+    <small class="secondary">
+      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
+    </small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
+
+</body>
+</html>
