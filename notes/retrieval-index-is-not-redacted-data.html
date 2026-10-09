@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A Retrieval Index Is Not Redacted Data — ZFRQBL</title>
+  <meta name="description" content="A page stored as about a thousand patch vectors can be inverted back into the page, recovering 47% of its words and ranking it first 98.4% of the time. Pooling stops the attack. Shuffling does not." />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="A Retrieval Index Is Not Redacted Data" />
+  <meta property="og:description" content="A page stored as about a thousand patch vectors can be inverted back into the page, recovering 47% of its words and ranking it first 98.4% of the time. Pooling stops the attack. Shuffling does not." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/retrieval-index-is-not-redacted-data" />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary" aria-label="Toggle theme" style="padding: 0.25rem 0.5rem; font-size: 0.85rem;">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article>
+      <header style="margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <small style="text-transform: uppercase; font-weight: bold; font-size: 0.75rem;" class="secondary">Note #46</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-10-09" class="secondary" style="font-size: 0.85rem;">October 9, 2026</time>
+        </div>
+        <h1>A Retrieval Index Is Not Redacted Data</h1>
+      </header>
+
+      
+
+      <section>
+                <h2>A retrieval index is not redacted data</h2>
+
+        <p>A visual document retriever reads a page as an image. A vision-language model cuts it into patches of 32 by 32 pixels and returns one vector for each, so a single page becomes an index of about a thousand vectors. A query is scored against the patches that match it, which is why these retrievers sit at the top of the current document benchmarks.</p>
+
+        <p>That index then lives in a vector database, often one run by somebody else. Since nobody can read a page out of a list of floats, the index gets filed as the safe copy. The page stayed home, and only an opaque digest went to the vendor.</p>
+
+        <p>A paper on arXiv from 7 October 2026 says the reasoning is wrong, and then demonstrates it. Whoever runs or breaches the store can reproduce the page from the index alone.</p>
+
+        <h2>What the attack assumes</h2>
+
+        <p>The attacker starts with nothing but the stored index. No source page, no page dimensions, no metadata, no idea which encoder produced the vectors. The paper calls everything else side information and requires zero of it.</p>
+
+        <p>Inversion is framed as conditional image generation. A flow-matching model, the architecture family behind current text-to-image systems, is trained on public pages paired with their indices. The index is the condition and the page is the output. A regression model would blur the result, because the best least-squares answer to an ambiguous glyph is an average of the possibilities, so the model has to sample instead of fit.</p>
+
+        <p>Everything else the attack needs it works out from the vectors. The encoder is identified by encoding 2,000 reference pages with each public candidate and keeping the one whose vectors best match the store. Across a pool of 13 public multi-vector retrievers, using the index of a single page, it identifies the right one in all 26,000 decisions.</p>
+
+        <p>The page shape comes next. A raw index lists its vectors in raster order, so the page width is a period of the sequence. Two vectors one row apart cover patches in the same column of adjacent rows and tend to be similar. Scoring similarity at each lag recovers the shape of 99.2 percent of raw indices.</p>
+
+        <p>Then the page is drawn.</p>
+
+        <h2>What comes back</h2>
+
+        <p>The model was trained on about 683,000 public pages and evaluated on the 19,252 pages of ViDoRe v3, a professional document benchmark in eight domains. The two sets do not overlap. Eight of the 2,000 evaluation pages have a near-identical training counterpart, and removing them changes no reported number.</p>
+
+        <p>From a raw index, the inverted page recovers 47 percent of the words and 45 percent of the sensitive tokens, where sensitive means numbers, capitalised words and acronyms. Used as a query against the whole store, it ranks its own source page first 98.4 percent of the time. An encoder that had no part in producing the index still ranks the source first 97.7 percent of the time, so the match is not an artefact of the encoder that made the vectors.</p>
+
+        <p>The controls make the result. An inverter sampled without the index recovers 0.1 percent of the words, so the text is not the model's imagination. A nearest-neighbour baseline, which answers with the closest training page, already recovers 23.4 percent of the words because pages of the same kind share vocabulary. The attack beats that baseline in every domain and beats it on sensitive tokens by 30 points. A recovered financial table comes back with 59 of its 60 numeric cells exact.</p>
+
+        <p>Word recall also understates the leak. OCR transcribes only glyphs that formed cleanly, and 75 percent of the pages scoring below 0.1 on word recall still ranked their source page first. The two measures correlate weakly, so a page can be unrecognisable to a reader and still match its source exactly.</p>
+
+        <h2>Two cheap protections, and one that fails</h2>
+
+        <p>The paper tests what a store could do about it. Hierarchical token pooling merges the patch vectors, shrinking the index by a factor of three or nine. Shuffling keeps the same vectors in a random order, which costs nothing because late-interaction scoring does not depend on order.</p>
+
+        <p>Both cut word recall to about 8 percent, below the nearest-neighbour baseline. Pooling holds. The attack cannot invert a pooled index at all.</p>
+
+        <p>Shuffling does not hold. Each vector was computed by a model that saw its patch in the context of the whole page, so it still carries where it belongs. The authors train a position model that reads the shuffled set and predicts each vector's row and column, placing them within 1.8 rows and 4.5 columns on average, against 12.6 and 11.3 for a random order. Handed the restored order, the same inverter re-identifies 93.5 percent of pages, against 98.4 percent from the raw index. Word recall returns to 23 percent.</p>
+
+        <p>The restored pages are not clean. Words come back, but whole lines land at the wrong height, so reading the transcript in order gives a scrambled page. Identity survives better than content, because matching a page needs less precision than reading it. That the content follows the vector at all is the finding. Each vector carries its own patch, and the inverter draws the patch wherever the vector is placed.</p>
+
+        <h2>A second retriever, and what did not generalise</h2>
+
+        <p>The same attack was then run unchanged against a different retriever from a different group and a different backbone. From the raw index, 70.2 percent of inverted pages rank their source first, against 15.4 percent for the baseline. The dependence on order is the same. Shuffling drops it to 0.6 percent, and the position model only brings it back to 11 percent.</p>
+
+        <p>Content did not carry over as cleanly. Word recall stayed below the baseline here, at 7.9 percent. The authors could not isolate the cause, because input resolution, training data and vector count all differ between the two encoders. They also show the gap is not the attacker's data. An inverter for the first encoder, trained on the same smaller corpus, recovered 55.5 percent of the words, more than the main inverter did. They call the reported leakage a lower bound.</p>
+
+        <h2>What to take from it</h2>
+
+        <p>The index is the document. If page images go to a third-party vector store, the pages went with them, and a breach of the store is a breach of the content. The paper's own conclusion is that a multi-vector index should be protected like the documents it encodes.</p>
+
+        <p>Shuffling is not a protection. It is free to apply and it looks like one, but a small model undoes it, which leaves a store that reads as protected while remaining invertible. Pooling is the defence that held in this evaluation, and it is a real trade. Fewer vectors, a smaller index, and an attack that cannot reconstruct a page from it.</p>
+
+        <p>If you are auditing a retrieval store for leakage, the useful test is not whether the inverted page is readable. It is whether it can be matched back to its source, because a page OCR cannot read can still rank its source first.</p>
+      </section>
+    </article>
+  </main>
+
+  <footer class="container" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--pico-muted-border-color);">
+    <small class="secondary">
+      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
+    </small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
+
+</body>
+</html>
