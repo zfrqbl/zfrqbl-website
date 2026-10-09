@@ -52,7 +52,6 @@ article.essay-content {
   padding-bottom: 1.5rem;
   margin-bottom: 2rem;
   border-bottom: 1px dashed var(--pico-muted-border-color);
-  transition: opacity 0.2s ease;
 }
 
 .meta-line {
@@ -81,6 +80,29 @@ article.essay-content {
   color: var(--pico-secondary-inverse);
 }
 
+/* Feed entry internals. These rules replace the inline style="" attributes the publisher
+   used to write into every entry (140 on the home page alone); the classes are emitted by
+   render_feed_entry() in zfrqbl_publish.py. */
+.feed-title {
+  margin-bottom: 0.5rem;
+  font-size: 1.25rem;
+}
+
+.feed-title a {
+  transition: color 0.15s ease;
+}
+
+.feed-title a:hover,
+.feed-title a:focus-visible {
+  color: var(--pico-primary);
+  text-decoration: underline;
+}
+
+.feed-desc {
+  margin-bottom: 0;
+  font-size: 0.95rem;
+}
+
 /* Filter buttons formatting */
 .filter-btn {
   padding: 0.2rem 0.65rem !important;
@@ -92,6 +114,12 @@ article.essay-content {
 /* --------------------------------------------------------------------------
    4. Code Containers & Copy Button
    -------------------------------------------------------------------------- */
+/* The copy button is appended INSIDE <pre> and positioned against it, so <pre> has to be
+   the positioning context — without this the button anchors to the page, not the block. */
+pre {
+  position: relative;
+}
+
 .code-container {
   position: relative;
   margin-bottom: 1.5rem;
@@ -144,4 +172,102 @@ pre[class*="language-"] {
     border: 1px solid #ccc;
     white-space: pre-wrap !important;
   }
+}
+
+/* --------------------------------------------------------------------------
+   6. Page Furniture & Note Measure
+   -------------------------------------------------------------------------- */
+/* Note pages carried no measure class while essays did: at the large breakpoint the
+   container is 950px, roughly 110 characters per line. 68ch matches the essays. */
+article.note-content {
+  max-width: 68ch;
+}
+
+.note-header {
+  margin-bottom: 2rem;
+}
+
+.note-kicker {
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 0.75rem;
+}
+
+.meta-time {
+  font-size: 0.85rem;
+}
+
+.theme-toggle-btn {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.85rem;
+}
+
+.site-footer {
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--pico-muted-border-color);
+}
+
+/* Home page furniture */
+.intro-section {
+  margin-bottom: 2.5rem;
+}
+
+.site-title {
+  font-size: 2.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.tagline {
+  font-size: 1.1rem;
+  max-width: 65ch;
+}
+
+.filter-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.feed-heading {
+  font-size: 1.5rem;
+  margin-bottom: 0;
+}
+
+/* Essay header figure (emitted by header_image_html() in zfrqbl_publish.py) */
+.article-header-image {
+  margin: 2rem 0;
+}
+
+.article-header-image img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  display: block;
+}
+
+/* The one essay that predates the essay template: it uses its own class names and had no rules at
+   all, so its header rendered unstyled. These give it the shape its markup was written for. */
+.essay-header {
+  margin-bottom: 2rem;
+}
+
+.eyebrow {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--pico-muted-color);
+  margin-bottom: 0.5rem;
+}
+
+.dek {
+  font-size: 1.1rem;
+  color: var(--pico-muted-color);
 }
