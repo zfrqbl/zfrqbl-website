@@ -36,7 +36,7 @@
       <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
       <ul>
         <li>
-          <button id="theme-toggle" class="outline secondary" aria-label="Toggle theme" style="padding: 0.25rem 0.5rem; font-size: 0.85rem;">🌙 / ☀️</button>
+          <button id="theme-toggle" class="outline secondary theme-toggle-btn" aria-label="Toggle theme">🌙 / ☀️</button>
         </li>
       </ul>
     </nav>
@@ -44,19 +44,19 @@
 
   <main class="container">
     <article class="essay-content">
-      <header style="margin-bottom: 2rem;">
-        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-          <small style="text-transform: uppercase; font-weight: bold; font-size: 0.75rem;" class="secondary">ESSAY</small>
+      <header class="note-header">
+        <div class="meta-line">
+          <small class="secondary note-kicker">ESSAY</small>
           <span class="secondary">•</span>
-          <time datetime="2026-08-14" class="secondary" style="font-size: 0.85rem;">August 14, 2026</time>
+          <time datetime="2026-08-14" class="secondary meta-time">August 14, 2026</time>
         </div>
         <h1>Graph Engineering Isn’t Magic: It’s Just Loops with State Management</h1>
       </header>
-      <figure class="article-header-image" style="margin: 2rem 0;">
+      <figure class="article-header-image">
         <img 
           src="/public/images/blog_header_graph_engineering_isnt_magic.png" 
           alt="Graph Engineering Isn't Magic Header Diagram" 
-          style="width: 100%; height: auto; border-radius: 8px; display: block;" 
+          
         />
       </figure>
 
@@ -816,7 +816,7 @@ raise RuntimeError(
     </article>
   </main>
 
-  <footer class="container" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--pico-muted-border-color);">
+  <footer class="container site-footer">
     <small class="secondary">© <script>document.write(new Date().getFullYear())</script> ZFRQBL</small>
   </footer>
 
@@ -841,5 +841,9 @@ raise RuntimeError(
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markdown.min.js"></script>
 </body>
 </html>
