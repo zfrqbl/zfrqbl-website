@@ -6,14 +6,18 @@
   <title>Stable Training Is Not Correct Gradients — ZFRQBL</title>
   <meta name="description" content="A 450M-parameter transformer trained fine for 25 billion tokens, then its gradient norm grew a thousandfold with no NaN and it finished 0.2 nats behind an identical FP32 run. The cause is a BF16 rounding error in FlashAttention-3's backward that breaks a conservation law in the attention gradient, and no forward-pass fix can reach it." />
 
+
   <meta property="og:type" content="article" />
   <meta property="og:title" content="Stable Training Is Not Correct Gradients" />
   <meta property="og:description" content="A 450M-parameter transformer trained fine for 25 billion tokens, then its gradient norm grew a thousandfold with no NaN and it finished 0.2 nats behind an identical FP32 run. The cause is a BF16 rounding error in FlashAttention-3's backward that breaks a conservation law in the attention gradient, and no forward-pass fix can reach it." />
   <meta property="og:url" content="https://zfrqbl.com/notes/stable-training-is-not-correct-gradients" />
-  <meta name="twitter:card" content="summary" />
+  <meta property="og:image" content="https://zfrqbl.com/public/og/stable-training-is-not-correct-gradients.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
 
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="/vendor/pico.2.1.1.min.css" />
 
   <link rel="stylesheet" href="/style.css" />
 

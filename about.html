@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About — ZFRQBL</title>
+  <meta name="description" content="ZFRQBL publishes daily notes on agent systems, model evaluation and software architecture. Written by Zafar, an independent software engineer based in Pakistan." />
+  <meta name="author" content="Zafar" />
+  <link rel="canonical" href="https://zfrqbl.com/about" />
+
+  <meta property="og:type" content="profile" />
+  <meta property="og:title" content="About ZFRQBL" />
+  <meta property="og:description" content="Daily notes on agent systems, model evaluation and software architecture. Written by Zafar, an independent software engineer based in Pakistan." />
+  <meta property="og:url" content="https://zfrqbl.com/about" />
+  <meta property="og:image" content="https://zfrqbl.com/public/og/about.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/vendor/pico.2.1.1.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Person",
+        "@id": "https://zfrqbl.com/#author",
+        "name": "Zafar",
+        "url": "https://zfrqbl.com/about",
+        "jobTitle": "Independent software engineer",
+        "description": "Writes daily notes on agent systems, model evaluation and software architecture.",
+        "knowsAbout": ["AI agents", "LLM evaluation", "software architecture", "developer tooling"],
+        "sameAs": ["https://www.linkedin.com/in/zfrqbl/"]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://zfrqbl.com/#website",
+        "url": "https://zfrqbl.com/",
+        "name": "ZFRQBL",
+        "description": "Daily notes on agent systems, model evaluation and software architecture.",
+        "inLanguage": "en",
+        "author": { "@id": "https://zfrqbl.com/#author" },
+        "publisher": { "@id": "https://zfrqbl.com/#author" }
+      }
+    ]
+  }
+  </script>
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="container">
+    <nav>
+      <ul>
+        <li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li>
+      </ul>
+      <ul>
+        <li><a href="/about">About</a></li>
+        <li>
+          <button id="theme-toggle" class="outline secondary theme-toggle-btn" aria-label="Toggle theme">
+            🌙 / ☀️
+          </button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article class="note-content">
+      <header class="note-header">
+        <div class="meta-line">
+          <small class="secondary note-kicker">About</small>
+        </div>
+        <h1>ZFRQBL is one engineer's working notes on agent systems</h1>
+      </header>
+
+      <section>
+        <p>ZFRQBL publishes one note a day about artificial intelligence, agent systems, model
+        evaluation and software architecture. It is written by Zafar, an independent software
+        engineer based in Pakistan, and it has run daily since September 2026.</p>
+
+        <p>The notes are short, sourced and specific. Each one takes a single claim — a benchmark
+        result, a release, a paper, an incident — checks it against the primary sources, and writes
+        down what a working engineer should take from it. The recurring subject is the gap between
+        what a headline says a system does and what the system actually does.</p>
+      </section>
+
+      <section>
+        <h2>What this site is</h2>
+        <ul>
+          <li><strong>Notes</strong> — one per day, numbered, at <a href="/">the home page</a> and
+          under <code>/notes/&lt;slug&gt;</code>. Each carries a date, a one-paragraph summary and
+          its sources.</li>
+          <li><strong>Essays</strong> — longer pieces at <code>/essays/&lt;slug&gt;</code>, published
+          when a subject needs more than a note.</li>
+          <li><strong>Feeds</strong> — <a href="/sitemap.xml">sitemap.xml</a> lists every page with a
+          last-modified date. <a href="/llms.txt">llms.txt</a> is a short map for agents and IDE
+          tooling.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>How it is built</h2>
+        <p>Static HTML and CSS served from Cloudflare Pages. No framework, no build step, no
+        client-side rendering: the full text of every page is in the initial response, which is
+        deliberate — a page that needs JavaScript to show its text returns nothing to a retrieval
+        agent. Notes are rendered and validated by a script before they publish, and every claim in
+        a note is checked against its cited sources first.</p>
+      </section>
+
+      <section>
+        <h2>Contact</h2>
+        <p>The only contact channel is LinkedIn:
+        <a href="https://www.linkedin.com/in/zfrqbl/" rel="me">linkedin.com/in/zfrqbl</a>.
+        Corrections are welcome there, particularly on the technical claims.</p>
+      </section>
+
+      <section>
+        <h2>Reuse and attribution</h2>
+        <p>Quoting and citing these notes is fine, with a link to the page. The site asks AI
+        crawlers to index and cite it: search and live-fetch agents are allowed in
+        <a href="/robots.txt">robots.txt</a>, training crawlers are not.</p>
+      </section>
+    </article>
+  </main>
+
+  <footer class="container site-footer">
+    <small class="secondary">
+      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
+    </small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
+
+</body>
+</html>

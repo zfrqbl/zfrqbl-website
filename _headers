@@ -1,0 +1,48 @@
+# zfrqbl.com — Cloudflare Pages parses this file at deploy time.
+# Limits: 100 rules max, 2,000 chars per line. A malformed rule is dropped SILENTLY, and exceeding
+# either ceiling rejects the whole file — so verify with curl after every change to this file:
+#   curl -sI https://zfrqbl.com/ | grep -iE "content-security|x-frame|permissions|strict-transport"
+#
+# Cache-Control is deliberately NOT set under /* : Pages joins a header applied by two matching
+# rules with a comma, so a blanket value would corrupt the asset rules below. HTML keeps the Pages
+# default (public, max-age=0, must-revalidate), which is the correct value for this site — the
+# markup changes on every publish.
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=(), usb=(), interest-cohort=()
+  Strict-Transport-Security: max-age=31536000
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://cloudflareinsights.com; form-action 'none'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'
+
+# Immutable, version-pinned assets. The vendor filenames carry their version, so a new version is a
+# new URL and this max-age is safe.
+/vendor/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/favicon.svg
+  Cache-Control: public, max-age=31536000, immutable
+
+# NOT immutable: the filename is not content-hashed, so a CSS edit must still be able to land.
+/style.css
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/public/images/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Keep the placeholder templates and the 404 page out of indexes. robots.txt asks; this enforces
+# for the crawlers that ignore robots.txt.
+/templates/*
+  X-Robots-Tag: noindex
+
+/404
+  X-Robots-Tag: noindex
+
+# Preview deployments (branch.pages.dev) must never be indexed — they carry the same content as
+# production under a different hostname, which is duplicate content.
+https://:project.pages.dev/*
+  X-Robots-Tag: noindex
+
+https://:version.:project.pages.dev/*
+  X-Robots-Tag: noindex
