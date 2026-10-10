@@ -16,20 +16,23 @@
   Strict-Transport-Security: max-age=31536000
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://cloudflareinsights.com; form-action 'none'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'
 
-# Immutable, version-pinned assets. The vendor filenames carry their version, so a new version is a
-# new URL and this max-age is safe.
+# Immutable ONLY where the filename carries its version. A version-pinned URL cannot go stale.
 /vendor/*
-  Cache-Control: public, max-age=31536000, immutable
-
-/favicon.svg
   Cache-Control: public, max-age=31536000, immutable
 
 # NOT immutable: the filename is not content-hashed, so a CSS edit must still be able to land.
 /style.css
   Cache-Control: public, max-age=86400, stale-while-revalidate=604800
 
+# Same reasoning as style.css, and this one was measured: /public/images/* was set to immutable at
+# first, and the deleted agent_loop.png kept returning 200 from the edge as a cf-cache-status: HIT
+# with age 18. A replaced image at the same path would have served stale for a year, silently.
+# Diagrams get revised; the cache must be able to follow.
 /public/images/*
-  Cache-Control: public, max-age=31536000, immutable
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/favicon.svg
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
 
 # Keep the placeholder templates and the 404 page out of indexes. robots.txt asks; this enforces
 # for the crawlers that ignore robots.txt.
