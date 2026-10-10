@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Cache Belongs to the Method, Not the Engine — ZFRQBL</title>
+  <meta name="description" content="Eviction-based sparse attention breaks the KV reuse that prefix caching depends on, so multi-turn agents rebuild context they already paid for. A lifecycle contract that lets each method own its cache state recovers it, at 2.24x end-to-end on a recorded agent trace." />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The Cache Belongs to the Method, Not the Engine" />
+  <meta property="og:description" content="Eviction-based sparse attention breaks the KV reuse that prefix caching depends on, so multi-turn agents rebuild context they already paid for. A lifecycle contract that lets each method own its cache state recovers it, at 2.24x end-to-end on a recorded agent trace." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/the-cache-belongs-to-the-method" />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary" aria-label="Toggle theme" style="padding: 0.25rem 0.5rem; font-size: 0.85rem;">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article>
+      <header style="margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <small style="text-transform: uppercase; font-weight: bold; font-size: 0.75rem;" class="secondary">Note #48</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-10-10" class="secondary" style="font-size: 0.85rem;">October 10, 2026</time>
+        </div>
+        <h1>The Cache Belongs to the Method, Not the Engine</h1>
+      </header>
+
+      
+
+      <section>
+                <h2>The cache belongs to the method, not the engine</h2>
+
+        <p>A long-horizon agent spends its context on tool results, reasoning traces and its own earlier output. Two costs grow with it. The KV cache has to hold the history, and attention has to read it. Sparse attention methods attack both, and there are enough of them now to fill a taxonomy.</p>
+
+        <p>SparseEngine starts from a different question. Not which sparse method is fastest, but where the boundary belongs between shared serving infrastructure and the method's own control over its cache.</p>
+
+        <h2>Every engine so far picked a layout, and the layout picked its methods</h2>
+
+        <p>Serving systems for sparse attention organize around a cache shape. Vortex exposes page-centric operations. SPIN moves partitions through a GPU and CPU pipeline. Tangram specializes in non-uniform, head-wise retention.</p>
+
+        <p>That works until a method does not fit. Quest needs query-dependent page selection at decode time. H2O needs persistent attention scores and physical eviction while generation is running. An interface built around one of those shapes constrains the other.</p>
+
+        <h2>Fifteen methods, one lifecycle</h2>
+
+        <p>The paper's answer is a lifecycle contract with hooks at fixed points, before and after attention, at the end of each layer and at the end of each execution step. A method registers callbacks and owns its cache representation, layout, position mapping and metadata. The engine keeps scheduling and capacity accounting.</p>
+
+        <p>The measured result is over 10x aggregate decode throughput with KV eviction under large batch sizes, over 2.5x decode throughput at matched concurrency against vLLM v0.26.0, and over 2x end-to-end speedup on agent benchmarks. At a matched batch size of two with 128K-token inputs, Quest inside SparseEngine reaches the decode throughput of Vortex and HiSparse, the two systems built specifically for page selection. The general implementation does not cost the specialists anything measurable.</p>
+
+        <h2>Eviction and prefix caching were incompatible. That is a bookkeeping gap, not a physics one.</h2>
+
+        <p>Prefix caching assumes the KV you computed is still resident. Eviction methods break that assumption on purpose, which is why SnapKV, H2O and KVzip could not reuse anything across agent turns. Every new turn rebuilt a prefix the engine had already processed and thrown away.</p>
+
+        <p>Chain Cache fixes the bookkeeping. A session gets an id, and the index holds its retained per-layer KV, the method's own metadata and the logical token prefix. The logical prefix stays matchable even when the physical entries behind it are gone. A continuation reattaches the retained state and prefills only the unprocessed suffix. Idle chains are reclaimed least-recently-used, so the memory accounting stays honest.</p>
+
+        <p>The agent numbers are where this lands. On SWE-bench Lite with mini-SWE-agent, SnapKV plus Chain Cache resolves 24.7% on GLM-4.7-Flash against 25.0% for full attention, and 8.3% on Qwen3-30B-A3B against 5.3% for full attention. H2O with the same treatment drops to 13.0%, which the paper attributes to an over-aggressive sparsity budget. Replaying a recorded Gasai trace with an 8K cache budget, SnapKV plus Chain Cache reaches a 2.24x end-to-end speedup, and the memory savings buy higher concurrency on top.</p>
+
+        <h2>Pruning a tool result is free, four rounds later</h2>
+
+        <p>Tool results lose value once they have been summarized. SparseEngine lets the application name a history interval and a retention ratio, then applies KVzip-style scoring to it.</p>
+
+        <p>Retaining 20% of the KV in targeted tool results costs a little quality. Delaying the same pruning by four rounds, so that only the fifth most recent tool result is touched, restores it entirely, at 25.0% task success on SWE-bench Lite against 23.7% for full attention. The recent evidence window is doing the work.</p>
+
+        <h2>The sparsity budget is where the quality bill arrives</h2>
+
+        <p>On AIME 2024 with Qwen3-4B-Thinking-2507, full attention scores 81.7%. OmniKV holds 80.0% and Quest 76.7%. SnapKV at a 16k budget scores 85.0%, at 8k 80.0%, and at 4k 58.3%. PyramidKV sits at 53.3% and R-KV at 51.7%, while StreamingLLM collapses to 18.3%.</p>
+
+        <p>The pattern runs one way. The larger the speedup, the larger the accuracy drop. Across the 20 overall-score comparisons on LongBench V1 and V2 the aggregate difference from the reference implementations is small, but individual subtasks move noticeably under top-p sampling. Read the aggregate, not the cell.</p>
+
+        <h2>What carries into your stack</h2>
+
+        <p>The cache is the method's state. An engine that treats it as a shared buffer will fit the methods whose layout it chose and fight the rest.</p>
+
+        <p>Cross-turn reuse is the payoff for agents. A single-turn benchmark understates eviction methods, because it hides the cost of rebuilding a prefix every turn.</p>
+
+        <p>Pruning is a policy with a delay parameter, not a switch. Four rounds of lag was the difference between a quality loss and none.</p>
+
+        <p>Match the comparison to the method. The paper's own check is a method-for-method comparison at matched batch size, which is the only way to tell whether a general engine is paying for its generality.</p>
+
+        <p>A default serving stack tells you what a model does with the cache it was given. Change who owns the cache and the same sparse methods keep their work across turns.</p>
+      </section>
+    </article>
+  </main>
+
+  <footer class="container" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--pico-muted-border-color);">
+    <small class="secondary">
+      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
+    </small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
+
+</body>
+</html>
