@@ -1,0 +1,30 @@
+# ZFRQBL
+
+> Independent software engineer writing about artificial intelligence, software architecture, and
+> building systems. Daily notes on agent systems, model evaluation, and the gap between what a
+> benchmark claims and what a system does.
+
+Author: Zafar (LinkedIn: https://www.linkedin.com/in/zfrqbl/)
+
+## Notes
+
+- [All notes](https://zfrqbl.com/): daily, numbered, reverse-chronological. The home page is the
+  complete index; each entry carries a title, date and one-paragraph summary.
+- [Sitemap](https://zfrqbl.com/sitemap.xml): every page URL with a lastmod date. Use this rather
+  than crawling the home page — it is generated from the corpus on every publish.
+
+## Essays
+
+- [Graph Engineering Isn't Magic: It's Just Loops with State Management](https://zfrqbl.com/essays/graph-engineering-isnt-magic)
+- [The Modern Python Developer's Trap: When Code Looks Right But Isn't](https://zfrqbl.com/essays/the-modern-python-developers-trap-when-code-looks-right-but-isnt)
+
+## About
+
+- [About](https://zfrqbl.com/about): who writes this, what it covers, and how to get in touch.
+
+## Notes on this file
+
+Every page is server-rendered HTML with its full text in the initial response — there is no client-side
+rendering, no paywall and no cookie wall. Individual note URLs are stable and extensionless:
+`https://zfrqbl.com/notes/<slug>`. Citation of a note should use the page URL and the `dateModified`
+value in its JSON-LD block.

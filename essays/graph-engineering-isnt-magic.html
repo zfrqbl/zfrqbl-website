@@ -13,8 +13,8 @@
   <meta name="twitter:card" content="summary" />
 
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/vendor/pico.2.1.1.min.css" />
+  <link rel="stylesheet" href="/vendor/prism-tomorrow.min.css" />
   <link rel="stylesheet" href="/style.css" />
 
   <script>
@@ -54,7 +54,7 @@
       </header>
       <figure class="article-header-image">
         <img 
-          src="/public/images/blog_header_graph_engineering_isnt_magic.png" 
+          src="/public/images/blog_header_graph_engineering_isnt_magic.webp" 
           alt="Graph Engineering Isn't Magic Header Diagram" 
           
         />
@@ -69,7 +69,7 @@
         <p>The workflow loop is straightforward:</p>
 
         <figure style="margin: 2rem 0;">
-          <img src="/public/images/code_loop.png" alt="Coding agent workflow loop diagram" style="width: 100%; height: auto; border-radius: 6px;" />
+          <img src="/public/images/code_loop.webp" alt="Coding agent workflow loop diagram" style="width: 100%; height: auto; border-radius: 6px;" />
           <figcaption class="secondary" style="font-size: 0.85rem; text-align: center; margin-top: 0.5rem;">Coding agent workflow loop</figcaption>
         </figure>
 
@@ -407,7 +407,7 @@ def evaluate_code(state: AgentState) -> dict:
         <p>The execution now has a clearer shape:</p>
 
         <figure style="margin: 2rem 0;">
-          <img src="/public/images/agent_loop.png" alt="Explicit state agent graph workflow diagram" style="width: 100%; height: auto; border-radius: 6px;" />
+          <img src="/public/images/agent_loop.webp" alt="Explicit state agent graph workflow diagram" style="width: 100%; height: auto; border-radius: 6px;" />
           <figcaption class="secondary" style="font-size: 0.85rem; text-align: center; margin-top: 0.5rem;">State and execution graph workflow diagram</figcaption>
         </figure>
 
@@ -839,11 +839,11 @@ raise RuntimeError(
       });
     });
   </script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markdown.min.js"></script>
+  <script src="/vendor/prism.min.js"></script>
+  <script src="/vendor/prism-python.min.js"></script>
+  <script src="/vendor/prism-javascript.min.js"></script>
+  <script src="/vendor/prism-bash.min.js"></script>
+  <script src="/vendor/prism-sql.min.js"></script>
+  <script src="/vendor/prism-markdown.min.js"></script>
 </body>
 </html>
