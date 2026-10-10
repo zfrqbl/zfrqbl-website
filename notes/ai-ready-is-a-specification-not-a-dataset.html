@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI-Ready Is a Specification, Not a Dataset — ZFRQBL</title>
+  <meta name="description" content="The $1.8 billion commitment to AI-ready biological data splits into new cash, prior federal spending and in-kind contributions, and most of the new money buys measurement instruments rather than models. What decides whether the resource works is a standards and access layer that costs almost nothing." />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="AI-Ready Is a Specification, Not a Dataset" />
+  <meta property="og:description" content="The $1.8 billion commitment to AI-ready biological data splits into new cash, prior federal spending and in-kind contributions, and most of the new money buys measurement instruments rather than models. What decides whether the resource works is a standards and access layer that costs almost nothing." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/ai-ready-is-a-specification-not-a-dataset" />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary theme-toggle-btn" aria-label="Toggle theme">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article class="note-content">
+      <header class="note-header">
+        <div class="meta-line">
+          <small class="secondary note-kicker">Note #49</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-10-10" class="secondary meta-time">October 10, 2026</time>
+        </div>
+        <h1>AI-Ready Is a Specification, Not a Dataset</h1>
+      </header>
+
+      
+
+      <section>
+                <h2>AI-ready is a specification, not a dataset</h2>
+
+        <p>Biohub, the Department of Energy, the National Institutes of Health and three corporate partners announced a $1.8 billion commitment to AI-ready biological data on October 7. It is the largest coordinated commitment to generating that kind of data so far. The number is doing a lot of work in the headline, so read the arithmetic before the ambition.</p>
+
+        <h2>Four contributions, three kinds of money</h2>
+
+        <p>The Department of Energy puts in more than $500 million over five years. Google DeepMind, Isomorphic Labs and Meta put in $300 million together. Biohub's $500 million anchors the effort, and that money was committed in April, not last week. The final $500 million is not new either. The NIH will coordinate datasets, repositories and knowledge bases built through more than $500 million in prior federal investment.</p>
+
+        <p>Those four contributions sum to the headline figure. The announcement calls the $1.8 billion funding, data, computation and new measurement technology, which is the tell. Only the DOE share and the $300 million from the three companies are money this announcement commits. A funding total is a portfolio sum, and a portfolio sum is not a data budget.</p>
+
+        <h2>The new money buys instruments</h2>
+
+        <p>Where the new dollars land tells you what the problem is. DOE's share is measurement, modeling and computation. Inside Biohub's founding commitment, $400 million buys tools. Cryo-electron tomography that resolves near-atomic detail inside a cell. Microscopy that images millions to billions of cells in living tissue. Engineering techniques that perturb biology at the molecular, cellular and tissue level. The other $100 million funds research outside Biohub.</p>
+
+        <p>That is a measurement budget rather than a modeling budget. The initiative states the constraint plainly, and it is not model capacity. It needs orders of magnitude more data than exists today, and no amount of capacity substitutes for measurements nobody took.</p>
+
+        <h2>The cheap part is the hard part</h2>
+
+        <p>The phrase carrying the engineering weight in the announcement is the smallest one. Biohub describes the layer it is building to make partner datasets work in a unified fashion as shared standards, common identifiers and a single point of access. Standards cost almost nothing in dollars and a great deal in coordination. Without them, the datasets stay a pile of files that happen to be open.</p>
+
+        <p>There is precedent to point at. CELLxGENE and the CryoET Data Portal are Biohub's existing data infrastructure. Tabula Sapiens, OpenCell and Zebrahub are its existing atlases. The partner list reads like the groups behind the Human Genome Project, with the Allen Institute, the Broad Institute, the Gladstone Institutes, the Wellcome Sanger Institute, the Human Cell Atlas and the Human Protein Atlas all involved. What made those earlier efforts usable was not the volume of data they produced. It was that separate laboratories agreed on what a record means.</p>
+
+        <h2>Open commons, qualified access</h2>
+
+        <p>One tension runs through the announcements. Biohub says the data it generates will be open and freely available to the research community. The Department of Energy's Genesis Mission page describes a narrower door, promising to open parts of the platform to qualified researchers, innovators and companies.</p>
+
+        <p>Both statements can be true at once, and where the line falls decides whether the resource is usable. A dataset only approved institutions can query trains models on the easy half. A dataset that opens everything creates a governance problem no data standard solves. Neither announcement says where the line falls, and that line matters more than the total does.</p>
+
+        <h2>What carries into your stack</h2>
+
+        <p>A funding total is a portfolio. Split it into new cash, prior spending and in-kind contributions before repeating it.</p>
+
+        <p>Data infrastructure is a specification. Shared standards, common identifiers and one access point are the deliverable, and the bytes sit downstream of them.</p>
+
+        <p>If you curate data for training, the coordination layer is the work. It does not get cheaper as the corpus grows, and it decides whether anyone else can use what you built.</p>
+      </section>
+    </article>
+  </main>
+
+  <footer class="container site-footer">
+    <small class="secondary">
+      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
+    </small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
+
+  
+
+</body>
+</html>
