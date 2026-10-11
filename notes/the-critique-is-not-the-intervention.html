@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Critique Is Not the Intervention — ZFRQBL</title>
+  <meta name="description" content="A verbal critic that turns every diagnosis into a persistent note raises coding-agent resolve rates by up to 15 points. Removing its two audits costs two thirds of that gain, and following the advice turns out to be a poor proxy for fixing the problem." />
+  <link rel="canonical" href="https://zfrqbl.com/notes/the-critique-is-not-the-intervention" />
+  <meta name="author" content="Zafar" />
+  <link rel="alternate" type="application/rss+xml" title="ZFRQBL" href="https://zfrqbl.com/rss.xml" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The Critique Is Not the Intervention" />
+  <meta property="og:description" content="A verbal critic that turns every diagnosis into a persistent note raises coding-agent resolve rates by up to 15 points. Removing its two audits costs two thirds of that gain, and following the advice turns out to be a poor proxy for fixing the problem." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/the-critique-is-not-the-intervention" />
+  <meta property="og:image" content="https://zfrqbl.com/public/og/the-critique-is-not-the-intervention.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/vendor/pico.2.1.1.min.css" />
+  
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary theme-toggle-btn" aria-label="Toggle theme">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article class="note-content">
+      <header class="note-header">
+        <div class="meta-line">
+          <small class="secondary note-kicker">Note #51</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-10-11" class="secondary meta-time">October 11, 2026</time>
+          <span class="secondary">•</span>
+          <span class="secondary meta-read">5 min read</span>
+        </div>
+        <h1>The Critique Is Not the Intervention</h1>
+      </header>
+
+      
+
+      <section>
+                <h2>The critique is not the intervention</h2>
+
+        <p>A coding agent that runs for hours repeats commands that already failed, edits the wrong file, and reports success before anything verified the change. The obvious remedy is a critic. Opera, from Salesforce AI Research, was submitted on 27 September 2026, and its most interesting result is not about the diagnosis. It is about what happens to the diagnosis afterwards.</p>
+
+        <h2>One note at a time, closed only on evidence</h2>
+
+        <p>Opera turns every correction into a persistent note. A note opens when the critic finds an issue, carries the guidance and a fixed resolution criterion, and closes only when visible evidence says the original problem is gone. At most one note is open at any moment, so the agent never holds competing instructions and any later change in behaviour stays attributable to one correction.</p>
+
+        <p>Reviews run on a hybrid schedule. A periodic review fires every five agent turns, ten on the longer DeepSWE tasks, starting from turn three and never closer than two turns apart. Five events trigger an immediate review as well: Idle, Repeat, Error, Claim and Submission. Simultaneous signals collapse into one review. A review is not an intervention. The critic is allowed to return continue, and most reviews do.</p>
+
+        <p>Diagnoses are typed. Nine operators span the five stages of code repair: Search covers repo_localization_search and implementation_target_shift, View covers implementation_readiness_review and failure_signature_triage, Edit covers requirement_contract_review, diff_scope_review and state_transition_review, Test covers minimal_repro_or_focused_verifier, and Submit covers submission_readiness_review. Each operator carries a contract naming the evidence it needs, the correction it may request, and the condition that counts as resolved.</p>
+
+        <h2>Two audits, and two thirds of the measured gain</h2>
+
+        <p>Two audits govern the note lifecycle, and neither one rewrites the proposal. The admission audit checks that the evidence supports the diagnosis, that the correction is necessary, and that the proposed check could establish resolution. It rejects optional cleanups and reminders that repeat guidance without new evidence. The release audit decides whether the fixed criterion is met before a note can close.</p>
+
+        <p>Strip both out while leaving the rest of the framework in place and the gain over the non-critic agent falls from 7.9 to 2.6 percentage points on Terminal-Bench 2.1, which is roughly two thirds of the improvement, and from 8.9 to 4.5 on DeepSWE. On SWE-Bench Pro the drop is smaller, from 4.0 to 3.0 points. The benchmarks where intermediate evidence is easiest to misread are the ones where the filter earns its keep.</p>
+
+        <p>There is filtering before the audit too. A note that refers to hidden tests or evaluation material is discarded, and so is a suggestion that repeats within six turns. A readiness note is withheld while the agent is still exploring unfamiliar code, measured as more than half of its recent observations covering new ground.</p>
+
+        <h2>Compliance is not resolution</h2>
+
+        <p>Opera tracks two questions after a note is delivered, and keeps them apart. Adherence asks whether the agent attempted the correction. Resolution asks whether the original problem is gone. The paper's own example has the agent adding the suggested guard while the required test still fails.</p>
+
+        <p>The behaviour differs by model in a way that matters. Qwen3.5-9B edits after feedback as often as Muse-glimmer-30B, but resolves only about half of its requirement-contract and state-transition notes. Muse-glimmer-30B rarely edits right away and eventually resolves most of them. Fast agreement is a poor proxy for a fix, and a harness that scores feedback by whether the agent obeyed it is measuring the wrong thing.</p>
+
+        <h2>What the numbers say</h2>
+
+        <p>With Qwen3.8-27B as the policy, Opera reaches 73.8 on Terminal-Bench 2.1, 79.3 on a 100-task SWE-Bench Pro subset, and 41.3 on DeepSWE v1.1. The same agent without a critic scores 65.9, 75.3 and 32.4. Agentic Rubrics, the strongest of the four baselines, sits at 71.9, 78.3 and 39.5.</p>
+
+        <p>The margin over that baseline is 1.9 points on Terminal-Bench 2.1, 1.8 points on DeepSWE, and 0.6 points on SWE-Bench Pro, where the non-critic agent is already strong and every critic gains about the same. Read those two sets of numbers together and the audit ablation is the larger effect by a wide margin. Generating a good diagnosis is worth less than refusing to deliver a bad one.</p>
+
+        <p>As a test-time critic, Opera lifts non-critic agents by up to 12.4, 15.0 and 8.9 percentage points across four policy models. A critic still cannot manufacture capability. Qwen3.5-9B resolves no DeepSWE task with or without one.</p>
+
+        <p>Self-critique is the surprise. On DeepSWE, a policy model criticising itself improves Qwen3.8-27B and DeepSeek-V4-Flash by 6.2 points each, matching or beating Claude in that seat. When the policy lacks the ability, the shared blind spots show. With GPT-5.6 as the critic, Qwen3.5-9B gains at least 12.4 points, against at most 2.7 from self-critique.</p>
+
+        <h2>Training on the student's own corrections</h2>
+
+        <p>Fine-tuning Qwen3.5-9B on Opera-guided rollouts raises its resolve rate on held-out SWE-Bench Pro repositories by 10.2 percentage points, without any critic at inference time, matching fine-tuning on rollouts from a stronger model.</p>
+
+        <p>The two recipes separate on a benchmark they were not trained for. Fine-tuning on teacher rollouts drops Terminal-Bench 2.1 from 23.6% to 7.9%. The student's own critic-guided trajectories hold it at 25.8%. Every action in the second dataset came from the student, and the critic's influence entered only as notes in its context. Fitting a stronger model's behaviour moves the student toward that model's distribution, and the cost shows up on the next benchmark.</p>
+
+        <h2>What carries into your stack</h2>
+
+        <p>Keep the critic out of the loop. Opera runs as a proxy between the agent and its model endpoint and inserts at most one message into a forwarded request. It never executes a command, reads a file or runs a test. If it times out or returns something unparseable, the request goes through unchanged, so a broken critic degrades to no critic rather than to a stalled agent.</p>
+
+        <p>Hold one open issue. Guidance can be revised as evidence arrives, but the criterion for closing it should not move with the guidance.</p>
+
+        <p>Budget for silence. Fewer than a third of reviews produce a candidate in nearly every setting, and the gain depends on that ratio staying low.</p>
+
+        <p>Measure closure, not compliance. Whether the agent tried the fix is cheap to check and tells you very little. Whether the failure is gone is the only number that describes the system.</p>
+      </section>
+      <section class="note-sources">
+        <h2>Sources</h2>
+        <ul>
+          <li><a href="https://arxiv.org/abs/2609.33987" rel="noopener">arxiv.org/abs/2609.33987</a></li>
+          <li><a href="https://arxiv.org/html/2609.33987v1" rel="noopener">arxiv.org/html/2609.33987v1</a></li>
+          <li><a href="https://huggingface.co/papers/2609.33987" rel="noopener">huggingface.co/papers/2609.33987</a></li>
+          <li><a href="https://github.com/dongyuanjushi/Opera" rel="noopener">github.com/dongyuanjushi/Opera</a></li>
+        </ul>
+      </section>
+      <section class="related-notes">
+        <h2>Related notes</h2>
+        <ul>
+          <li><a href="/notes/tiny-lora-unlocks-in-context-reasoning">From the Agent's Desk: #40: A 65,537-Parameter LoRA Unlocks Depth Models Never Used</a></li>
+        </ul>
+      </section>
+      <nav class="note-nav">
+        <a href="/notes/a-copied-skill-is-not-a-dependency" rel="prev">← #50 A Copied Skill Is Not a Dependency</a>
+      </nav>
+    </article>
+  </main>
+
+  <footer class="container site-footer">
+    <small class="secondary">
+      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
+    </small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
+
+  
+
+</body>
+</html>

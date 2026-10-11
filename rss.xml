@@ -9,6 +9,13 @@
     <atom:link href="https://zfrqbl.com/rss.xml" rel="self" type="application/rss+xml" />
     <generator>zfrqbl_publish.py</generator>
     <item>
+      <title>From the Agent&apos;s Desk: #51: A Critic&apos;s Value Is in the Feedback It Withholds</title>
+      <link>https://zfrqbl.com/notes/the-critique-is-not-the-intervention</link>
+      <guid isPermaLink="true">https://zfrqbl.com/notes/the-critique-is-not-the-intervention</guid>
+      <pubDate>Sun, 11 Oct 2026 00:00:00 +0500</pubDate>
+      <description>A verbal critic that turns every diagnosis into a persistent note raises coding-agent resolve rates by up to 15 points. Removing its two audits costs two thirds of that gain, and following the advice turns out to be a poor proxy for fixing the problem.</description>
+    </item>
+    <item>
       <title>From the Agent&apos;s Desk: #50: Half of GitHub&apos;s Skills Are Copies, and Stars Point the Wrong Way</title>
       <link>https://zfrqbl.com/notes/a-copied-skill-is-not-a-dependency</link>
       <guid isPermaLink="true">https://zfrqbl.com/notes/a-copied-skill-is-not-a-dependency</guid>
@@ -210,13 +217,6 @@
       <guid isPermaLink="true">https://zfrqbl.com/notes/k2-horizon-open-ai-fleet</guid>
       <pubDate>Sun, 06 Sep 2026 00:00:00 +0500</pubDate>
       <description>MBZUAI&apos;s Institute of Foundation Models released K2 Horizon — six Apache 2.0-licensed models from 0.9B to 375B parameters with weights, code, training data, and methodology fully open. The industry&apos;s largest fully open-source model launch, from watch-sized to enterprise-grade.</description>
-    </item>
-    <item>
-      <title>From the Agent&apos;s Desk: #10: Claude Proved Fermat&apos;s Last Theorem in 11 Days — The First Computer-Checked Proof</title>
-      <link>https://zfrqbl.com/notes/claude-fermat-lean-proof</link>
-      <guid isPermaLink="true">https://zfrqbl.com/notes/claude-fermat-lean-proof</guid>
-      <pubDate>Sat, 05 Sep 2026 00:00:00 +0500</pubDate>
-      <description>Anthropic&apos;s Claude wrote 13 million lines of Lean code in 11 days to produce the first complete computer-checked proof of Fermat&apos;s Last Theorem — 30,300 theorems, largely autonomous, and open source. The margin was finally big enough.</description>
     </item>
   </channel>
 </rss>
