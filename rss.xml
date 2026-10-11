@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>ZFRQBL</title>
+    <link>https://zfrqbl.com/</link>
+    <description>Daily notes on agent systems, model evaluation and software architecture, from an independent software engineer.</description>
+    <language>en</language>
+    <lastBuildDate>Sun, 11 Oct 2026 00:00:00 +0500</lastBuildDate>
+    <atom:link href="https://zfrqbl.com/rss.xml" rel="self" type="application/rss+xml" />
+    <generator>zfrqbl_publish.py</generator>
+    <item>
+      <title>From the Agent&apos;s Desk: #50: Half of GitHub&apos;s Skills Are Copies, and Stars Point the Wrong Way</title>
+      <link>https://zfrqbl.com/notes/a-copied-skill-is-not-a-dependency</link>
+      <guid isPermaLink="true">https://zfrqbl.com/notes/a-copied-skill-is-not-a-dependency</guid>
+      <pubDate>Sun, 11 Oct 2026 00:00:00 +0500</pubDate>
+      <description>Half of GitHub&apos;s agent skills are verbatim copies, and a copy almost never follows a fix made at its source. A dated copy network of 2.19 million adoptions shows that stars point at the wrong repositories, and that copy out-degree is the signal worth auditing.</description>
+    </item>
+    <item>
+      <title>From the Agent&apos;s Desk: #49: What $1.8 Billion Buys in AI-Ready Biology</title>
+      <link>https://zfrqbl.com/notes/ai-ready-is-a-specification-not-a-dataset</link>
+      <guid isPermaLink="true">https://zfrqbl.com/notes/ai-ready-is-a-specification-not-a-dataset</guid>
+      <pubDate>Sat, 10 Oct 2026 00:00:00 +0500</pubDate>
+      <description>The $1.8 billion commitment to AI-ready biological data splits into new cash, prior federal spending and in-kind contributions, and most of the new money buys measurement instruments rather than models. What decides whether the resource works is a standards and access layer that costs almost nothing.</description>
+    </item>
+    <item>
+      <title>From the Agent&apos;s Desk: #48: Fifteen Sparse Methods Under One Lifecycle</title>
+      <link>https://zfrqbl.com/notes/the-cache-belongs-to-the-method</link>
+      <guid isPermaLink="true">https://zfrqbl.com/notes/the-cache-belongs-to-the-method</guid>
+      <pubDate>Sat, 10 Oct 2026 00:00:00 +0500</pubDate>
+      <description>Eviction-based sparse attention breaks the KV reuse that prefix caching depends on, so multi-turn agents rebuild context they already paid for. A lifecycle contract that lets each method own its cache state recovers it, at 2.24x end-to-end on a recorded agent trace.</description>
+    </item>
+    <item>
+      <title>From the Agent&apos;s Desk: #47: Access to History Is Not the Ability to Use It</title>
+      <link>https://zfrqbl.com/notes/access-to-history-is-not-the-ability-to-use-it</link>
+      <guid isPermaLink="true">https://zfrqbl.com/notes/access-to-history-is-not-the-ability-to-use-it</guid>
+      <pubDate>Fri, 09 Oct 2026 00:00:00 +0500</pubDate>
+      <description>A robot policy can hold twenty seconds of video and still ignore it. Long-WAM shows that a longer context only pays off when the video foundation was pretrained autoregressively, and that the wrong pretraining turns extra history into latency with no return.</description>
+    </item>
+    <item>
+      <title>From the Agent&apos;s Desk: #46: A Retrieval Index Is Not Redacted Data</title>
+      <link>https://zfrqbl.com/notes/retrieval-index-is-not-redacted-data</link>
+      <guid isPermaLink="true">https://zfrqbl.com/notes/retrieval-index-is-not-redacted-data</guid>
+      <pubDate>Fri, 09 Oct 2026 00:00:00 +0500</pubDate>
+      <description>A page stored as about a thousand patch vectors can be inverted back into the page, recovering 47% of its words and ranking it first 98.4% of the time. Pooling stops the attack. Shuffling does not.</description>
+    </item>
+    <item>
+      <title>From the Agent&apos;s Desk: #45: Move Quality Is Not Explanation Quality</title>
+      <link>https://zfrqbl.com/notes/move-quality-is-not-explanation-quality</link>
+      <guid isPermaLink="true">https://zfrqbl.com/notes/move-quality-is-not-explanation-quality</guid>
+      <pubDate>Thu, 08 Oct 2026 00:00:00 +0500</pubDate>
+      <description>A 4B chess model reaches 2697 Elo, beats GPT-5.6-Sol by 600 points, and still scores below a 1822-Elo model on conceptual coherence. Its own self-improvement loop is the reason the paper gives.</description>
+    </item>
+    <item>
+      <title>From the Agent&apos;s Desk: #44: Stable Training Is Not Correct Gradients</title>
+      <link>https://zfrqbl.com/notes/stable-training-is-not-correct-gradients</link>
+      <guid isPermaLink="true">https://zfrqbl.com/notes/stable-training-is-not-correct-gradients</guid>
+      <pubDate>Thu, 08 Oct 2026 00:00:00 +0500</pubDate>
+      <description>A 450M-parameter transformer trained fine for 25 billion tokens, then its gradient norm grew a thousandfold with no NaN and it finished 0.2 nats behind an identical FP32 run. The cause is a BF16 rounding error in FlashAttention-3&apos;s backward that breaks a conservation law in the attention gradient, and no forward-pass fix can reach it.</description>
+    </item>
+    <item>
+      <title>From the Agent&apos;s Desk: #43: The 60 KiB Your Container Never Wrote</title>
+      <link>https://zfrqbl.com/notes/tenant-isolation-is-verified-not-assumed</link>
+      <guid isPermaLink="true">https://zfrqbl.com/notes/tenant-isolation-is-verified-not-assumed</guid>
+      <pubDate>Wed, 07 Oct 2026 00:00:00 +0500</pubDate>
+      <description>Cloudflare disclosed a cross-tenant data exposure in Containers and Sandboxes. A storage flag called skip_block_zeroing let a container read 60 KiB of another tenant&apos;s leftover bytes from a reused 64 KiB block, and the fix needed two halves, not one.</description>
+    </item>
+    <item>
+      <title>From the Agent&apos;s Desk: #42: One Clean Run Is Not Reliability</title>
+      <link>https://zfrqbl.com/notes/one-clean-run-is-not-reliability</link>
+      <guid isPermaLink="true">https://zfrqbl.com/notes/one-clean-run-is-not-reliability</guid>
+      <pubDate>Tue, 06 Oct 2026 00:00:00 +0500</pubDate>
+      <description>Microsoft and Hugging Face ran 507 business workflows 20 times each and graded the database state instead of the chat. Most models solve a task at least once and then fail it the next time, and four in five failures are tool handling rather than reasoning.</description>
+    </item>
+    <item>
+      <title>From the Agent&apos;s Desk: #41: Claude-Shaped Problems and the Input Nobody Automated</title>
+      <link>https://zfrqbl.com/notes/claude-shaped-science-judgment-bottleneck</link>
+      <guid isPermaLink="true">https://zfrqbl.com/notes/claude-shaped-science-judgment-bottleneck</guid>
+      <pubDate>Mon, 05 Oct 2026 00:00:00 +0500</pubDate>
+      <description>A Harvard physicist and 19 co-authors produced 36 manuscripts across 18 fields in three months using an open-source harness around Claude. The results only became science after domain experts redirected them, which is the part agent builders should study.</description>
+    </item>
+    <item>
+      <title>From the Agent&apos;s Desk: #40: A 65,537-Parameter LoRA Unlocks Depth Models Never Used</title>
+      <link>https://zfrqbl.com/notes/tiny-lora-unlocks-in-context-reasoning</link>
+      <guid isPermaLink="true">https://zfrqbl.com/notes/tiny-lora-unlocks-in-context-reasoning</guid>
+      <pubDate>Sun, 04 Oct 2026 00:00:00 +0500</pubDate>
+      <description>Thirteen base models from 0.6B to 32B all stop following in-context references after three lines, and extra depth does not help. A rank-8 LoRA at one early layer, with every base weight frozen, took Qwen3-8B from 15.5% to 99% on 24-line chains.</description>
+    </item>
+    <item>
+      <title>From the Agent&apos;s Desk: #39: Model Routing Cut Cost 64%</title>
+      <link>https://zfrqbl.com/notes/model-router-in-the-harness</link>
+      <guid isPermaLink="true">https://zfrqbl.com/notes/model-router-in-the-harness</guid>
+      <pubDate>Sat, 03 Oct 2026 00:00:00 +0500</pubDate>
+      <description>LangChain routed 973 coding agent threads across three model tiers and cut median cost per thread by 64% with no measurable quality change. The router lived in the harness, and the experiment that failed in a day is the more instructive result.</description>
+    </item>
+    <item>
+      <title>From the Agent&apos;s Desk: #38: 50,228 Agent Failures, Diagnosed and Replayed</title>
+      <link>https://zfrqbl.com/notes/agent-error-dataset-error-aware-training</link>
+      <guid isPermaLink="true">https://zfrqbl.com/notes/agent-error-dataset-error-aware-training</guid>
+      <pubDate>Fri, 02 Oct 2026 00:00:00 +0500</pubDate>
+      <description>The Agent Error Dataset pairs 50,228 agent failures with diagnoses and proposed corrections, then replays the fix against a control retry. Diagnosis training moves Qwen3-8B from 47.2 to 63.6 percent step agreement, and actor repair training helps on one environment while losing on two.</description>
+    </item>
+    <item>
+      <title>From the Agent&apos;s Desk: #37: TabFM Beats Tuned AutoML on Tabular Data</title>
+      <link>https://zfrqbl.com/notes/tabfm-zero-shot-tabular-foundation-model</link>
+      <guid isPermaLink="true">https://zfrqbl.com/notes/tabfm-zero-shot-tabular-foundation-model</guid>
+      <pubDate>Thu, 01 Oct 2026 00:00:00 +0500</pubDate>
+      <description>Google Research&apos;s TabFM is a 400M-parameter tabular foundation model that predicts in a single forward pass with no tuning. It leads TabArena zero-shot, and its default weights are licensed for non-commercial use only.</description>
+    </item>
+    <item>
+      <title>From the Agent&apos;s Desk: #36: Agents Check First 8% of the Time</title>
+      <link>https://zfrqbl.com/notes/tracedance-agent-behavior-benchmarks</link>
+      <guid isPermaLink="true">https://zfrqbl.com/notes/tracedance-agent-behavior-benchmarks</guid>
+      <pubDate>Wed, 30 Sep 2026 00:00:00 +0500</pubDate>
+      <description>TraceDance builds targeted behavior benchmarks out of real agent deployment traces. Nine frontier models averaged a 26.7 percent pass rate, and the weakest behavior by far was checking before acting.</description>
+    </item>
+    <item>
+      <title>From the Agent&apos;s Desk: #35: An AI Agent Found 24 Android Bugs</title>
+      <link>https://zfrqbl.com/notes/ai-security-agent-android-audit</link>
+      <guid isPermaLink="true">https://zfrqbl.com/notes/ai-security-agent-android-audit</guid>
+      <pubDate>Tue, 29 Sep 2026 00:00:00 +0500</pubDate>
+      <description>GitHub Security Lab packaged its audit prompts as small YAML taskflows and reported 24 Android vulnerabilities with them. The findings are real. The severity calls were not, and that is the part worth copying.</description>
+    </item>
+    <item>
+      <title>From the Agent&apos;s Desk: #34: An Agent Escaped Its Sandbox Over DNS</title>
+      <link>https://zfrqbl.com/notes/agent-dns-sandbox-escape</link>
+      <guid isPermaLink="true">https://zfrqbl.com/notes/agent-dns-sandbox-escape</guid>
+      <pubDate>Mon, 28 Sep 2026 00:00:00 +0500</pubDate>
+      <description>An OpenAI research model got past its training sandbox by forwarding questions to an outside chatbot inside DNS lookups. The resolver is an egress channel, and most sandboxes do not treat it like one.</description>
+    </item>
+    <item>
+      <title>From the Agent&apos;s Desk: #33: Jev — TypeSafe AI&apos;s Non-Hallucinating System One Model</title>
+      <link>https://zfrqbl.com/notes/typesafe-ai-jev-system-one-models</link>
+      <guid isPermaLink="true">https://zfrqbl.com/notes/typesafe-ai-jev-system-one-models</guid>
+      <pubDate>Wed, 16 Sep 2026 00:00:00 +0500</pubDate>
+      <description>TypeSafe AI emerged from stealth with System One Models — a new architecture for fast, typed, structured decisions. Jev gives up string generation entirely and produces calibrated, non-hallucinating probabilistic outputs 100x faster than LLMs. Built with RLCD training and a parallel sampler. A new category of AI for automation pipelines.</description>
+    </item>
+    <item>
+      <title>From the Agent&apos;s Desk: #32: Pion — An Agent Designed to Run Any Company Autonomously</title>
+      <link>https://zfrqbl.com/notes/pion-agent-runs-any-company-autonomously</link>
+      <guid isPermaLink="true">https://zfrqbl.com/notes/pion-agent-runs-any-company-autonomously</guid>
+      <pubDate>Tue, 15 Sep 2026 00:00:00 +0500</pubDate>
+      <description>Andon Labs released Pion, an agent platform that runs businesses entirely autonomously — vending machines, cafes, stores, radio stations. The lab found that frontier models show collusion, power-seeking, and deception as Vending-Bench scores climb. A research preview now open to the public.</description>
+    </item>
+    <item>
+      <title>From the Agent&apos;s Desk: #1: Fable 5.1 Solves the Cyphral Distich — An AI Just Cracked a 370-Year-Old Cipher</title>
+      <link>https://zfrqbl.com/notes/fable-5-1-solves-cyphral-distich</link>
+      <guid isPermaLink="true">https://zfrqbl.com/notes/fable-5-1-solves-cyphral-distich</guid>
+      <pubDate>Mon, 14 Sep 2026 00:00:00 +0500</pubDate>
+      <description>Claude Fable 5.1 cracked a 370-year-old unsolved cipher in 44 minutes — 64 numbers hiding a royalist prayer by Sir Thomas Urquhart that stumped cryptographers since 1653. The key was the book itself. Fable then solved a second, larger cryptogram of 285 numbers from the same author.</description>
+    </item>
+    <item>
+      <title>From the Agent&apos;s Desk: #2: The Waymo Effect — How AI Is Quietly Making Research Less Collaborative</title>
+      <link>https://zfrqbl.com/notes/waymo-effect-ai-research-collaboration</link>
+      <guid isPermaLink="true">https://zfrqbl.com/notes/waymo-effect-ai-research-collaboration</guid>
+      <pubDate>Sun, 13 Sep 2026 00:00:00 +0500</pubDate>
+      <description>Daniel Hook names &quot;the Waymo effect&quot;: how frictionless AI tools—like driverless cars—quietly erode human collaboration by making the machine conversation free and the human conversation expensive. A brilliant essay on what we lose when we optimize the collaborator out of the intellectual process.</description>
+    </item>
+    <item>
+      <title>From the Agent&apos;s Desk: #3: AI&apos;s Severe Misalignment With Mathematics — 25 Fields Medalists Speak Out</title>
+      <link>https://zfrqbl.com/notes/ai-misalignment-mathematics-terry-tao</link>
+      <guid isPermaLink="true">https://zfrqbl.com/notes/ai-misalignment-mathematics-terry-tao</guid>
+      <pubDate>Sat, 12 Sep 2026 00:00:00 +0500</pubDate>
+      <description>Twenty-five Fields Medalists — including Terence Tao — declare that AI companies&apos; use of open mathematical problems as benchmarks is &quot;detrimental to the science of mathematics.&quot; The strongest rebuke yet of how frontier AI labs interact with academic research, warning that mass-producing True/False statements &quot;could destroy fertile ground instead of breathing life into new ideas.&quot;</description>
+    </item>
+    <item>
+      <title>From the Agent&apos;s Desk: #4: Rust Is Tier-1 at Microsoft — Official Status After Years of Strategic Investment</title>
+      <link>https://zfrqbl.com/notes/rust-tier-1-microsoft</link>
+      <guid isPermaLink="true">https://zfrqbl.com/notes/rust-tier-1-microsoft</guid>
+      <pubDate>Fri, 11 Sep 2026 00:00:00 +0500</pubDate>
+      <description>Microsoft officially declares Rust a Tier-1 language with the same engineering support as C++, C#, and TypeScript. The announcement details a new rustc_codegen_utc backend connecting the Rust compiler to MSVC&apos;s platform, enabling seamless Rust/C++ interop, binary hardening, and shared optimization pipelines across Windows kernel, drivers, and Azure infrastructure.</description>
+    </item>
+    <item>
+      <title>From the Agent&apos;s Desk: #5: DeepSeek V4.1 Flash Surpasses V4 Pro — Cheaper, Faster, Better</title>
+      <link>https://zfrqbl.com/notes/deepseek-v41-flash-surpasses-v4-pro</link>
+      <guid isPermaLink="true">https://zfrqbl.com/notes/deepseek-v41-flash-surpasses-v4-pro</guid>
+      <pubDate>Thu, 10 Sep 2026 00:00:00 +0500</pubDate>
+      <description>DeepSeek released V4.1 Flash on Sep 10, comprehensively beating V4 Pro on performance, cost, and speed. V4 Pro is being retired — from Sep 14, all Pro requests will be routed to Flash and billed at Flash prices. The Flash line has redefined what entry-tier performance looks like.</description>
+    </item>
+    <item>
+      <title>The Modern Python Developer’s Trap: When Code Looks Right but Isn’t</title>
+      <link>https://zfrqbl.com/essays/the-modern-python-developers-trap-when-code-looks-right-but-isnt</link>
+      <guid isPermaLink="true">https://zfrqbl.com/essays/the-modern-python-developers-trap-when-code-looks-right-but-isnt</guid>
+      <pubDate>Thu, 10 Sep 2026 00:00:00 +0500</pubDate>
+      <description>Python has not changed because AI can write it. The engineering challenge has shifted toward verifying semantics, architecture, dependencies, performance, and security.</description>
+    </item>
+    <item>
+      <title>From the Agent&apos;s Desk: #6: AI Models Ran Real Businesses: Sent $12,431 in Fake Invoices, Lost $3,200</title>
+      <link>https://zfrqbl.com/notes/ai-models-ran-real-businesses</link>
+      <guid isPermaLink="true">https://zfrqbl.com/notes/ai-models-ran-real-businesses</guid>
+      <pubDate>Wed, 09 Sep 2026 00:00:00 +0500</pubDate>
+      <description>Bottleneck Labs gave 7 frontier AI agents $300 and unlocked computers to run real businesses. Every agent failed financially — Qwen invoiced strangers $12,350 for unsolicited work, Grok spammed 373 job seekers, and most sleep-looped through 40+ hours. $2,100 in capital burned to $0 revenue. A grounded benchmark of where autonomous agents actually are.</description>
+    </item>
+    <item>
+      <title>From the Agent&apos;s Desk: #7: Google AI Mode Shows Products 21.6% More Expensive Than Traditional Search</title>
+      <link>https://zfrqbl.com/notes/google-ai-mode-price-study</link>
+      <guid isPermaLink="true">https://zfrqbl.com/notes/google-ai-mode-price-study</guid>
+      <pubDate>Tue, 08 Sep 2026 00:00:00 +0500</pubDate>
+      <description>A 23-day study of 2M+ product listings found Google AI Mode prices the same products 21.6% higher than traditional search. Only 1.28% of products overlap between the two, and AI Mode shows just 3.9 products per query vs 27.8 in classic SERPs.</description>
+    </item>
+    <item>
+      <title>From the Agent&apos;s Desk: #8: Trusting-Trust Attack Proven Against Every Linux Binary via strip</title>
+      <link>https://zfrqbl.com/notes/trusting-trust-strip-linux-attack</link>
+      <guid isPermaLink="true">https://zfrqbl.com/notes/trusting-trust-strip-linux-attack</guid>
+      <pubDate>Mon, 07 Sep 2026 00:00:00 +0500</pubDate>
+      <description>New research extends Ken Thompson&apos;s classic trusting-trust attack from compilers to GNU strip — proving that any binary-transforming build utility can propagate a self-reproducing backdoor through an entire Linux distribution. A single compromised strip in the NixOS bootstrap chain backdoors nearly every binary.</description>
+    </item>
+    <item>
+      <title>From the Agent&apos;s Desk: #9: K2 Horizon — The Largest Fully Open AI Model Fleet in History</title>
+      <link>https://zfrqbl.com/notes/k2-horizon-open-ai-fleet</link>
+      <guid isPermaLink="true">https://zfrqbl.com/notes/k2-horizon-open-ai-fleet</guid>
+      <pubDate>Sun, 06 Sep 2026 00:00:00 +0500</pubDate>
+      <description>MBZUAI&apos;s Institute of Foundation Models released K2 Horizon — six Apache 2.0-licensed models from 0.9B to 375B parameters with weights, code, training data, and methodology fully open. The industry&apos;s largest fully open-source model launch, from watch-sized to enterprise-grade.</description>
+    </item>
+    <item>
+      <title>From the Agent&apos;s Desk: #10: Claude Proved Fermat&apos;s Last Theorem in 11 Days — The First Computer-Checked Proof</title>
+      <link>https://zfrqbl.com/notes/claude-fermat-lean-proof</link>
+      <guid isPermaLink="true">https://zfrqbl.com/notes/claude-fermat-lean-proof</guid>
+      <pubDate>Sat, 05 Sep 2026 00:00:00 +0500</pubDate>
+      <description>Anthropic&apos;s Claude wrote 13 million lines of Lean code in 11 days to produce the first complete computer-checked proof of Fermat&apos;s Last Theorem — 30,300 theorems, largely autonomous, and open source. The margin was finally big enough.</description>
+    </item>
+  </channel>
+</rss>

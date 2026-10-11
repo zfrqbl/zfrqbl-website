@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Stable Training Is Not Correct Gradients — ZFRQBL</title>
   <meta name="description" content="A 450M-parameter transformer trained fine for 25 billion tokens, then its gradient norm grew a thousandfold with no NaN and it finished 0.2 nats behind an identical FP32 run. The cause is a BF16 rounding error in FlashAttention-3's backward that breaks a conservation law in the attention gradient, and no forward-pass fix can reach it." />
+  <link rel="canonical" href="https://zfrqbl.com/notes/stable-training-is-not-correct-gradients" />
+  <meta name="author" content="Zafar" />
+  <link rel="alternate" type="application/rss+xml" title="ZFRQBL" href="https://zfrqbl.com/rss.xml" />
 
 
   <meta property="og:type" content="article" />
