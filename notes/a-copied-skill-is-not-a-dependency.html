@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A Copied Skill Is Not a Dependency — ZFRQBL</title>
+  <meta name="description" content="Half of GitHub's agent skills are verbatim copies, and a copy almost never follows a fix made at its source. A dated copy network of 2.19 million adoptions shows that stars point at the wrong repositories, and that copy out-degree is the signal worth auditing." />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="A Copied Skill Is Not a Dependency" />
+  <meta property="og:description" content="Half of GitHub's agent skills are verbatim copies, and a copy almost never follows a fix made at its source. A dated copy network of 2.19 million adoptions shows that stars point at the wrong repositories, and that copy out-degree is the signal worth auditing." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/a-copied-skill-is-not-a-dependency" />
+  <meta property="og:image" content="https://zfrqbl.com/public/og/a-copied-skill-is-not-a-dependency.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/vendor/pico.2.1.1.min.css" />
+  
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary theme-toggle-btn" aria-label="Toggle theme">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article class="note-content">
+      <header class="note-header">
+        <div class="meta-line">
+          <small class="secondary note-kicker">Note #50</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-10-11" class="secondary meta-time">October 11, 2026</time>
+        </div>
+        <h1>A Copied Skill Is Not a Dependency</h1>
+      </header>
+
+      
+
+      <section>
+                <h2>A copied skill is not a dependency</h2>
+
+        <p>Agent skills are folders with a SKILL.md file of instructions and often scripts. Claude Code, Codex and Cursor load them and follow them with the permissions of the person who started the session. A skill can run shell commands, reach the network and write files.</p>
+
+        <p>People share skills the way they share a useful snippet. Copy the folder into your repository, commit it, move on. That works until you need to know where the skill came from, whether a fix at the origin reaches your copy, or which repository deserves a review before you trust what it hands your agent.</p>
+
+        <p>A new paper from the University of British Columbia Okanagan answers those questions by reconstructing the copy network of agent skills from git history. What it finds is a software supply chain with no registry, no versions and no provenance, where the usual popularity signal points in the wrong direction.</p>
+
+        <h2>Ten months, a million and a half skills</h2>
+
+        <p>The paper works from GitSkills, a dataset released in July 2026. Within ten months the SKILL.md format appeared in 259,596 repositories holding 1,612,846 distinct skills. Half of all SKILL.md files on GitHub are verbatim copies of another file.</p>
+
+        <p>There is no registry that records where a copy came from, no version you can pin, and no channel that delivers a fix. Package managers answer the question of what to review from a dependency graph. Skills do not have one.</p>
+
+        <p>So the authors rebuilt it. They walked the git history of every SKILL.md, linked each copy to its source, and dated every edge. The result is a dated, directed network of 2,193,119 skill adoptions.</p>
+
+        <h2>Copies do not follow their sources</h2>
+
+        <p>The headline number is how badly fixes propagate. Only 20.9% of skill copies follow a later edit of their source. Copied code files adopt upstream security fixes in 47% to 84% of cases. A skill fix at the origin mostly does not reach the copies already in the wild.</p>
+
+        <p>Copies also rarely move together. Only 11.1% of changes to a group of repositories holding the same version are consistent, at every observation window, and only 4.0% of genealogies ever change consistently. A single owner raises the odds of a consistent change 3.32-fold. A group spread across several owners almost never moves as one.</p>
+
+        <p>Then there is the finding that matters if you review skills by reading them. Modified copies gain command execution more often than they lose it, and the gain does not come from the owner's edits. It comes from adopting another version of the skill.</p>
+
+        <h2>Stars point the wrong way</h2>
+
+        <p>The obvious way to find the sources worth auditing is to sort by GitHub stars. Measured against the copy network, stars are nearly uninformative about out-degree, and fake-star campaigns make them a manipulable signal on top of that.</p>
+
+        <p>Dating the copies corrects the attribution. Of the 20 repositories with the highest static out-degree, only 7 stay in the top 20 once they are credited only for skills they held first. The rest are late adopters.</p>
+
+        <p>Ranked before 1 April 2026, current copy out-degree identifies 4.0 times as many later transmissions as stars. PageRank and the number of skills held perform about the same. Most of the unstarred top sources are ordinary projects rather than catalogs.</p>
+
+        <h2>Audit the hundred that spread</h2>
+
+        <p>The paper turns that into an audit strategy and tests it on a held-out period. Auditing the 100 repositories the source-choice model ranks highest prevents 14.9% of later adoptions of high-risk skills. Auditing the 100 most starred prevents 0.5%.</p>
+
+        <p>A quarter of the prevented adoptions are indirect copies, so the payoff comes from stopping the source rather than each leaf. Two limits are worth stating. Even a ranking chosen with hindsight prevents only about a quarter of the high-risk adoptions, because roughly half arrive as new skills that no existing repository carried. And the window is weeks, not hours, because a new skill reaches few of its eventual adopters in its first week. That first week is the time a reviewer actually has.</p>
+
+        <h2>What to change</h2>
+
+        <p>Platforms should distribute skills as versioned references rather than copies, so a fix at the source reaches the people who depend on it.</p>
+
+        <p>Reviewers and registries should rank repositories by current copy out-degree rather than stars, and act in the first weeks after a skill appears. A review has to cover every agent, because a third of copies between agent folders now cross platforms.</p>
+
+        <p>If you run agents, the copies in your repositories are yours to update. Nothing upstream will do it for you, and half the ecosystem is a copy of something else.</p>
+      </section>
+    </article>
+  </main>
+
+  <footer class="container site-footer">
+    <small class="secondary">
+      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
+    </small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
+
+  
+
+</body>
+</html>
