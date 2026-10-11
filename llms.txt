@@ -8,8 +8,9 @@ Author: Zafar (LinkedIn: https://www.linkedin.com/in/zfrqbl/)
 
 ## Notes
 
-- [All notes](https://zfrqbl.com/): daily, numbered, reverse-chronological. The home page is the
-  complete index; each entry carries a title, date and one-paragraph summary.
+- [All notes](https://zfrqbl.com/): daily, numbered, reverse-chronological. The home page shows the
+  newest 30 entries; each carries a title, date and one-paragraph summary.
+- [Archive](https://zfrqbl.com/archive): every note and essay, newest first, on one page.
 - [RSS feed](https://zfrqbl.com/rss.xml): the newest 30 notes, with full titles, dates and summaries.
 - [Sitemap](https://zfrqbl.com/sitemap.xml): every page URL with a lastmod date. Use this rather
   than crawling the home page — it is generated from the corpus on every publish.
