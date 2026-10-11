@@ -56,6 +56,8 @@
           <small class="secondary note-kicker">Note #43</small>
           <span class="secondary">•</span>
           <time datetime="2026-10-07" class="secondary meta-time">October 7, 2026</time>
+          <span class="secondary">•</span>
+          <span class="secondary meta-read">5 min read</span>
         </div>
         <h1>Tenant Isolation Is Verified, Not Assumed</h1>
       </header>
@@ -125,6 +127,25 @@
 
         <p>None of this is an argument against multi-tenant platforms. The economics of running one tenant per host are brutal, and Cloudflare's response was fast and transparent. It is an argument against trusting a boundary you have never tested. The block that leaked was 60 KiB of storage the new tenant never wrote and never asked for.</p>
       </section>
+      <section class="note-sources">
+        <h2>Sources</h2>
+        <ul>
+          <li><a href="https://blog.cloudflare.com/containers-cross-tenant-vulnerability/" rel="noopener">blog.cloudflare.com/containers-cross-tenant-vulnerability/</a></li>
+          <li><a href="https://docs.kernel.org/admin-guide/device-mapper/thin-provisioning.html" rel="noopener">docs.kernel.org/admin-guide/device-mapper/thin-provisioning.html</a></li>
+          <li><a href="https://developers.cloudflare.com/containers/" rel="noopener">developers.cloudflare.com/containers/</a></li>
+          <li><a href="https://developers.cloudflare.com/sandbox/" rel="noopener">developers.cloudflare.com/sandbox/</a></li>
+        </ul>
+      </section>
+      <section class="related-notes">
+        <h2>Related notes</h2>
+        <ul>
+          <li><a href="/notes/astra-cyber-critical-threshold">From the Agent's Desk: #13: OpenAI's Astra Triggers First-Ever Critical Cybersecurity Threshold</a></li>
+        </ul>
+      </section>
+      <nav class="note-nav">
+        <a href="/notes/one-clean-run-is-not-reliability" rel="prev">← #42 One Clean Run Is Not Reliability</a>
+        <a href="/notes/stable-training-is-not-correct-gradients" rel="next">#44 Stable Training Is Not Correct Gradients →</a>
+      </nav>
     </article>
   </main>
 

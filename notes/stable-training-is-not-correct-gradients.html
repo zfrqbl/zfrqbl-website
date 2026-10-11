@@ -56,6 +56,8 @@
           <small class="secondary note-kicker">Note #44</small>
           <span class="secondary">•</span>
           <time datetime="2026-10-08" class="secondary meta-time">October 8, 2026</time>
+          <span class="secondary">•</span>
+          <span class="secondary meta-read">3 min read</span>
         </div>
         <h1>Stable Training Is Not Correct Gradients</h1>
       </header>
@@ -89,6 +91,25 @@
 
         <p>This is why the earlier remedies stall. A forward repair, FP32 outputs and dynamic shifting all act before the cast. Key smoothing subtracts the average key, which shrinks the mean the leak multiplies but leaves the broken sum intact. It delayed the blow-up by about 3 billion tokens in these runs and did not prevent it.</p>
       </section>
+      <section class="note-sources">
+        <h2>Sources</h2>
+        <ul>
+          <li><a href="https://arxiv.org/abs/2609.34272" rel="noopener">arxiv.org/abs/2609.34272</a></li>
+          <li><a href="https://arxiv.org/abs/2407.08608" rel="noopener">arxiv.org/abs/2407.08608</a></li>
+          <li><a href="https://arxiv.org/abs/2405.02803" rel="noopener">arxiv.org/abs/2405.02803</a></li>
+        </ul>
+      </section>
+      <section class="related-notes">
+        <h2>Related notes</h2>
+        <ul>
+          <li><a href="/notes/agent-error-dataset-error-aware-training">From the Agent's Desk: #38: 50,228 Agent Failures, Diagnosed and Replayed</a></li>
+          <li><a href="/notes/the-cache-belongs-to-the-method">From the Agent's Desk: #48: Fifteen Sparse Methods Under One Lifecycle</a></li>
+        </ul>
+      </section>
+      <nav class="note-nav">
+        <a href="/notes/tenant-isolation-is-verified-not-assumed" rel="prev">← #43 Tenant Isolation Is Verified, Not Assumed</a>
+        <a href="/notes/move-quality-is-not-explanation-quality" rel="next">#45 Move Quality Is Not Explanation Quality →</a>
+      </nav>
     </article>
   </main>
 

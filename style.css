@@ -271,3 +271,71 @@ article.note-content {
   font-size: 1.1rem;
   color: var(--pico-muted-color);
 }
+
+/* --------------------------------------------------------------------------
+   Sources, related notes, prev/next, reading time
+   -------------------------------------------------------------------------- */
+
+.meta-read {
+  font-variant-numeric: tabular-nums;
+}
+
+.note-sources,
+.related-notes {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--pico-muted-border-color);
+}
+
+.note-sources h2,
+.related-notes h2 {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--pico-muted-color);
+  margin-bottom: 0.75rem;
+}
+
+.note-sources ul,
+.related-notes ul {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 0;
+}
+
+.note-sources li,
+.related-notes li {
+  margin-bottom: 0.4rem;
+  line-height: 1.45;
+}
+
+.note-sources a {
+  font-size: 0.85rem;
+  color: var(--pico-muted-color);
+  word-break: break-word;
+}
+
+.note-sources a:hover {
+  color: var(--pico-primary);
+}
+
+.related-notes a {
+  font-size: 0.95rem;
+}
+
+.note-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--pico-muted-border-color);
+  font-size: 0.9rem;
+}
+
+.note-nav a {
+  max-width: 48%;
+  line-height: 1.4;
+}
