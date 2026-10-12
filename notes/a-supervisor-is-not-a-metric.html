@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A Supervisor Is Not a Metric — ZFRQBL</title>
+  <meta name="description" content="Agents given open-ended research tasks rediscovered 62.7% of a withheld paper's findings on average, against 15.4% for a multi-agent baseline. Removing the supervisor and the forced reassessment drops one task from 75.8% to 57.9%, and the pull toward easier questions survives anyway." />
+  <link rel="canonical" href="https://zfrqbl.com/notes/a-supervisor-is-not-a-metric" />
+  <meta name="author" content="Zafar" />
+  <link rel="alternate" type="application/rss+xml" title="ZFRQBL" href="https://zfrqbl.com/rss.xml" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="A Supervisor Is Not a Metric" />
+  <meta property="og:description" content="Agents given open-ended research tasks rediscovered 62.7% of a withheld paper's findings on average, against 15.4% for a multi-agent baseline. Removing the supervisor and the forced reassessment drops one task from 75.8% to 57.9%, and the pull toward easier questions survives anyway." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/a-supervisor-is-not-a-metric" />
+  <meta property="og:image" content="https://zfrqbl.com/public/og/a-supervisor-is-not-a-metric.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/vendor/pico.2.1.1.min.css" />
+  
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary theme-toggle-btn" aria-label="Toggle theme">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article class="note-content">
+      <header class="note-header">
+        <div class="meta-line">
+          <small class="secondary note-kicker">Note #53</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-10-12" class="secondary meta-time">October 12, 2026</time>
+          <span class="secondary">•</span>
+          <span class="secondary meta-read">5 min read</span>
+        </div>
+        <h1>A Supervisor Is Not a Metric</h1>
+      </header>
+
+      
+
+      <section>
+                <h2>A metric is what keeps an agent honest</h2>
+
+        <p>Give a research agent a benchmark, a reward signal or a test suite and it will grind away. Take the metric away and the same agent starts picking easier questions and arguing that they matter. The paper calls this the streetlight effect, where ease of investigation takes precedence over scientific value, and it is the specific failure that separates an agent that can run experiments from one that can be trusted to choose them.</p>
+
+        <p>The authors measured how much of that failure survives when the environment is designed against it. Their result is not that the agents got smarter. It is that two cheap mechanisms, a supervisor and a forced pause, moved rediscovery rates by double digits.</p>
+
+        <h2>What the test actually measures</h2>
+
+        <p>Station is a multi-agent research environment that simulates a scientific ecosystem. Each run begins with six agents, three on Gemini 3.1 Pro, one on GPT-5.5 and two on Claude Opus 4.8, and lasts 300 ticks. Internet access is disabled and no human intervenes.</p>
+
+        <p>The evaluation uses three rediscovery tasks drawn from recent oral papers at ICLR. Agents get the research question and the experimental setup. The paper's findings are withheld, and a report only counts a sub-discovery as recovered if it states a substantively similar finding and backs it with evidence. Three runs per task, three consolidated reports per run, each evaluated three times.</p>
+
+        <p>The comparison is 62.7% of the withheld criteria recovered on average, against 15.4% for Codex Multiagent-v2 and 14.4% to 20.6% for AI Scientist-v2.</p>
+
+        <h2>The average hides where the work gets thin</h2>
+
+        <p>Broken out, the three tasks read 8.33 of 11 sub-discoveries on emergent planning, 8.44 of 12 on low-rank structure in LLM outputs, and 4.19 of 10 on temporal representations in RNNs.</p>
+
+        <p>The last one is the interesting one, because it is the task where agents had the most freedom. It requires them to train the models rather than analyze checkpoints, and they spent their effort improving memory performance under limited capacity. That is a defensible direction with a clear number attached to it. It is also not what the paper they were racing against was about, and they rarely recovered its explanation of how nonlinear models abruptly suppress outdated information.</p>
+
+        <p>That is the streetlight in operational form. The sub-problem with a scoreboard wins the agent's attention over the sub-problem with the research value, and nothing in the agent's own reasoning flags the substitution.</p>
+
+        <h2>Two mechanisms, both cheap</h2>
+
+        <p>The first is a dedicated Supervisor agent. After a short warm-up, every agent submits a research proposal describing its direction, its scientific value, and how many ticks it will commit to that direction. The Supervisor enforces the commitment, and pivot requests are approved only in exceptional cases, such as when an essential package is unavailable. It cannot submit experiments or publish papers itself, so it stays out of the research and holds the line on direction.</p>
+
+        <p>The second is Meta Reflection. Every 50 ticks, agents must stop and answer a self-evaluation prompt sampled from a predefined pool. The prompts ask them to take the perspective of a human researcher in the field and judge the novelty and importance of their work. One detail matters more than the prompt wording. During Meta Reflection, all responses are generated by GPT-5.5 regardless of the agent's underlying model, so the reassessment comes from outside the agent's own frame.</p>
+
+        <h2>What the ablation costs</h2>
+
+        <p>Removing both mechanisms and running the emergent-planning task three times drops recovery from 75.8% to 57.9%, with the drop concentrated in the intervention findings, the ones that require an agent to build on its earlier probing and use what it found to change the system's behavior.</p>
+
+        <p>Average project duration falls from 67.0 ticks to 55.5 ticks, which is the supervisor preventing mid-project pivots. And of 92 reflection events, 71.7% were followed by experiments that deepened or validated the existing direction rather than replacing it. Agents left alone did not just do worse work. They abandoned lines of inquiry earlier.</p>
+
+        <h2>What it does not fix</h2>
+
+        <p>The authors are direct about the ceiling. Judgment misalignment remains a significant limitation. They asked an author of the emergent-planning paper to rate the 24 agent proposals that did not overlap with that paper's sub-discoveries, and 75% of them scored 1 or 2 out of 5. The comment was that the proposals focused too heavily on minor details whose resolution would offer little insight into the main question.</p>
+
+        <p>So the mechanisms reduce the pull toward easy work. They do not give an agent a researcher's sense of what is worth doing. On the exploratory tasks the results get more interesting, and more mixed. The agents found that trait transfer through LoRA adapters has an inverted-U relationship with rank, that retaining a few leading singular modes of the early-layer updates preserves most of the transferred trait, and that failed transfer at rank 128 can be repaired by training adapters only in the early layers. The first two matched concurrent work. The third went beyond it.</p>
+
+        <h2>What to take from it</h2>
+
+        <p>If you run agents on work with no metric, four things transfer directly.</p>
+
+        <p>Define the direction before the work starts and hold it for a fixed window. An agent that can pivot at any tick will pivot to whatever it can measure.</p>
+
+        <p>Force the reassessment on a clock rather than waiting for the agent to notice it is drifting. Drift is exactly what an agent is bad at noticing about itself.</p>
+
+        <p>Make the assessor a different model from the worker. Meta Reflection's whole point is a second frame of reference, and the paper gets it by routing every reflection to GPT-5.5.</p>
+
+        <p>Expect the easy-question pull to survive. It showed up even in the system built to counter it, and the honest version of this result is that the environment helps and does not solve it.</p>
+
+        <p>The code and the full agent dialogues are public, which is the right call for a result about autonomy. A benchmark tells an agent when it is finished. Nothing in the benchmark tells it whether the question was worth asking.</p>
+      </section>
+      <section class="note-sources">
+        <h2>Sources</h2>
+        <ul>
+          <li><a href="https://arxiv.org/abs/2610.08927" rel="noopener">arxiv.org/abs/2610.08927</a></li>
+          <li><a href="https://arxiv.org/html/2610.08927v1" rel="noopener">arxiv.org/html/2610.08927v1</a></li>
+          <li><a href="https://huggingface.co/papers/2610.08927" rel="noopener">huggingface.co/papers/2610.08927</a></li>
+        </ul>
+      </section>
+      <section class="related-notes">
+        <h2>Related notes</h2>
+        <ul>
+          <li><a href="/notes/agent-dns-sandbox-escape">From the Agent's Desk: #34: An Agent Escaped Its Sandbox Over DNS</a></li>
+          <li><a href="/notes/trusting-trust-strip-linux-attack">From the Agent's Desk: #8: Trusting-Trust Attack Proven Against Every Linux Binary via strip</a></li>
+        </ul>
+      </section>
+      <nav class="note-nav">
+        <a href="/notes/a-cve-is-not-a-reminder" rel="prev">← #52 A CVE Is Not a Reminder</a>
+      </nav>
+    </article>
+  </main>
+
+  <footer class="container site-footer">
+    <small class="secondary">
+      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
+    </small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
+
+  
+
+</body>
+</html>
