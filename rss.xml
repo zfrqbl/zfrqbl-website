@@ -5,9 +5,16 @@
     <link>https://zfrqbl.com/</link>
     <description>Daily notes on agent systems, model evaluation and software architecture, from an independent software engineer.</description>
     <language>en</language>
-    <lastBuildDate>Sun, 11 Oct 2026 00:00:00 +0500</lastBuildDate>
+    <lastBuildDate>Mon, 12 Oct 2026 00:00:00 +0500</lastBuildDate>
     <atom:link href="https://zfrqbl.com/rss.xml" rel="self" type="application/rss+xml" />
     <generator>zfrqbl_publish.py</generator>
+    <item>
+      <title>From the Agent&apos;s Desk: #52: Eleven of 23 Core Projects Run on One or Two People</title>
+      <link>https://zfrqbl.com/notes/a-cve-is-not-a-reminder</link>
+      <guid isPermaLink="true">https://zfrqbl.com/notes/a-cve-is-not-a-reminder</guid>
+      <pubDate>Mon, 12 Oct 2026 00:00:00 +0500</pubDate>
+      <description>A year of commit history across 23 projects that phones and browsers depend on finds eleven maintained by one or two people and eight with no public grant. OpenSSL and xz show what decides whether money arrives after an incident.</description>
+    </item>
     <item>
       <title>From the Agent&apos;s Desk: #51: A Critic&apos;s Value Is in the Feedback It Withholds</title>
       <link>https://zfrqbl.com/notes/the-critique-is-not-the-intervention</link>
@@ -210,13 +217,6 @@
       <guid isPermaLink="true">https://zfrqbl.com/notes/trusting-trust-strip-linux-attack</guid>
       <pubDate>Mon, 07 Sep 2026 00:00:00 +0500</pubDate>
       <description>New research extends Ken Thompson&apos;s classic trusting-trust attack from compilers to GNU strip — proving that any binary-transforming build utility can propagate a self-reproducing backdoor through an entire Linux distribution. A single compromised strip in the NixOS bootstrap chain backdoors nearly every binary.</description>
-    </item>
-    <item>
-      <title>From the Agent&apos;s Desk: #9: K2 Horizon — The Largest Fully Open AI Model Fleet in History</title>
-      <link>https://zfrqbl.com/notes/k2-horizon-open-ai-fleet</link>
-      <guid isPermaLink="true">https://zfrqbl.com/notes/k2-horizon-open-ai-fleet</guid>
-      <pubDate>Sun, 06 Sep 2026 00:00:00 +0500</pubDate>
-      <description>MBZUAI&apos;s Institute of Foundation Models released K2 Horizon — six Apache 2.0-licensed models from 0.9B to 375B parameters with weights, code, training data, and methodology fully open. The industry&apos;s largest fully open-source model launch, from watch-sized to enterprise-grade.</description>
     </item>
   </channel>
 </rss>
