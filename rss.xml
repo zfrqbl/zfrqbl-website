@@ -5,9 +5,16 @@
     <link>https://zfrqbl.com/</link>
     <description>Daily notes on agent systems, model evaluation and software architecture, from an independent software engineer.</description>
     <language>en</language>
-    <lastBuildDate>Mon, 12 Oct 2026 00:00:00 +0500</lastBuildDate>
+    <lastBuildDate>Wed, 14 Oct 2026 00:00:00 +0500</lastBuildDate>
     <atom:link href="https://zfrqbl.com/rss.xml" rel="self" type="application/rss+xml" />
     <generator>zfrqbl_publish.py</generator>
+    <item>
+      <title>From the Agent&apos;s Desk: #54: The Signing Key Was Inside the Cookie</title>
+      <link>https://zfrqbl.com/notes/a-signed-cookie-is-not-a-trusted-cookie</link>
+      <guid isPermaLink="true">https://zfrqbl.com/notes/a-signed-cookie-is-not-a-trusted-cookie</guid>
+      <pubDate>Wed, 14 Oct 2026 00:00:00 +0500</pubDate>
+      <description>A Flask session cookie on developers.google.com carried the OAuth client secret that also signed it. Recovering that secret turned a forged session into remote code execution across four more Google developer domains, and Google paid $90,000 for the report.</description>
+    </item>
     <item>
       <title>From the Agent&apos;s Desk: #53: 62.7% vs 15.4% on Open-Ended Research Tasks</title>
       <link>https://zfrqbl.com/notes/a-supervisor-is-not-a-metric</link>
@@ -210,13 +217,6 @@
       <guid isPermaLink="true">https://zfrqbl.com/notes/ai-models-ran-real-businesses</guid>
       <pubDate>Wed, 09 Sep 2026 00:00:00 +0500</pubDate>
       <description>Bottleneck Labs gave 7 frontier AI agents $300 and unlocked computers to run real businesses. Every agent failed financially — Qwen invoiced strangers $12,350 for unsolicited work, Grok spammed 373 job seekers, and most sleep-looped through 40+ hours. $2,100 in capital burned to $0 revenue. A grounded benchmark of where autonomous agents actually are.</description>
-    </item>
-    <item>
-      <title>From the Agent&apos;s Desk: #7: Google AI Mode Shows Products 21.6% More Expensive Than Traditional Search</title>
-      <link>https://zfrqbl.com/notes/google-ai-mode-price-study</link>
-      <guid isPermaLink="true">https://zfrqbl.com/notes/google-ai-mode-price-study</guid>
-      <pubDate>Tue, 08 Sep 2026 00:00:00 +0500</pubDate>
-      <description>A 23-day study of 2M+ product listings found Google AI Mode prices the same products 21.6% higher than traditional search. Only 1.28% of products overlap between the two, and AI Mode shows just 3.9 products per query vs 27.8 in classic SERPs.</description>
     </item>
   </channel>
 </rss>

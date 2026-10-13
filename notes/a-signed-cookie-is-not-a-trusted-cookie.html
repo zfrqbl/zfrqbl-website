@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A Signed Cookie Is Not a Trusted Cookie — ZFRQBL</title>
+  <meta name="description" content="A Flask session cookie on developers.google.com carried the OAuth client secret that also signed it. Recovering that secret turned a forged session into remote code execution across four more Google developer domains, and Google paid $90,000 for the report." />
+  <link rel="canonical" href="https://zfrqbl.com/notes/a-signed-cookie-is-not-a-trusted-cookie" />
+  <meta name="author" content="Zafar" />
+  <link rel="alternate" type="application/rss+xml" title="ZFRQBL" href="https://zfrqbl.com/rss.xml" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="A Signed Cookie Is Not a Trusted Cookie" />
+  <meta property="og:description" content="A Flask session cookie on developers.google.com carried the OAuth client secret that also signed it. Recovering that secret turned a forged session into remote code execution across four more Google developer domains, and Google paid $90,000 for the report." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/a-signed-cookie-is-not-a-trusted-cookie" />
+  <meta property="og:image" content="https://zfrqbl.com/public/og/a-signed-cookie-is-not-a-trusted-cookie.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/vendor/pico.2.1.1.min.css" />
+  
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary theme-toggle-btn" aria-label="Toggle theme">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article class="note-content">
+      <header class="note-header">
+        <div class="meta-line">
+          <small class="secondary note-kicker">Note #54</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-10-14" class="secondary meta-time">October 14, 2026</time>
+          <span class="secondary">•</span>
+          <span class="secondary meta-read">4 min read</span>
+        </div>
+        <h1>A Signed Cookie Is Not a Trusted Cookie</h1>
+      </header>
+
+      
+
+      <section>
+                <h2>The cookie that carried its own key</h2>
+
+        <p>Google's developer documentation sites share an OAuth flow. You hit <code>/oauth2authorize</code>, it sets a Flask session cookie and sends you to Google's sign-in page, and no account is needed to make it happen. A security researcher mapping that flow noticed the cookie was about 1,200 bytes, which is a lot of room for a CSRF token and a return URL.</p>
+
+        <p>Flask session cookies are signed, not encrypted. Anyone holding one can read what is inside it, and what was inside this one was a pickled <code>oauth2client</code> flow object with Google's OAuth <code>client_id</code> and <code>client_secret</code> sitting in plaintext. The leading dot on the payload meant it was zlib-compressed, which is why it decoded cleanly.</p>
+
+        <p>Then came the part that turned a leak into a vulnerability. The client secret, tried as the Flask <code>SECRET_KEY</code>, validated the signature on the cookie Google had just issued. The signing key was stored inside the object it signs.</p>
+
+        <h2>Why signing is not a boundary</h2>
+
+        <p>Signed and trustworthy are different properties, and the design treated one as if it implied the other. Signing is an integrity check. It tells you the payload was not edited after the server wrote it. It says nothing about who can read the payload, and nothing about whether the payload is safe to load.</p>
+
+        <p>Flask signs through <code>itsdangerous</code> using the <code>cookie-session</code> key derivation, so the signature is reproducible offline from the key. Recomputed that way, it came out byte-for-byte identical to the signature on the cookie. One flipped character was rejected, and re-signing the original payload with the recovered secret was accepted. Session integrity was gone. Any key and value could be set, and the server would still take the cookie.</p>
+
+        <p>The OAuth callback then read the flow object back out of the session and unpickled it. That <code>pickle.loads</code> is only safe while nobody else can forge a valid cookie, and the key was public. Python's own documentation states the rule without hedging: the pickle module is not secure, it is possible to construct malicious pickle data which will execute arbitrary code during unpickling, and data that could have come from an untrusted source or been tampered with should never be unpickled. The REDUCE opcode names a callable and its arguments, and unpickling calls it. A public signing key plus that sink is unauthenticated remote code execution.</p>
+
+        <h2>What the proof of concept did</h2>
+
+        <p>No commands were run against production. The payload was reduced to <code>time.sleep(N)</code> and the response time tracked the number in the pickle. Zero seconds of sleep returned in 0.207s, three in 3.193s, five in 5.194s, eight in 8.283s.</p>
+
+        <p>The controls matter more than the timing. No cookie came back <code>Invalid request</code>. One flipped byte in the signature came back <code>Invalid request</code>. A valid signature with no matching flow entry came back <code>Invalid request state</code>. A valid signature with the real flow reached Google's token exchange and failed later on the fake authorization code. Only the forged session with the sleep payload was delayed by exactly the number chosen.</p>
+
+        <h2>How far one key reached</h2>
+
+        <p>This was not a single application. It was the shared DevSite platform, so the key from <code>developers.google.com</code> also signed valid sessions on <code>firebase.google.com</code>, <code>developer.android.com</code>, <code>source.android.com</code> and <code>docs.partner.android.com</code>.</p>
+
+        <p>The timeline is short. The report went in on August 6, was triaged and accepted on August 7, the reward was decided on August 27 at $90,000 (a $75,000 base for an S0 remote code execution, multiplied by 1.2 for report quality), and the fix shipped on October 7.</p>
+
+        <h2>The four fixes, and why they stack</h2>
+
+        <ol>
+          <li>Rotate both exposed OAuth client secrets and kill every session signed with them.</li>
+          <li>Give each deployment its own high-entropy Flask <code>SECRET_KEY</code> from a server-side store, with nothing to do with an OAuth credential.</li>
+          <li>Keep the OAuth flow object on the server. The cookie should hold an opaque reference and nothing sensitive.</li>
+          <li>Drop pickle for anything crossing a client boundary. A data-only format with a schema check makes a forged cookie inert.</li>
+        </ol>
+
+        <p>Any one of those four breaks the chain. That is the useful part of the writeup, and it is also the uncomfortable part, because the chain depended on all four being absent at once.</p>
+
+        <h2>What to check in your own stack</h2>
+
+        <p>Three questions, and none of them needs a security team.</p>
+
+        <p>Is any signing key in your stack also a credential that gets handed to a third party? The Flask <code>SECRET_KEY</code> and the OAuth client secret were the same string, which is what made the leak fatal rather than embarrassing.</p>
+
+        <p>Does any session cookie carry a serialized object rather than an identifier? The cookie should hold an opaque reference and nothing sensitive, and a session store on the server is the cheap way to get there.</p>
+
+        <p>Is <code>pickle.loads</code> reachable from anything a request can influence? Python's documentation suggests signing data with hmac when tamper detection is the goal, and notes that deserializing untrusted JSON does not in itself create an arbitrary code execution vulnerability. If the answer is yes and the data crosses a trust boundary, the format is the bug.</p>
+
+        <p>Signing proves the payload was not edited on the way in. It says nothing about who can read it, and a secret that can be read is a secret that has been published.</p>
+      </section>
+      <section class="note-sources">
+        <h2>Sources</h2>
+        <ul>
+          <li><a href="https://simonkoeck.com/writeups/google-devsite-flask-session-pickle-rce" rel="noopener">simonkoeck.com/writeups/google-devsite-flask-session-pickle-rce</a></li>
+          <li><a href="https://docs.python.org/3/library/pickle.html" rel="noopener">docs.python.org/3/library/pickle.html</a></li>
+        </ul>
+      </section>
+      <section class="related-notes">
+        <h2>Related notes</h2>
+        <ul>
+          <li><a href="/essays/the-modern-python-developers-trap-when-code-looks-right-but-isnt">The Modern Python Developer’s Trap: When Code Looks Right but Isn’t</a></li>
+        </ul>
+      </section>
+      <nav class="note-nav">
+        <a href="/notes/a-supervisor-is-not-a-metric" rel="prev">← #53 A Supervisor Is Not a Metric</a>
+      </nav>
+    </article>
+  </main>
+
+  <footer class="container site-footer">
+    <small class="secondary">
+      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
+    </small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
+
+  
+
+</body>
+</html>
