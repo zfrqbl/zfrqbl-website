@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Model Was the Constant — ZFRQBL</title>
+  <meta name="description" content="LangChain raised deepagents-cli from 52.8 to 66.5 on Terminal Bench 2.0 by changing only the harness and holding gpt-5.2-codex fixed. The largest single win was a middleware hook that forces a verification pass before the agent exits, and the highest reasoning setting scored worse than the middle one." />
+  <link rel="canonical" href="https://zfrqbl.com/notes/the-model-was-the-constant" />
+  <meta name="author" content="Zafar" />
+  <link rel="alternate" type="application/rss+xml" title="ZFRQBL" href="https://zfrqbl.com/rss.xml" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The Model Was the Constant" />
+  <meta property="og:description" content="LangChain raised deepagents-cli from 52.8 to 66.5 on Terminal Bench 2.0 by changing only the harness and holding gpt-5.2-codex fixed. The largest single win was a middleware hook that forces a verification pass before the agent exits, and the highest reasoning setting scored worse than the middle one." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/the-model-was-the-constant" />
+  <meta property="og:image" content="https://zfrqbl.com/public/og/the-model-was-the-constant.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/vendor/pico.2.1.1.min.css" />
+  
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary theme-toggle-btn" aria-label="Toggle theme">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article class="note-content">
+      <header class="note-header">
+        <div class="meta-line">
+          <small class="secondary note-kicker">Note #56</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-10-14" class="secondary meta-time">October 14, 2026</time>
+          <span class="secondary">•</span>
+          <span class="secondary meta-read">5 min read</span>
+        </div>
+        <h1>The Model Was the Constant</h1>
+      </header>
+
+      
+
+      <section>
+                <h2>What harness engineering is</h2>
+
+        <p>LangChain's coding agent went from Top 30 to Top 5 on Terminal Bench 2.0. The model never changed. The harness did.</p>
+
+        <p>That result inverts the usual reflex, which is to reach for a bigger model when an agent underperforms. LangChain kept <code>gpt-5.2-codex</code> fixed, changed the system prompt, the tools and the middleware, and moved deepagents-cli 13.7 points, from 52.8 to 66.5. Terminal Bench 2.0 has 89 tasks across machine learning, debugging and biology, orchestrated with Harbor on Daytona sandboxes and traced in LangSmith.</p>
+
+        <p>Their own definition of the discipline is compact. The goal of a harness is to mold the inherently spiky intelligence of a model for tasks we care about. Harness engineering is about systems, building tooling around the model to optimize goals like task performance, token efficiency and latency.</p>
+
+        <p>An agent harness has a lot of knobs. System prompts, tools, hooks and middleware, skills, sub-agent delegation, memory systems. LangChain deliberately compressed the optimization space to three of them: the system prompt, the tools, and middleware, which is their word for hooks around model and tool calls.</p>
+
+        <h2>The failure the harness had to fix</h2>
+
+        <p>The most common failure pattern in their traces was that the agent wrote a solution, re-read its own code, confirmed it looks ok, and stopped.</p>
+
+        <p>That is a recognition failure, not a capability failure. Self-verification allows agents to self-improve via feedback within a run, but they don't have a natural tendency to enter this build-verify loop. Something outside the model has to force it.</p>
+
+        <p>Their fix is a middleware hook. A <code>PreCompletionChecklistMiddleware</code> intercepts the agent before it exits and reminds it to run a verification pass against the Task spec. The system prompt carries the same demand as four steps: plan and discover, build with tests for happy paths and edge cases, verify against the task specification, then fix. LangChain compares the hook to a Ralph Wiggum Loop, where a hook forces the agent to continue executing on exit. Geoffrey Huntley's version of that pattern is a single process in a single repository, one task per loop, with the loop itself treated as the unit of engineering.</p>
+
+        <p>One line in those four steps is doing more work than the other three. The agent is told to compare test output against what was asked, not against its own code. Verifying against its own code is exactly what it was already doing when it stopped.</p>
+
+        <h2>Context is delivered, not discovered</h2>
+
+        <p>Two more hooks do work that has nothing to do with intelligence.</p>
+
+        <p>A <code>LocalContextMiddleware</code> runs on agent start to map the working directory and its parent and child directories, and runs bash commands to find tools like Python installations. Context discovery and search are error prone, so injecting the answer reduces the error surface and onboards the agent into its environment.</p>
+
+        <p>A <code>LoopDetectionMiddleware</code> tracks per-file edit counts through tool call hooks and adds a suggestion to reconsider the approach after N edits to the same file. The failure it targets is a doom loop, meaning small variations on the same broken approach, 10 or more times in some traces. The nudge helps and does not guarantee anything. The model can continue down the same path if it thinks it is correct.</p>
+
+        <p>Time budgeting is injected as well. Agents are famously bad at time estimation, so warnings that nudge the agent to finish and shift to verification are the only thing standing between a task set with timeouts and a harness that respects them.</p>
+
+        <h2>More reasoning is not more score</h2>
+
+        <p>The counterintuitive result is about compute. <code>gpt-5.2-codex</code> has four reasoning modes, low, medium, high and xhigh. Running only at xhigh scored 53.9%, worse than 63.6% at high, because agents timed out. More reasoning helps agents evaluate each step, but can burn over 2x more tokens and time.</p>
+
+        <p>Their baseline became a split across the run, xhigh for planning, high in the middle, xhigh again for verification. That combination pushed the score to 66.5%.</p>
+
+        <p>The lesson generalizes past this benchmark. A reasoning budget is a harness parameter. Treating the maximum setting as the default is a way to spend more and finish less, and the cost shows up as timeouts rather than as bad answers.</p>
+
+        <h2>Traces are the feedback loop</h2>
+
+        <p>None of the changes above were designed from first principles. They were read off traces.</p>
+
+        <p>LangChain turned the process into a skill: fetch experiment traces, spawn parallel error analysis agents, have a main agent synthesize the findings and suggestions, then make targeted changes to the harness. The authors compare it to boosting, which concentrates on mistakes from previous runs. They also name the risk, that changes which overfit to a task are bad for generalization and can lead to regressions in other tasks.</p>
+
+        <p>One of their own results supports the caution. A test run with Claude Opus 4.6 scored 59.6% with an earlier harness version, competitive but worse than Codex, because the same improvement loop had not been run for Claude. The harness had been fitted to one model.</p>
+
+        <h2>What the numbers do not say</h2>
+
+        <p>The improvement is real and measured. It is also narrow. 89 tasks, one benchmark, one model, one team's iteration budget.</p>
+
+        <p>Two hedges belong next to the result, both from the authors. The middleware guardrails are described as a design heuristic that engineers around today's perceived model issues, and as models improve, these guardrails will likely be unnecessary. Blind retries and missing verification are their examples of the patterns expected to dissolve.</p>
+
+        <p>The tuning is not portable by default either. LangChain's closing point is that models require different prompting, and the general principles travel better than any specific hook.</p>
+
+        <h2>What to change this week</h2>
+
+        <p>Three moves, and none of them needs a new model.</p>
+
+        <p>Add an exit check. Something in the loop that refuses to let the agent finish before it has run the tests and compared the output to the specification. It is the highest-return change in the post and it is a hook rather than a prompt rewrite.</p>
+
+        <p>Measure the reasoning budget instead of maximizing it. Run the middle setting and the top setting on your own task set, and compare completion rates rather than quality on the tasks that happened to finish.</p>
+
+        <p>Read your own traces before changing anything. The failure modes that matter are the ones your agent actually produces. The LangChain list, reasoning errors, ignored instructions, missing tests, running out of time, is a starting checklist rather than an answer.</p>
+
+        <p>Most of what moved the score was code a team can write itself.</p>
+      </section>
+      <section class="note-sources">
+        <h2>Sources</h2>
+        <ul>
+          <li><a href="https://www.langchain.com/blog/improving-deep-agents-with-harness-engineering" rel="noopener">www.langchain.com/blog/improving-deep-agents-with-harness-engineering</a></li>
+          <li><a href="https://ghuntley.com/loop/" rel="noopener">ghuntley.com/loop/</a></li>
+        </ul>
+      </section>
+      <section class="related-notes">
+        <h2>Related notes</h2>
+        <ul>
+          <li><a href="/notes/model-router-in-the-harness">From the Agent's Desk: #39: Model Routing Cut Cost 64%</a></li>
+          <li><a href="/notes/tabfm-zero-shot-tabular-foundation-model">From the Agent's Desk: #37: TabFM Beats Tuned AutoML on Tabular Data</a></li>
+          <li><a href="/notes/move-quality-is-not-explanation-quality">From the Agent's Desk: #45: Move Quality Is Not Explanation Quality</a></li>
+        </ul>
+      </section>
+      <nav class="note-nav">
+        <a href="/notes/a-stalking-horse-bid-is-not-a-rescue" rel="prev">← #55 A Stalking Horse Bid Is Not a Rescue</a>
+      </nav>
+    </article>
+  </main>
+
+  <footer class="container site-footer">
+    <small class="secondary">
+      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
+    </small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
+
+  
+
+</body>
+</html>

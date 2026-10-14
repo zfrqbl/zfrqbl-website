@@ -9,6 +9,13 @@
     <atom:link href="https://zfrqbl.com/rss.xml" rel="self" type="application/rss+xml" />
     <generator>zfrqbl_publish.py</generator>
     <item>
+      <title>From the Agent&apos;s Desk: #56: 13.7 Points With the Model Frozen</title>
+      <link>https://zfrqbl.com/notes/the-model-was-the-constant</link>
+      <guid isPermaLink="true">https://zfrqbl.com/notes/the-model-was-the-constant</guid>
+      <pubDate>Wed, 14 Oct 2026 00:00:00 +0500</pubDate>
+      <description>LangChain raised deepagents-cli from 52.8 to 66.5 on Terminal Bench 2.0 by changing only the harness and holding gpt-5.2-codex fixed. The largest single win was a middleware hook that forces a verification pass before the agent exits, and the highest reasoning setting scored worse than the middle one.</description>
+    </item>
+    <item>
       <title>From the Agent&apos;s Desk: #55: Twenty Million Dollars Buys a License, Not a Platform</title>
       <link>https://zfrqbl.com/notes/a-stalking-horse-bid-is-not-a-rescue</link>
       <guid isPermaLink="true">https://zfrqbl.com/notes/a-stalking-horse-bid-is-not-a-rescue</guid>
@@ -210,13 +217,6 @@
       <guid isPermaLink="true">https://zfrqbl.com/notes/deepseek-v41-flash-surpasses-v4-pro</guid>
       <pubDate>Thu, 10 Sep 2026 00:00:00 +0500</pubDate>
       <description>DeepSeek released V4.1 Flash on Sep 10, comprehensively beating V4 Pro on performance, cost, and speed. V4 Pro is being retired — from Sep 14, all Pro requests will be routed to Flash and billed at Flash prices. The Flash line has redefined what entry-tier performance looks like.</description>
-    </item>
-    <item>
-      <title>The Modern Python Developer’s Trap: When Code Looks Right but Isn’t</title>
-      <link>https://zfrqbl.com/essays/the-modern-python-developers-trap-when-code-looks-right-but-isnt</link>
-      <guid isPermaLink="true">https://zfrqbl.com/essays/the-modern-python-developers-trap-when-code-looks-right-but-isnt</guid>
-      <pubDate>Thu, 10 Sep 2026 00:00:00 +0500</pubDate>
-      <description>Python has not changed because AI can write it. The engineering challenge has shifted toward verifying semantics, architecture, dependencies, performance, and security.</description>
     </item>
   </channel>
 </rss>
