@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>One Computer, Many Bots — ZFRQBL</title>
+  <meta name="description" content="Shane Mac's personal finance agent posted his bank balances into his company's Slack channel, under his name, on October 1. Grok Bot's own documentation explains why before the incident does. Every Bot on an account shares one cloud computer, and the docs say plainly not to treat separate Bots as a security boundary." />
+  <link rel="canonical" href="https://zfrqbl.com/notes/one-computer-many-bots" />
+  <meta name="author" content="Zafar" />
+  <link rel="alternate" type="application/rss+xml" title="ZFRQBL" href="https://zfrqbl.com/rss.xml" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="One Computer, Many Bots" />
+  <meta property="og:description" content="Shane Mac's personal finance agent posted his bank balances into his company's Slack channel, under his name, on October 1. Grok Bot's own documentation explains why before the incident does. Every Bot on an account shares one cloud computer, and the docs say plainly not to treat separate Bots as a security boundary." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/one-computer-many-bots" />
+  <meta property="og:image" content="https://zfrqbl.com/public/og/one-computer-many-bots.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/vendor/pico.2.1.1.min.css" />
+  
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary theme-toggle-btn" aria-label="Toggle theme">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article class="note-content">
+      <header class="note-header">
+        <div class="meta-line">
+          <small class="secondary note-kicker">Note #57</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-10-14" class="secondary meta-time">October 14, 2026</time>
+          <span class="secondary">•</span>
+          <span class="secondary meta-read">5 min read</span>
+        </div>
+        <h1>One Computer, Many Bots</h1>
+      </header>
+
+      
+
+      <section>
+                <h2>The report that went to the wrong channel</h2>
+
+        <p>On October 1, Shane Mac got a direct message on Slack from his head of product, who thought he had meant to post the XMTP bank balance. He had not meant to post anything. Mac is the CEO of XMTP Labs, and a month earlier he had stood up a personal finance agent on Grok Bot, given it read-only access to his personal checking and savings accounts, and told it to send him a monthly audit in a group chat of his own agents.</p>
+
+        <p>The audit landed in "Exec-team", the channel where his company's executives work. It carried his balances, his biggest expenses of the month, and the reason he was over his spending target. It stayed visible for about two hours.</p>
+
+        <p>The agent did not have Slack. Another Bot on the same account did.</p>
+
+        <h2>The Bot is not the boundary</h2>
+
+        <p>Grok Bot's own documentation states the rule in one line. All of your Bots share one cloud computer assigned to your user account, and files, browser sessions and command line credentials on that computer are available across your Bot roster. The FAQ says the same thing in its own words. Every Bot on the account uses one persistent cloud computer, they share its files, browser sessions and logins so they can hand work off, and the computer is assigned per user, not per Bot.</p>
+
+        <p>Then the warning the docs attach to it, which is the sentence worth keeping: do not use separate Bots as a security boundary.</p>
+
+        <p>Read the product page against that and the gap is hard to miss. Bots have their own computer. The vendor's own docs say Bots have their own screen, and screens are separate work surfaces rather than separate security boundaries. "Own computer" and "own screen" are not the same claim, and only one of them is a claim about security.</p>
+
+        <p>So the setup did what the architecture says it will do. Mac wrote it out himself. It was read-only, and this specific Grok Bot agent did not have Slack, but another one did, and they are all connected. When the Grok team investigated, they found the agent had not malfunctioned. It confused the destination, sending the report to a Slack chat titled "Exec-team" instead of his personal group chat with his agents, because the channels carried the same name and the connections underneath belonged to the account.</p>
+
+        <p>Grok shipped a fix. Users must now explicitly grant permission before an agent can move information to another channel. That is a real improvement and it targets the specific name collision, not the boundary underneath it.</p>
+
+        <h2>What an approval can and cannot do</h2>
+
+        <p>The approvals documentation contains a sentence that is worth more than the feature it describes. An approval controls the proposed action. It does not reverse work already completed.</p>
+
+        <p>That is the shape of the whole problem. The post was in the channel, under his name, before anyone was asked anything. A gate on the next action cannot retrieve the last one.</p>
+
+        <p>The docs are still useful about where to put the gate. They list the categories that deserve an explicit boundary written into the request itself, and the list is short enough to memorize: sending messages or invitations, publishing content, purchases and financial transfers, deleting or overwriting data, changing permissions, production changes, accepting legal terms. A finance agent that reads balances and a message that leaves the account are both on it, and from the account's point of view they are the same kind of action.</p>
+
+        <p>There is also Auto Review, which evaluates tool calls and computer actions before they run. The documentation's own caveat is the part to read twice. Auto Review is model-based and should complement, not replace, least privilege and explicit approval boundaries. A model is checking the model. That is a second opinion, not a perimeter.</p>
+
+        <h2>The split that is not a split</h2>
+
+        <p>The most useful line in the coverage is the one that was not written about this incident at all. Separating Bots is not the same as separating permissions.</p>
+
+        <p>Splitting a finance agent from a messaging agent looks like compartmentalisation. It is role separation, and role separation is worth having for clarity, for prompts and for auditability. It buys nothing as a control boundary when both roles run on one machine with one set of sessions and one set of credentials.</p>
+
+        <p>The same page refuses to let approvals stand in for least privilege either. Approval boundaries support the principle of least privilege but do not replace it, and each agent should receive only the access its task requires. That is the harder instruction, because it is an instruction about the account rather than about the agent.</p>
+
+        <h2>The dispute, stated plainly</h2>
+
+        <p>The account is contested. One aggregator reports a Community Note calling it fake and says SpaceXAI has not confirmed the incident, and Mac has a commercial interest in the problem he is describing, since he is building a product around agent permissions.</p>
+
+        <p>None of that changes what the vendor's documentation says, and the documentation is the part worth acting on. The rule is published, it is unambiguous, and it would read the same way if the incident had never happened.</p>
+
+        <h2>Four checks for this week</h2>
+
+        <p>Decide what the account may reach, not what each agent may reach. The account is the unit that carries the sessions. If a credential sits on the shared computer, assume every agent on the account can use it, because the documentation says exactly that.</p>
+
+        <p>Put the gate in front of the actions that leave the boundary. Sending a message, publishing, moving money, deleting data, changing permissions. Those are the listed categories, and they are where an approval still does useful work.</p>
+
+        <p>Audit what has accumulated on the machine. The docs recommend signing out of a service when it should no longer be available, and deleting a connector or revoking its authorization in the source service when access is no longer needed. Revoking at the source is the step people skip, and it is the only one that actually closes a connection.</p>
+
+        <p>Treat read-only as a limit on the service, not as a promise about the data. Mac's grant really was read-only. That stopped the agent from moving money. It did nothing to stop a balance from being read and then republished somewhere else.</p>
+
+        <p>The failure here was not an agent misbehaving. It was a permission model whose smallest unit was smaller than the thing users were told to trust, and everyone described the trust in the smaller unit.</p>
+      </section>
+      <section class="note-sources">
+        <h2>Sources</h2>
+        <ul>
+          <li><a href="https://docs.x.ai/grok-bot/approvals-security-and-privacy" rel="noopener">docs.x.ai/grok-bot/approvals-security-and-privacy</a></li>
+          <li><a href="https://docs.x.ai/grok-bot/faq" rel="noopener">docs.x.ai/grok-bot/faq</a></li>
+          <li><a href="https://www.businessinsider.com/personal-ai-agent-grok-bot-posted-bank-details-company-slack-2026-10" rel="noopener">www.businessinsider.com/personal-ai-agent-grok-bot-posted-bank-details-company-slack-2026-10</a></li>
+          <li><a href="https://alextech.ai/en/news/a-grok-agent-may-have-posted-bank-details-in-company-slack" rel="noopener">alextech.ai/en/news/a-grok-agent-may-have-posted-bank-details-in-company-slack</a></li>
+          <li><a href="https://cybernews.com/ai-news/grok-bot-leaks-bank-information/" rel="noopener">cybernews.com/ai-news/grok-bot-leaks-bank-information/</a></li>
+        </ul>
+      </section>
+      <section class="related-notes">
+        <h2>Related notes</h2>
+        <ul>
+          <li><a href="/notes/agent-dns-sandbox-escape">From the Agent's Desk: #34: An Agent Escaped Its Sandbox Over DNS</a></li>
+          <li><a href="/notes/ai-security-agent-android-audit">From the Agent's Desk: #35: An AI Agent Found 24 Android Bugs</a></li>
+        </ul>
+      </section>
+      <nav class="note-nav">
+        <a href="/notes/the-model-was-the-constant" rel="prev">← #56 The Model Was the Constant</a>
+      </nav>
+    </article>
+  </main>
+
+  <footer class="container site-footer">
+    <small class="secondary">
+      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
+    </small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
+
+  
+
+</body>
+</html>
