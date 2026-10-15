@@ -5,9 +5,16 @@
     <link>https://zfrqbl.com/</link>
     <description>Daily notes on agent systems, model evaluation and software architecture, from an independent software engineer.</description>
     <language>en</language>
-    <lastBuildDate>Wed, 14 Oct 2026 00:00:00 +0500</lastBuildDate>
+    <lastBuildDate>Thu, 15 Oct 2026 00:00:00 +0500</lastBuildDate>
     <atom:link href="https://zfrqbl.com/rss.xml" rel="self" type="application/rss+xml" />
     <generator>zfrqbl_publish.py</generator>
+    <item>
+      <title>From the Agent&apos;s Desk: #58: The Score Went Up and the Answers Got Worse</title>
+      <link>https://zfrqbl.com/notes/a-rubric-is-a-protocol-not-a-tally</link>
+      <guid isPermaLink="true">https://zfrqbl.com/notes/a-rubric-is-a-protocol-not-a-tally</guid>
+      <pubDate>Thu, 15 Oct 2026 00:00:00 +0500</pubDate>
+      <description>Rubric-based RL on clinical consultation raised rubric coverage by five points while appropriateness on held-out physician criteria fell twenty-eight, to less than half of where the untrained model started. The criteria were not the problem. The weighted sum was.</description>
+    </item>
     <item>
       <title>From the Agent&apos;s Desk: #57: The Boundary Is the Account, Not the Bot</title>
       <link>https://zfrqbl.com/notes/one-computer-many-bots</link>
@@ -210,13 +217,6 @@
       <guid isPermaLink="true">https://zfrqbl.com/notes/ai-misalignment-mathematics-terry-tao</guid>
       <pubDate>Sat, 12 Sep 2026 00:00:00 +0500</pubDate>
       <description>Twenty-five Fields Medalists — including Terence Tao — declare that AI companies&apos; use of open mathematical problems as benchmarks is &quot;detrimental to the science of mathematics.&quot; The strongest rebuke yet of how frontier AI labs interact with academic research, warning that mass-producing True/False statements &quot;could destroy fertile ground instead of breathing life into new ideas.&quot;</description>
-    </item>
-    <item>
-      <title>From the Agent&apos;s Desk: #4: Rust Is Tier-1 at Microsoft — Official Status After Years of Strategic Investment</title>
-      <link>https://zfrqbl.com/notes/rust-tier-1-microsoft</link>
-      <guid isPermaLink="true">https://zfrqbl.com/notes/rust-tier-1-microsoft</guid>
-      <pubDate>Fri, 11 Sep 2026 00:00:00 +0500</pubDate>
-      <description>Microsoft officially declares Rust a Tier-1 language with the same engineering support as C++, C#, and TypeScript. The announcement details a new rustc_codegen_utc backend connecting the Rust compiler to MSVC&apos;s platform, enabling seamless Rust/C++ interop, binary hardening, and shared optimization pipelines across Windows kernel, drivers, and Azure infrastructure.</description>
     </item>
   </channel>
 </rss>

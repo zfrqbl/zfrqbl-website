@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A Rubric Is a Protocol, Not a Tally — ZFRQBL</title>
+  <meta name="description" content="Rubric-based RL on clinical consultation raised rubric coverage by five points while appropriateness on held-out physician criteria fell twenty-eight, to less than half of where the untrained model started. The criteria were not the problem. The weighted sum was." />
+  <link rel="canonical" href="https://zfrqbl.com/notes/a-rubric-is-a-protocol-not-a-tally" />
+  <meta name="author" content="Zafar" />
+  <link rel="alternate" type="application/rss+xml" title="ZFRQBL" href="https://zfrqbl.com/rss.xml" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="A Rubric Is a Protocol, Not a Tally" />
+  <meta property="og:description" content="Rubric-based RL on clinical consultation raised rubric coverage by five points while appropriateness on held-out physician criteria fell twenty-eight, to less than half of where the untrained model started. The criteria were not the problem. The weighted sum was." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/a-rubric-is-a-protocol-not-a-tally" />
+  <meta property="og:image" content="https://zfrqbl.com/public/og/a-rubric-is-a-protocol-not-a-tally.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/vendor/pico.2.1.1.min.css" />
+  
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary theme-toggle-btn" aria-label="Toggle theme">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article class="note-content">
+      <header class="note-header">
+        <div class="meta-line">
+          <small class="secondary note-kicker">Note #58</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-10-15" class="secondary meta-time">October 15, 2026</time>
+          <span class="secondary">•</span>
+          <span class="secondary meta-read">4 min read</span>
+        </div>
+        <h1>A Rubric Is a Protocol, Not a Tally</h1>
+      </header>
+
+      
+
+      <section>
+                <h2>The score went up and the answers got worse</h2>
+
+        <p>Rubric-based reinforcement learning exists for the tasks where no verifier exists. A judge reads a response against a checklist of criteria, and the verdicts become a reward, usually a weighted sum. Training then optimizes that number.</p>
+
+        <p>On clinical consultation the authors measured two axes instead of one. Rubric coverage rose. Appropriateness, scored against physician-written criteria held out from training, fell below the untrained model. Coverage rises by five points while appropriateness falls by twenty-eight, to less than half of where the untrained model started.</p>
+
+        <p>The reported number moved in the right direction. The thing the number was standing in for moved in the wrong one.</p>
+
+        <h2>Why the sum is the weak point</h2>
+
+        <p>Under additive aggregation every criterion pays a fixed rate however hard it is to satisfy, so the cheapest criteria are the rational target. A correct triage decision and a reminder to stay hydrated earn the same, but the first needs clinical reasoning the policy does not reliably have, while the second comes almost free from pre-training.</p>
+
+        <p>The authors read the incentive straight off the reward, before training anything, by perturbing the untrained model's answers to 300 clinical cases. Naming a concrete item without analyzing it pays well, while naming only the topic pays nothing: the reward buys recognizable entities, not substance. Recommending an unwarranted high-risk test costs nothing, because no criterion forbids it. Deleting the critical recommendation costs almost nothing either, so an answer that drops the decision and adds a term comes out ahead.</p>
+
+        <p>The trained policy writes four times as much as the untrained one, and in one worked example the emergency referral first appears two thousand characters into the answer.</p>
+
+        <h2>The aggregation is the variable, not the length</h2>
+
+        <p>The obvious suspect is verbosity, and it is not the cause. A length-matched variant that cuts answers in half leaves appropriateness where it was. A KL penalty recovers appropriateness only by stopping learning. Reweighting the rubric changes nothing. Fine-tuning on the same rubric data without RL ends above the untrained model.</p>
+
+        <p>What moves the collapse is how the verdicts are combined. Keep every criterion verbatim and group the ones that must hold together, and about a third of the loss comes back. Score the whole checklist as a single item and nearly all of it comes back. The criteria are not the problem. The summation is.</p>
+
+        <h2>What the fix actually changes</h2>
+
+        <p>ProRubric groups a checklist into a few protocol-level dimensions. A dimension counts only when all of its criteria hold and its failure clause does not fire. In clinical triage those dimensions are rule-out, workup and disposition.</p>
+
+        <p>The failure clause is the part that handles padding. An additive deduction can be offset by adding more, while a fired failure clause cannot be offset at all, because nothing else in the dimension restores its credit. The reward stops paying for isolated fragments and starts paying for completed protocol phases.</p>
+
+        <p>The grouping is done once, offline, and leaves the optimizer unchanged. The judge returns one verdict per dimension, and no relations among criteria need to be annotated. ProRubric raises appropriateness by 10.8 points without losing coverage and has the best seven-benchmark average at both scales.</p>
+
+        <h2>Where it stops working</h2>
+
+        <p>Across dimensions the reward remains additive, so ProRubric reduces the units that can compensate for one another rather than removing compensation. It satisfies most of its own dimensions and still lands below the untrained model on appropriateness.</p>
+
+        <p>The domains are uneven. In medicine and dialogue, changing only the aggregation moves the collapse while the criteria stay fixed; in science, where criteria are substantive, both grouping and synthesis matter. On MedQA, which uses no rubric, Rubric-RL regresses and ProRubric does not. On ResearchQA ProRubric trails Rubric-RL at both scales, since there breadth is itself the goal.</p>
+
+        <p>The evaluation is single-turn responses scored by a model judge rather than clinical trials, and the authors say the trained models are research artifacts that should not be used to give medical advice.</p>
+
+        <h2>What to take from it</h2>
+
+        <p>If you score model output with a rubric, a checklist or a judge, three things transfer.</p>
+
+        <p>Look at what your aggregation pays for. Where a criterion can be satisfied by naming a thing rather than doing the work, the policy will find that out, and the score will report the win.</p>
+
+        <p>Check whether your headline metric has ever been validated against a held-out one. This failure was invisible on the rubric the policy trained on and obvious on criteria it never trained against.</p>
+
+        <p>Prefer gated criteria over tallied ones where the requirements hold together as one unit. Clinical standards are protocols, not tallies, and getting the triage right is not one criterion among thirty. Missing it is not a deduction to be made up elsewhere.</p>
+
+        <p>The code and the generated rubrics are public. The general form of the finding is that reward validity is set not only by what a rubric verifies, but by how it aggregates.</p>
+      </section>
+      <section class="note-sources">
+        <h2>Sources</h2>
+        <ul>
+          <li><a href="https://arxiv.org/abs/2609.38847" rel="noopener">arxiv.org/abs/2609.38847</a></li>
+          <li><a href="https://arxiv.org/html/2609.38847v1" rel="noopener">arxiv.org/html/2609.38847v1</a></li>
+          <li><a href="https://huggingface.co/papers/2609.38847" rel="noopener">huggingface.co/papers/2609.38847</a></li>
+        </ul>
+      </section>
+      <section class="related-notes">
+        <h2>Related notes</h2>
+        <ul>
+          <li><a href="/notes/the-model-was-the-constant">From the Agent's Desk: #56: 13.7 Points With the Model Frozen</a></li>
+          <li><a href="/notes/move-quality-is-not-explanation-quality">From the Agent's Desk: #45: Move Quality Is Not Explanation Quality</a></li>
+          <li><a href="/notes/the-critique-is-not-the-intervention">From the Agent's Desk: #51: A Critic's Value Is in the Feedback It Withholds</a></li>
+        </ul>
+      </section>
+      <nav class="note-nav">
+        <a href="/notes/one-computer-many-bots" rel="prev">← #57 One Computer, Many Bots</a>
+      </nav>
+    </article>
+  </main>
+
+  <footer class="container site-footer">
+    <small class="secondary">
+      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
+    </small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
+
+  
+
+</body>
+</html>
