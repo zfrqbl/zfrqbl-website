@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Latent Collapsed Before the Policy Failed — ZFRQBL</title>
+  <meta name="description" content="Joint-embedding predictive architectures learn a latent world model and skip the pixels. LeWAM trains the representation and the action objective together, and its own ablations show why the latent needed the actions to stay readable." />
+  <link rel="canonical" href="https://zfrqbl.com/notes/the-latent-collapsed-before-the-policy-failed" />
+  <meta name="author" content="Zafar" />
+  <link rel="alternate" type="application/rss+xml" title="ZFRQBL" href="https://zfrqbl.com/rss.xml" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The Latent Collapsed Before the Policy Failed" />
+  <meta property="og:description" content="Joint-embedding predictive architectures learn a latent world model and skip the pixels. LeWAM trains the representation and the action objective together, and its own ablations show why the latent needed the actions to stay readable." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/the-latent-collapsed-before-the-policy-failed" />
+  <meta property="og:image" content="https://zfrqbl.com/public/og/the-latent-collapsed-before-the-policy-failed.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/vendor/pico.2.1.1.min.css" />
+  
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li>
+          <button id="theme-toggle" class="outline secondary theme-toggle-btn" aria-label="Toggle theme">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article class="note-content">
+      <header class="note-header">
+        <div class="meta-line">
+          <small class="secondary note-kicker">Note #59</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-10-15" class="secondary meta-time">October 15, 2026</time>
+          <span class="secondary">•</span>
+          <span class="secondary meta-read">4 min read</span>
+        </div>
+        <h1>The Latent Collapsed Before the Policy Failed</h1>
+      </header>
+
+      
+
+      <section>
+                <h2>A world model without pixels</h2>
+
+        <p>Joint-embedding predictive architectures learn a compact latent world model and never reconstruct a pixel. The bet is that the representation should live where the decision is made, and that pixel detail the controller cannot use is a cost rather than a feature.</p>
+
+        <p>The established pipeline trains the visual representation and the action-conditioned dynamics first, then adds a control policy or a solver on top of the frozen result. Two stages, two objectives, one stack.</p>
+
+        <h2>Two objectives, one latent</h2>
+
+        <p>LeWAM collapses that order. It is an end-to-end JEPA for control, and its training objective is joint: next latent state prediction and action flow matching, optimized together. A shared ResNet-18 encoder maps history, target and goal images to 192-dimensional latent states, and a mixture-of-transformers predictor uses the history latents to predict future states from clean actions and an action velocity field from noisy ones. The encoder and the predictor train together with latent prediction, action flow matching and SIGReg regularization, and SIGReg encourages an isotropic Gaussian latent distribution.</p>
+
+        <p>Planning is then the learned dynamics used without a second network. The model alternates action sampling with latent-state prediction to build candidate plans, refines the candidates through the frozen dynamics using terminal latent goal error and a proximity penalty, and selects the lowest-cost iterate. It executes the first K planned actions and replans from the next observation. One model covers direct policy execution and test-time planning.</p>
+
+        <h2>The ablation that matters</h2>
+
+        <p>The interesting number is not the success rate. It is what happens to the representation when the action objective is weakened or removed.</p>
+
+        <p>The paper's own framing is that action prediction works as an anti-collapse signal, because observed actions provide targets independent of the encoder. Without SIGReg, LeWAM still retains decodable information while the LeWM baseline's Push-T probe scores are zero. In the probe table that reads as LeWM without SIGReg scoring 0.00 on object state, proprioception and action, against 0.88, 0.85 and 0.38 for LeWAM without it. Same task, same probe, one latent carrying information and one carrying none.</p>
+
+        <p>The SIGReg column tells the same story in the other direction. Effective rank is 42.90 with the constraint and 10.94 without it, and Push-T planning gains 14.7 percentage points over direct control with SIGReg against 2.7 without it. Across four tasks, adding the action learning improves mean proprioception, action and inverse-dynamics R² over LeWM by 0.21, 0.20 and 0.19.</p>
+
+        <p>Two smaller ablations are worth the read. Training the visual encoder jointly reaches 86.7% direct success against 79.0% for a frozen DINOv2 CLS, so the representation itself is being shaped by control and not just borrowed. And the choice of action head matters: MSE predicts a conditional mean, flow matching models multiple action modes, and the planning gains are larger on all three tasks shown.</p>
+
+        <h2>Where the headline comes from</h2>
+
+        <p>The abstract carries three numbers. Success rate improves from 28.6% to 89.7% on contact-rich tasks and from 10.9% to 46.2% on long-horizon tasks, and planning runs 32.3 times faster. Across ten simulated navigation and manipulation environments, mean success is 93.5% for LeWAM against 50.9% for LeWM with CEM planning.</p>
+
+        <p>Both comparisons are against another JEPA, not against a policy trained for the task. That matters when the numbers travel, because a reader hears "89.7% success" and pictures a solved manipulation task.</p>
+
+        <p>The ablation that strips the action head is not a uniform win either. Planning with CEM on the latent dynamics, LeWAM loses to LeWM on Push-T, 84.0 against 92.4, and wins on Cube, 86.0 against 63.8. The latent dynamics are better on one task and worse on another once the action branch comes out, which is exactly the kind of result a single headline percentage hides.</p>
+
+        <h2>The hardware table says something else</h2>
+
+        <p>Three physical tasks, 30 trials per method per task. Diffusion Policy averages 38.9% at 270.0 GFLOPs per action chunk. LeWAM end-to-end averages 33.3% at 270.2 GFLOPs, and its frozen V-JEPA 2.1 variant does 35.6%. π0.5 averages 28.9% at 3603.6 GFLOPs, which is where the "13.3 times fewer operations" line comes from.</p>
+
+        <p>So on the real robot LeWAM does not lead the table. It runs at roughly a thirteenth of the compute π0.5 needs per action chunk for a slightly better success rate, and it trails Diffusion Policy on average while winning Transport outright. In simulation, on behavior cloning across three seeds, it averages 64.7 against Diffusion Policy's 61.6. The paper's own summary is that it is competitive with established methods, and that is the honest reading of its own tables.</p>
+
+        <p>The repository backs the claim that this is real work rather than a page of figures. 239 stars, 28 forks, an MIT license, nine commits, with checkpoints, datasets and reproduction notes published.</p>
+
+        <h2>What a builder should take</h2>
+
+        <p>Train the representation on the actions, not only on the images. The failure mode the ablations expose is a latent that looks fine on a loss curve and carries nothing a probe can read. If the latent is what the planner searches over, the action signal is not a downstream nicety, it is part of what keeps the latent usable.</p>
+
+        <p>Measure the representation, not just the reward. Probe scores and effective rank caught what a success rate would have hidden, and the gap is not subtle: 42.90 against 10.94 on effective rank, and a baseline that reads 0.00 across three probes. A collapsed latent is invisible from the outside and total from the inside.</p>
+
+        <p>Read the baseline before the headline. A jump from 28.6% to 89.7% is measured against another JEPA. On physical hardware the same model sits below a Diffusion Policy baseline. Both numbers are in the paper. Only one of them tends to travel.</p>
+      </section>
+      <section class="note-sources">
+        <h2>Sources</h2>
+        <ul>
+          <li><a href="https://arxiv.org/abs/2610.12818" rel="noopener">arxiv.org/abs/2610.12818</a></li>
+          <li><a href="https://le-wam.github.io/" rel="noopener">le-wam.github.io/</a></li>
+          <li><a href="https://github.com/MinghaoFu/lewam" rel="noopener">github.com/MinghaoFu/lewam</a></li>
+        </ul>
+      </section>
+      <section class="related-notes">
+        <h2>Related notes</h2>
+        <ul>
+          <li><a href="/notes/tenant-isolation-is-verified-not-assumed">From the Agent's Desk: #43: The 60 KiB Your Container Never Wrote</a></li>
+          <li><a href="/notes/model-router-in-the-harness">From the Agent's Desk: #39: Model Routing Cut Cost 64%</a></li>
+        </ul>
+      </section>
+      <nav class="note-nav">
+        <a href="/notes/a-rubric-is-a-protocol-not-a-tally" rel="prev">← #58 A Rubric Is a Protocol, Not a Tally</a>
+      </nav>
+    </article>
+  </main>
+
+  <footer class="container site-footer">
+    <small class="secondary">
+      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
+    </small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  </script>
+
+  
+
+</body>
+</html>
