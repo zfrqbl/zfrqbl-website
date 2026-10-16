@@ -1,341 +1,173 @@
-/* ==========================================================================
-   ZFRQBL — Global Styles & Pico CSS Overrides
-   ========================================================================== */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>__TITLE__ — ZFRQBL</title>
+  <meta name="description" content="__DESCRIPTION__" />
+  <link rel="canonical" href="__CANONICAL_URL__" />
+  <meta name="author" content="Zafar" />
+  <link rel="alternate" type="application/rss+xml" title="ZFRQBL" href="https://zfrqbl.com/rss.xml" />
 
-/* --------------------------------------------------------------------------
-   1. Typography & System Variables
-   -------------------------------------------------------------------------- */
-:root {
-  --pico-font-family-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --pico-font-family-serif: "Newsreader", "Georgia", Cambria, serif;
-  --pico-font-family-monospace: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="__TITLE__" />
+  <meta property="og:description" content="__DESCRIPTION__" />
+  <meta property="og:url" content="__CANONICAL_URL__" />
+  <meta property="og:image" content="__OG_IMAGE__" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
 
-  --pico-font-family: var(--pico-font-family-sans);
-  --pico-line-height: 1.65;
-  --pico-font-size: 100%;
-}
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/vendor/pico.2.1.1.min.css" />
+  <link rel="stylesheet" href="/vendor/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
 
-/* Optional serif styling for long-form essays */
-article.essay-content {
-  font-family: var(--pico-font-family-serif);
-  font-size: 1.125rem;
-  max-width: 68ch;
-}
+  <!-- Theme Detection (FOUC Guard) -->
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
 
-/* --------------------------------------------------------------------------
-   2. Theme Color Palettes
-   -------------------------------------------------------------------------- */
-[data-theme="light"] {
-  --pico-primary: #2563eb;
-  --pico-primary-background: #2563eb;
-  --pico-primary-underline: rgba(37, 99, 235, 0.5);
-  --pico-background-color: #fcfcfc;
-  --pico-color: #1c1d22;
-  --pico-muted-color: #64748b;
-  --pico-muted-border-color: #e2e8f0;
-}
+  <!-- Skip link (accessibility) -->
+  <a class="skip-link" href="#main-content">Skip to content</a>
 
-[data-theme="dark"] {
-  --pico-primary: #3b82f6;
-  --pico-primary-background: #3b82f6;
-  --pico-primary-underline: rgba(59, 130, 246, 0.5);
-  --pico-background-color: #090d16;
-  --pico-color: #f1f5f9;
-  --pico-muted-color: #94a3b8;
-  --pico-muted-border-color: #1e293b;
-}
+  <!-- Header -->
+  <header class="container">
+    <nav>
+      <ul>
+        <li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li>
+      </ul>
+      <ul>
+        <li><a href="/about">About</a></li>
+        <li>
+          <button id="theme-toggle" class="outline secondary theme-toggle-btn" aria-label="Toggle theme">
+            🌙 / ☀️
+          </button>
+        </li>
+      </ul>
+    </nav>
+  </header>
 
-/* --------------------------------------------------------------------------
-   3. Feed Items & Badges
-   -------------------------------------------------------------------------- */
-.feed-item {
-  padding-bottom: 1.5rem;
-  margin-bottom: 2rem;
-  border-bottom: 1px dashed var(--pico-muted-border-color);
-}
+  <!-- Main Content -->
+  <main id="main-content" class="container">
+    <article class="essay-content">
+      <header class="note-header">
+        <div class="meta-line">
+          <small class="secondary note-kicker">Essay</small>
+          <span class="secondary">•</span>
+          <time datetime="__DATE_ISO__" class="secondary meta-time">__DATE_DISPLAY__</time>
+          <span class="secondary">•</span>
+          __READING_TIME__
+        </div>
+        <h1>__TITLE__</h1>
+      </header>
 
-.meta-line {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 0.35rem;
-}
+      __HEADER_IMAGE__
 
-.badge {
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  padding: 0.15rem 0.4rem;
-  border-radius: 4px;
-  letter-spacing: 0.05em;
-}
+      <section>
+        __CONTENT__
+      </section>
 
-.badge-essay {
-  background: var(--pico-primary-background);
-  color: var(--pico-primary-inverse);
-}
+      __SOURCES__
 
-.badge-note {
-  background: var(--pico-secondary-background);
-  color: var(--pico-secondary-inverse);
-}
+      __RELATED__
 
-/* Feed entry internals. These rules replace the inline style="" attributes the publisher
-   used to write into every entry (140 on the home page alone); the classes are emitted by
-   render_feed_entry() in zfrqbl_publish.py. */
-.feed-title {
-  margin-bottom: 0.5rem;
-  font-size: 1.25rem;
-}
+      <!-- Citation block -->
+      <div class="cite-block">
+        <strong>Cite this essay</strong>
+        <pre id="citation-text"></pre>
+        <button class="copy-btn" id="copy-citation" style="position:static;">Copy citation</button>
+      </div>
 
-.feed-title a {
-  transition: color 0.15s ease;
-}
+      <!-- Discuss link -->
+      <p class="secondary discuss-link">
+        <a href="https://github.com/zfrqbl/zfrqbl-website/discussions" rel="noopener">
+          Discuss this essay on GitHub
+        </a>
+      </p>
 
-.feed-title a:hover,
-.feed-title a:focus-visible {
-  color: var(--pico-primary);
-  text-decoration: underline;
-}
+      __NOTE_NAV__
+    </article>
+  </main>
 
-.feed-desc {
-  margin-bottom: 0;
-  font-size: 0.95rem;
-}
+  <!-- Footer -->
+  <footer class="container site-footer">
+    <small class="secondary">© <script>document.write(new Date().getFullYear())</script> ZFRQBL</small>
+  </footer>
 
-/* Filter buttons formatting */
-.filter-btn {
-  padding: 0.2rem 0.65rem !important;
-  font-size: 0.8rem !important;
-  width: auto !important;
-  margin-bottom: 0 !important;
-}
+  <!-- Scripts -->
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
 
-/* --------------------------------------------------------------------------
-   4. Code Containers & Copy Button
-   -------------------------------------------------------------------------- */
-/* The copy button is appended INSIDE <pre> and positioned against it, so <pre> has to be
-   the positioning context — without this the button anchors to the page, not the block. */
-pre {
-  position: relative;
-}
+    document.querySelectorAll('.copy-btn').forEach(button => {
+      // Skip the citation button; it's handled separately below
+      if (button.id === 'copy-citation') return;
+      button.addEventListener('click', () => {
+        const container = button.closest('.code-container');
+        if (!container) return;
+        const code = container.querySelector('code').innerText;
+        navigator.clipboard.writeText(code).then(() => {
+          button.innerText = 'Copied!';
+          setTimeout(() => button.innerText = 'Copy', 2000);
+        });
+      });
+    });
 
-.code-container {
-  position: relative;
-  margin-bottom: 1.5rem;
-  border-radius: 6px;
-  overflow: hidden;
-}
+    // Citation generator — reads existing meta/DOM, no publisher change needed
+    (function () {
+      const citeEl = document.getElementById('citation-text');
+      const copyBtn = document.getElementById('copy-citation');
+      if (!citeEl) return;
 
-.copy-btn {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  padding: 0.2rem 0.5rem;
-  font-size: 0.75rem;
-  background: rgba(255, 255, 255, 0.15);
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background 0.2s ease;
-  z-index: 10;
-}
+      const ogTitle = document.querySelector('meta[property="og:title"]')?.content || '';
+      const title = ogTitle || document.title.replace(/\s*[—|]\s*ZFRQBL.*$/, '');
+      const url = document.querySelector('link[rel="canonical"]')?.href || location.href;
+      const author = document.querySelector('meta[name="author"]')?.content || 'Zafar';
+      const timeEl = document.querySelector('time[datetime]');
+      const year = timeEl
+        ? new Date(timeEl.getAttribute('datetime')).getFullYear()
+        : new Date().getFullYear();
+      const slug = (location.pathname.replace(/\/$/, '').split('/').pop() || 'essay')
+        .replace(/[^a-z0-9]+/gi, '_');
 
-.copy-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
-}
+      citeEl.textContent =
+`@misc{zfrqbl_${slug}_${year},
+  author = {${author}},
+  title  = {${title}},
+  year   = {${year}},
+  url    = {${url}}
+}`;
 
-pre[class*="language-"] {
-  border-radius: 6px !important;
-  margin-bottom: 0 !important;
-  font-size: 0.875rem !important;
-}
+      copyBtn?.addEventListener('click', () => {
+        navigator.clipboard.writeText(citeEl.textContent).then(() => {
+          copyBtn.textContent = 'Copied!';
+          setTimeout(() => copyBtn.textContent = 'Copy citation', 2000);
+        });
+      });
+    })();
+  </script>
 
-/* --------------------------------------------------------------------------
-   5. Clean Print / Save-to-PDF Styles
-   -------------------------------------------------------------------------- */
-@media print {
-  header, footer, .copy-btn, #theme-toggle, .filter-container {
-    display: none !important;
-  }
-  body {
-    background: #ffffff !important;
-    color: #000000 !important;
-    font-size: 12pt;
-  }
-  a {
-    text-decoration: underline;
-    color: #000000 !important;
-  }
-  pre, code {
-    border: 1px solid #ccc;
-    white-space: pre-wrap !important;
-  }
-}
-
-/* --------------------------------------------------------------------------
-   6. Page Furniture & Note Measure
-   -------------------------------------------------------------------------- */
-/* Note pages carried no measure class while essays did: at the large breakpoint the
-   container is 950px, roughly 110 characters per line. 68ch matches the essays. */
-article.note-content {
-  max-width: 68ch;
-}
-
-.note-header {
-  margin-bottom: 2rem;
-}
-
-.note-kicker {
-  text-transform: uppercase;
-  font-weight: bold;
-  font-size: 0.75rem;
-}
-
-.meta-time {
-  font-size: 0.85rem;
-}
-
-.theme-toggle-btn {
-  padding: 0.25rem 0.5rem;
-  font-size: 0.85rem;
-}
-
-.site-footer {
-  margin-top: 4rem;
-  padding-top: 2rem;
-  border-top: 1px solid var(--pico-muted-border-color);
-}
-
-/* Home page furniture */
-.intro-section {
-  margin-bottom: 2.5rem;
-}
-
-.site-title {
-  font-size: 2.25rem;
-  margin-bottom: 0.5rem;
-}
-
-.tagline {
-  font-size: 1.1rem;
-  max-width: 65ch;
-}
-
-.filter-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-}
-
-.filter-buttons {
-  display: flex;
-  gap: 0.4rem;
-}
-
-.feed-heading {
-  font-size: 1.5rem;
-  margin-bottom: 0;
-}
-
-/* Essay header figure (emitted by header_image_html() in zfrqbl_publish.py) */
-.article-header-image {
-  margin: 2rem 0;
-}
-
-.article-header-image img {
-  width: 100%;
-  height: auto;
-  border-radius: 8px;
-  display: block;
-}
-
-/* The one essay that predates the essay template: it uses its own class names and had no rules at
-   all, so its header rendered unstyled. These give it the shape its markup was written for. */
-.essay-header {
-  margin-bottom: 2rem;
-}
-
-.eyebrow {
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--pico-muted-color);
-  margin-bottom: 0.5rem;
-}
-
-.dek {
-  font-size: 1.1rem;
-  color: var(--pico-muted-color);
-}
-
-/* --------------------------------------------------------------------------
-   Sources, related notes, prev/next, reading time
-   -------------------------------------------------------------------------- */
-
-.meta-read {
-  font-variant-numeric: tabular-nums;
-}
-
-.note-sources,
-.related-notes {
-  margin-top: 3rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--pico-muted-border-color);
-}
-
-.note-sources h2,
-.related-notes h2 {
-  font-size: 0.8rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--pico-muted-color);
-  margin-bottom: 0.75rem;
-}
-
-.note-sources ul,
-.related-notes ul {
-  list-style: none;
-  padding-left: 0;
-  margin-bottom: 0;
-}
-
-.note-sources li,
-.related-notes li {
-  margin-bottom: 0.4rem;
-  line-height: 1.45;
-}
-
-.note-sources a {
-  font-size: 0.85rem;
-  color: var(--pico-muted-color);
-  word-break: break-word;
-}
-
-.note-sources a:hover {
-  color: var(--pico-primary);
-}
-
-.related-notes a {
-  font-size: 0.95rem;
-}
-
-.note-nav {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-top: 2.5rem;
-  padding-top: 1.25rem;
-  border-top: 1px solid var(--pico-muted-border-color);
-  font-size: 0.9rem;
-}
-
-.note-nav a {
-  max-width: 48%;
-  line-height: 1.4;
-}
+  <script src="/vendor/prism.min.js"></script>
+  <script src="/vendor/prism-python.min.js"></script>
+  <script src="/vendor/prism-javascript.min.js"></script>
+  <script src="/vendor/prism-bash.min.js"></script>
+  <script src="/vendor/prism-sql.min.js"></script>
+  <script src="/vendor/prism-markdown.min.js"></script>
+</body>
+</html>
