@@ -5,17 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>__TITLE__ — ZFRQBL</title>
   <meta name="description" content="__DESCRIPTION__" />
-__HEAD_META__
+  <link rel="canonical" href="__CANONICAL_URL__" />
+  <meta name="author" content="Zafar" />
+  <link rel="alternate" type="application/rss+xml" title="ZFRQBL" href="https://zfrqbl.com/rss.xml" />
 
   <meta property="og:type" content="article" />
   <meta property="og:title" content="__TITLE__" />
   <meta property="og:description" content="__DESCRIPTION__" />
-  <meta property="og:url" content="https://zfrqbl.com/essays/__SLUG__" />
-__OG_META__
+  <meta property="og:url" content="__CANONICAL_URL__" />
+  <meta property="og:image" content="__OG_IMAGE__" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- PWA / Mobile Feel -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0172ad" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#111827" media="(prefers-color-scheme: dark)" />
+  <link rel="apple-touch-icon" href="/favicon.svg" />
 
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="/vendor/pico.2.1.1.min.css" />
-  __PRISM_CSS__
+  <link rel="stylesheet" href="/vendor/prism-tomorrow.min.css" />
   <link rel="stylesheet" href="/style.css" />
 
   <script>
@@ -31,25 +42,25 @@ __OG_META__
   </script>
 </head>
 <body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
 
   <header class="container">
     <nav>
       <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
       <ul>
-        <li>
-          <button id="theme-toggle" class="outline secondary theme-toggle-btn" aria-label="Toggle theme">🌙 / ☀️</button>
-        </li>
+        <li><a href="/about">About</a></li>
+        <li><button id="theme-toggle" class="outline secondary theme-toggle-btn" aria-label="Toggle theme">🌙 / ☀️</button></li>
       </ul>
     </nav>
   </header>
 
-  <main class="container">
+  <main id="main-content" class="container">
     <article class="essay-content">
       <header class="note-header">
         <div class="meta-line">
-          <small class="secondary note-kicker">__KIND_LABEL__</small>
+          <small class="secondary note-kicker">Essay</small>
           <span class="secondary">•</span>
-          <time datetime="__DATE_ISO__" class="secondary meta-time">__DATE_HUMAN__</time>
+          <time datetime="__DATE_ISO__" class="secondary meta-time">__DATE_DISPLAY__</time>
           <span class="secondary">•</span>
           __READING_TIME__
         </div>
@@ -58,19 +69,27 @@ __OG_META__
 
       __HEADER_IMAGE__
 
-      <section>
-        __CONTENT__
-      </section>
-__SOURCES__
-__RELATED__
-__NOTE_NAV__
+      <section>__CONTENT__</section>
+
+      __SOURCES__
+      __RELATED__
+
+      <div class="cite-block">
+        <strong>Cite this essay</strong>
+        <pre id="citation-text"></pre>
+        <button class="copy-btn" id="copy-citation" style="position:static;">Copy citation</button>
+      </div>
+
+      <p class="secondary discuss-link">
+        <a href="https://github.com/zfrqbl/zfrqbl-website/discussions" rel="noopener">Discuss this essay on GitHub</a>
+      </p>
+
+      __NOTE_NAV__
     </article>
   </main>
 
   <footer class="container site-footer">
-    <small class="secondary">
-      © <script>document.write(new Date().getFullYear())</script> ZFRQBL — Built with HTML & Pico CSS.
-    </small>
+    <small class="secondary">© <script>document.write(new Date().getFullYear())</script> ZFRQBL</small>
   </footer>
 
   <script>
@@ -80,9 +99,84 @@ __NOTE_NAV__
       document.documentElement.setAttribute('data-theme', newTheme);
       localStorage.setItem('theme', newTheme);
     });
+
+    document.querySelectorAll('.copy-btn').forEach(button => {
+      if (button.id === 'copy-citation') return;
+      button.addEventListener('click', () => {
+        const container = button.closest('.code-container');
+        if (!container) return;
+        const code = container.querySelector('code').innerText;
+        navigator.clipboard.writeText(code).then(() => {
+          button.innerText = 'Copied!';
+          setTimeout(() => button.innerText = 'Copy', 2000);
+        });
+      });
+    });
+
+    document.querySelectorAll('pre[class*="language-"]').forEach(pre => {
+      const cls = [...pre.classList].find(c => c.startsWith('language-'));
+      if (cls) {
+        const lang = cls.replace('language-', '').replace('prism-', '');
+        const container = pre.closest('.code-container') || pre.parentElement;
+        if (container && !container.querySelector('.code-lang')) {
+          const span = document.createElement('span');
+          span.className = 'code-lang';
+          span.textContent = lang;
+          container.prepend(span);
+        }
+      }
+    });
+
+    document.querySelectorAll('main h2[id], main h3[id], main h4[id]').forEach(heading => {
+      const anchor = document.createElement('a');
+      anchor.href = `#${heading.id}`;
+      anchor.className = 'heading-anchor';
+      anchor.setAttribute('aria-label', 'Permalink');
+      anchor.addEventListener('click', (e) => {
+        e.preventDefault();
+        navigator.clipboard.writeText(window.location.href.split('#')[0] + `#${heading.id}`);
+        anchor.classList.add('copied');
+        setTimeout(() => anchor.classList.remove('copied'), 2000);
+        history.replaceState(null, '', `#${heading.id}`);
+      });
+      heading.prepend(anchor);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+      if (e.key === 't' || e.key === 'T') {
+        document.getElementById('theme-toggle')?.click();
+      }
+    });
+
+    (function () {
+      const citeEl = document.getElementById('citation-text');
+      const copyBtn = document.getElementById('copy-citation');
+      if (!citeEl) return;
+
+      const title = document.querySelector('meta[property="og:title"]')?.content || document.title.replace(/\s*[—|]\s*ZFRQBL.*$/, '');
+      const url = document.querySelector('link[rel="canonical"]')?.href || location.href;
+      const author = document.querySelector('meta[name="author"]')?.content || 'Zafar';
+      const timeEl = document.querySelector('time[datetime]');
+      const year = timeEl ? new Date(timeEl.getAttribute('datetime')).getFullYear() : new Date().getFullYear();
+      const slug = (location.pathname.replace(/\/$/, '').split('/').pop() || 'essay').replace(/[^a-z0-9]+/gi, '_');
+
+      citeEl.textContent = `@misc{zfrqbl_${slug}_${year},\n  author = {${author}},\n  title  = {${title}},\n  year   = {${year}},\n  url    = {${url}}\n}`;
+
+      copyBtn?.addEventListener('click', () => {
+        navigator.clipboard.writeText(citeEl.textContent).then(() => {
+          copyBtn.textContent = 'Copied!';
+          setTimeout(() => copyBtn.textContent = 'Copy citation', 2000);
+        });
+      });
+    })();
   </script>
 
-  __PRISM__
-
+  <script src="/vendor/prism.min.js"></script>
+  <script src="/vendor/prism-python.min.js"></script>
+  <script src="/vendor/prism-javascript.min.js"></script>
+  <script src="/vendor/prism-bash.min.js"></script>
+  <script src="/vendor/prism-sql.min.js"></script>
+  <script src="/vendor/prism-markdown.min.js"></script>
 </body>
 </html>
