@@ -1,0 +1,17 @@
+{
+  "name": "ZFRQBL",
+  "short_name": "ZFRQBL",
+  "description": "Daily notes on agent systems, model evaluation and software architecture.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0172ad",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
