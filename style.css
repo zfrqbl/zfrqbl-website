@@ -5,7 +5,7 @@
    ============================================================ */
 
 /* ------------------------------------------------------------
-   Theme tokens (Pico reads data-theme on <html>)
+   Theme tokens
    ------------------------------------------------------------ */
 :root {
   --site-max-width: 720px;
@@ -37,7 +37,7 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  font-size: 1.0625rem; /* 17px for comfortable technical reading */
+  font-size: 1.0625rem;
 }
 
 main.container {
@@ -47,7 +47,6 @@ main.container {
   line-height: 1.75;
 }
 
-/* Heading hierarchy with tighter letter-spacing */
 h1 {
   font-size: 2.25rem;
   line-height: 1.2;
@@ -56,13 +55,17 @@ h1 {
   font-weight: 700;
 }
 
+h2, h3, h4 {
+  position: relative; /* For heading anchors */
+  font-weight: 600;
+}
+
 h2 {
   font-size: 1.75rem;
   line-height: 1.3;
   letter-spacing: -0.01em;
   margin-top: 2.5rem;
   margin-bottom: 0.75rem;
-  font-weight: 600;
 }
 
 h3 {
@@ -70,45 +73,44 @@ h3 {
   line-height: 1.4;
   margin-top: 2rem;
   margin-bottom: 0.5rem;
-  font-weight: 600;
 }
 
 h4, h5, h6 {
   margin-top: 1.5rem;
   margin-bottom: 0.5rem;
-  font-weight: 600;
 }
 
-/* Paragraph and list spacing */
-p {
-  margin-bottom: 1.25rem;
-}
+p { margin-bottom: 1.25rem; }
 
 ul, ol {
   margin-bottom: 1.25rem;
   padding-left: 1.75rem;
 }
 
-li {
-  margin-bottom: 0.5rem;
-}
+li { margin-bottom: 0.5rem; }
 
-/* Link styling — underline on hover only */
 a {
   text-decoration: none;
   border-bottom: 1px solid transparent;
   transition: border-color var(--transition-base), color var(--transition-base);
 }
 
-a:hover {
-  border-bottom-color: currentColor;
-}
+a:hover { border-bottom-color: currentColor; }
 
-/* External link indicator */
 a[href^="http"]:not([href*="zfrqbl.com"])::after {
   content: " ↗";
   font-size: 0.8em;
   opacity: 0.6;
+}
+
+/* Custom selection color */
+::selection {
+  background: var(--pico-primary, #0172ad);
+  color: #fff;
+}
+::-moz-selection {
+  background: var(--pico-primary, #0172ad);
+  color: #fff;
 }
 
 /* ============================================================
@@ -130,7 +132,6 @@ header.container nav ul {
   list-style: none;
 }
 
-/* Theme toggle button */
 .theme-toggle-btn {
   padding: 0.4rem 0.8rem;
   font-size: 1rem;
@@ -145,11 +146,9 @@ header.container nav ul {
 }
 
 /* ============================================================
-   FEED ITEMS (index / archive) — card-style
+   FEED ITEMS (index / archive)
    ============================================================ */
-.feed-heading {
-  margin-bottom: 0.5rem;
-}
+.feed-heading { margin-bottom: 0.5rem; }
 
 .filter-container {
   display: flex;
@@ -160,10 +159,7 @@ header.container nav ul {
   margin-bottom: 1.5rem;
 }
 
-.filter-buttons {
-  display: flex;
-  gap: 0.5rem;
-}
+.filter-buttons { display: flex; gap: 0.5rem; }
 
 .filter-btn {
   padding: 0.35rem 0.9rem;
@@ -178,7 +174,6 @@ header.container nav ul {
   box-shadow: var(--shadow-sm);
 }
 
-/* Card-style feed items with hover lift */
 .feed-item {
   padding: 1.5rem;
   margin-bottom: 1rem;
@@ -197,11 +192,8 @@ header.container nav ul {
   box-shadow: var(--shadow-md);
 }
 
-.feed-item:last-child {
-  border-bottom: 1px solid var(--card-border);
-}
+.feed-item:last-child { border-bottom: 1px solid var(--card-border); }
 
-/* Stagger fade-in for first few items */
 .feed-item:nth-child(1) { animation-delay: 0.05s; }
 .feed-item:nth-child(2) { animation-delay: 0.1s; }
 .feed-item:nth-child(3) { animation-delay: 0.15s; }
@@ -209,17 +201,10 @@ header.container nav ul {
 .feed-item:nth-child(5) { animation-delay: 0.25s; }
 
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* Meta line */
 .meta-line {
   display: flex;
   align-items: center;
@@ -229,9 +214,7 @@ header.container nav ul {
   font-size: 0.875rem;
 }
 
-.meta-time, .meta-read, .note-kicker {
-  opacity: 0.75;
-}
+.meta-time, .meta-read, .note-kicker { opacity: 0.75; }
 
 .feed-title {
   font-size: 1.25rem;
@@ -244,9 +227,7 @@ header.container nav ul {
   transition: color var(--transition-base);
 }
 
-.feed-title a:hover {
-  color: var(--pico-primary, #0172ad);
-}
+.feed-title a:hover { color: var(--pico-primary, #0172ad); }
 
 .feed-desc {
   margin: 0;
@@ -255,7 +236,6 @@ header.container nav ul {
   opacity: 0.85;
 }
 
-/* Badges with subtle tinted backgrounds */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -283,32 +263,15 @@ header.container nav ul {
 /* ============================================================
    NOTE / ESSAY CONTENT
    ============================================================ */
-.note-header {
-  margin-bottom: 2rem;
-}
+.note-header { margin-bottom: 2rem; }
+.note-kicker { text-transform: uppercase; letter-spacing: 0.06em; }
+.meta-read { white-space: nowrap; }
 
-.note-kicker {
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-.meta-read {
-  white-space: nowrap;
-}
-
-/* Essay header figure (emitted by zfrqbl_publish.py) */
-.essay-header-figure {
-  margin: 1.5rem 0 2rem;
-}
-
-.essay-header-figure img {
-  width: 100%;
-  height: auto;
-  border-radius: var(--radius);
-}
+.essay-header-figure { margin: 1.5rem 0 2rem; }
+.essay-header-figure img { width: 100%; height: auto; border-radius: var(--radius); }
 
 /* ============================================================
-   CODE BLOCKS + COPY BUTTON
+   CODE BLOCKS + LANGUAGE LABELS + COPY BUTTON
    ============================================================ */
 .code-container {
   position: relative;
@@ -328,7 +291,6 @@ header.container nav ul {
   line-height: 1.6;
 }
 
-/* Inline code polish */
 code:not(pre code) {
   background: color-mix(in srgb, var(--pico-code-background-color) 60%, transparent);
   padding: 0.2em 0.4em;
@@ -336,7 +298,6 @@ code:not(pre code) {
   font-size: 0.9em;
 }
 
-/* Copy button — hidden until hover */
 .copy-btn {
   position: absolute;
   top: 0.5rem;
@@ -351,11 +312,10 @@ code:not(pre code) {
   opacity: 0;
   transition: opacity var(--transition-base), background var(--transition-base),
               color var(--transition-base), border-color var(--transition-base);
+  z-index: 2;
 }
 
-.code-container:hover .copy-btn {
-  opacity: 1;
-}
+.code-container:hover .copy-btn { opacity: 1; }
 
 .copy-btn:hover {
   background: var(--pico-primary, #0172ad);
@@ -363,8 +323,55 @@ code:not(pre code) {
   border-color: var(--pico-primary, #0172ad);
 }
 
+.code-lang {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--pico-muted-color);
+  background: var(--pico-card-background-color);
+  border-bottom-right-radius: 6px;
+  border-right: 1px solid var(--card-border);
+  border-bottom: 1px solid var(--card-border);
+  z-index: 1;
+  pointer-events: none;
+}
+
 /* ============================================================
-   BLOCKQUOTES & CALLOUTS
+   HEADING ANCHORS
+   ============================================================ */
+.heading-anchor {
+  position: absolute;
+  left: -1.25rem;
+  color: var(--pico-muted-color, #888);
+  text-decoration: none;
+  border-bottom: none !important;
+  opacity: 0;
+  transition: opacity var(--transition-base);
+  font-weight: normal;
+  user-select: none;
+}
+
+h2:hover .heading-anchor,
+h3:hover .heading-anchor,
+h4:hover .heading-anchor,
+.heading-anchor:focus {
+  opacity: 1;
+}
+
+.heading-anchor::after { content: "#"; }
+
+.heading-anchor.copied::after {
+  content: "✓";
+  color: var(--pico-primary, #0172ad);
+}
+
+/* ============================================================
+   BLOCKQUOTES, TABLES, IMAGES
    ============================================================ */
 blockquote {
   margin: 1.5rem 0;
@@ -374,13 +381,8 @@ blockquote {
   border-radius: 0 var(--radius) var(--radius) 0;
   font-style: italic;
 }
-
-blockquote p:last-child {
-  margin-bottom: 0;
-}
-
-blockquote footer,
-blockquote cite {
+blockquote p:last-child { margin-bottom: 0; }
+blockquote footer, blockquote cite {
   display: block;
   margin-top: 0.75rem;
   font-size: 0.9em;
@@ -388,84 +390,26 @@ blockquote cite {
   font-style: normal;
 }
 
-/* ============================================================
-   TABLES
-   ============================================================ */
-table {
-  width: 100%;
-  margin: 1.5rem 0;
-  border-collapse: collapse;
-  font-size: 0.95rem;
-}
-
+table { width: 100%; margin: 1.5rem 0; border-collapse: collapse; font-size: 0.95rem; }
 th {
   background: color-mix(in srgb, var(--pico-primary, #0172ad) 8%, transparent);
-  font-weight: 600;
-  text-align: left;
-  padding: 0.75rem;
+  font-weight: 600; text-align: left; padding: 0.75rem;
   border-bottom: 2px solid var(--pico-primary, #0172ad);
 }
+td { padding: 0.75rem; border-bottom: 1px solid var(--card-border); }
+tr:hover { background: var(--card-bg-tint); }
 
-td {
-  padding: 0.75rem;
-  border-bottom: 1px solid var(--card-border);
-}
-
-tr:hover {
-  background: var(--card-bg-tint);
-}
-
-/* ============================================================
-   IMAGES & FIGURES
-   ============================================================ */
-img {
-  max-width: 100%;
-  height: auto;
-  border-radius: var(--radius);
-}
-
-figure {
-  margin: 2rem 0;
-}
-
+img { max-width: 100%; height: auto; border-radius: var(--radius); }
+figure { margin: 2rem 0; }
 figcaption {
-  margin-top: 0.75rem;
-  font-size: 0.875rem;
-  text-align: center;
-  opacity: 0.75;
-  font-style: italic;
+  margin-top: 0.75rem; font-size: 0.875rem; text-align: center;
+  opacity: 0.75; font-style: italic;
 }
 
 /* ============================================================
-   SOURCES BLOCK
+   SOURCES, RELATED, CITATION, NAV
    ============================================================ */
-.note-sources {
-  margin-top: 2.5rem;
-  padding: 1.5rem;
-  border: 1px solid var(--card-border);
-  border-radius: var(--radius);
-  background: color-mix(in srgb, var(--pico-card-background-color) 30%, transparent);
-}
-
-.note-sources h2 {
-  font-size: 1.1rem;
-  margin-top: 0;
-  margin-bottom: 1rem;
-}
-
-.note-sources ol {
-  padding-left: 1.25rem;
-  margin-bottom: 0;
-}
-
-.note-sources li {
-  margin-bottom: 0.5rem;
-}
-
-/* ============================================================
-   RELATED NOTES
-   ============================================================ */
-.related-notes {
+.note-sources, .related-notes, .cite-block {
   margin-top: 2rem;
   padding: 1.5rem;
   border: 1px solid var(--card-border);
@@ -473,173 +417,72 @@ figcaption {
   background: color-mix(in srgb, var(--pico-card-background-color) 30%, transparent);
 }
 
-.related-notes h2 {
-  font-size: 1.1rem;
-  margin-top: 0;
-  margin-bottom: 1rem;
+.note-sources h2, .related-notes h2, .cite-block strong {
+  font-size: 1.1rem; margin-top: 0; margin-bottom: 1rem; display: block;
 }
 
-.related-notes ul {
-  list-style: none;
-  padding: 0;
-  margin-bottom: 0;
-}
+.note-sources ol, .related-notes ul { margin-bottom: 0; }
+.related-notes ul { list-style: none; padding: 0; }
 
-.related-notes li {
-  margin-bottom: 0.5rem;
-}
-
-/* ============================================================
-   PREV / NEXT NAVIGATION
-   ============================================================ */
 .note-nav {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-top: 2.5rem;
-  padding-top: 1.25rem;
-  border-top: 1px solid var(--card-border);
+  display: flex; justify-content: space-between; gap: 1rem;
+  margin-top: 2.5rem; padding-top: 1.25rem; border-top: 1px solid var(--card-border);
 }
-
-.note-nav a {
-  max-width: 48%;
-}
-
-.note-nav .nav-next {
-  text-align: right;
-  margin-left: auto;
-}
-
-/* ============================================================
-   CITATION BLOCK
-   ============================================================ */
-.cite-block {
-  margin-top: 2.5rem;
-  padding: 1.5rem;
-  border: 1px solid var(--card-border);
-  border-radius: var(--radius);
-  background: color-mix(in srgb, var(--pico-card-background-color) 30%, transparent);
-}
-
-.cite-block strong {
-  font-size: 1.1rem;
-  display: block;
-  margin-bottom: 0.75rem;
-}
+.note-nav a { max-width: 48%; }
+.note-nav .nav-next { text-align: right; margin-left: auto; }
 
 .cite-block pre {
-  margin: 0.5rem 0;
-  font-size: 0.85rem;
-  white-space: pre-wrap;
-  word-break: break-word;
-  background: var(--code-bg);
-  padding: 0.75rem;
-  border-radius: 6px;
-  line-height: 1.5;
+  margin: 0.5rem 0; font-size: 0.85rem; white-space: pre-wrap; word-break: break-word;
+  background: var(--code-bg); padding: 0.75rem; border-radius: 6px; line-height: 1.5;
 }
 
-/* Discuss link */
-.discuss-link {
-  margin-top: 1.5rem;
-}
+.discuss-link { margin-top: 1.5rem; }
 
 /* ============================================================
-   BUTTONS & INTERACTIVE ELEMENTS
+   BUTTONS & RULES
    ============================================================ */
 button, .button {
   transition: transform var(--transition-base), box-shadow var(--transition-base),
               background var(--transition-base), color var(--transition-base);
 }
+button:hover, .button:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+button:active, .button:active { transform: translateY(0); }
 
-button:hover, .button:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
-}
-
-button:active, .button:active {
-  transform: translateY(0);
-}
-
-/* ============================================================
-   HORIZONTAL RULES
-   ============================================================ */
 hr {
-  border: none;
-  height: 1px;
-  background: linear-gradient(
-    to right,
-    transparent,
-    var(--card-border) 20%,
-    var(--card-border) 80%,
-    transparent
-  );
+  border: none; height: 1px;
+  background: linear-gradient(to right, transparent, var(--card-border) 20%, var(--card-border) 80%, transparent);
   margin: 2.5rem 0;
 }
 
 /* ============================================================
-   FOOTER
+   FOOTER & TRANSITIONS
    ============================================================ */
 .site-footer {
   border-top: 1px solid var(--card-border);
-  padding: 2rem 0;
-  margin-top: 4rem;
-  text-align: center;
+  padding: 2rem 0; margin-top: 4rem; text-align: center;
 }
+.site-footer small { font-size: 0.875rem; opacity: 0.7; }
 
-.site-footer small {
-  font-size: 0.875rem;
-  opacity: 0.7;
-}
-
-/* ============================================================
-   SMOOTH THEME TRANSITIONS
-   ============================================================ */
-body,
-header,
-footer,
-.feed-item,
-.code-container,
-.note-sources,
-.related-notes,
-.cite-block,
-blockquote,
-table {
-  transition: background-color var(--transition-slow), border-color var(--transition-slow),
-              color var(--transition-slow);
+body, header, footer, .feed-item, .code-container, .note-sources, .related-notes, .cite-block, blockquote, table {
+  transition: background-color var(--transition-slow), border-color var(--transition-slow), color var(--transition-slow);
 }
 
 /* ============================================================
-   ACCESSIBILITY (from previous pass)
+   ACCESSIBILITY & REDUCED MOTION
    ============================================================ */
-
-/* Visible keyboard focus for all interactive elements */
 :focus-visible {
   outline: 2px solid var(--pico-primary, #0172ad);
-  outline-offset: 2px;
-  border-radius: 2px;
+  outline-offset: 2px; border-radius: 2px;
 }
 
-/* Skip-to-content link */
 .skip-link {
-  position: absolute;
-  top: -48px;
-  left: 8px;
-  padding: 8px 14px;
-  background: var(--pico-primary, #0172ad);
-  color: #fff;
-  border-radius: 0 0 6px 6px;
-  z-index: 1000;
-  text-decoration: none;
+  position: absolute; top: -48px; left: 8px; padding: 8px 14px;
+  background: var(--pico-primary, #0172ad); color: #fff;
+  border-radius: 0 0 6px 6px; z-index: 1000; text-decoration: none;
   transition: top 0.15s ease;
 }
+.skip-link:focus { top: 0; }
 
-.skip-link:focus {
-  top: 0;
-}
-
-/* ============================================================
-   REDUCED MOTION (global override)
-   ============================================================ */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -647,122 +490,44 @@ table {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-
-  .feed-item {
-    animation: none;
-    opacity: 1;
-    transform: none;
-  }
+  .feed-item { animation: none; opacity: 1; transform: none; }
 }
 
 /* ============================================================
-   MOBILE OPTIMIZATIONS
+   MOBILE & PRINT
    ============================================================ */
 @media (max-width: 768px) {
-  body {
-    font-size: 1rem;
-  }
-
-  h1 {
-    font-size: 1.875rem;
-  }
-
-  h2 {
-    font-size: 1.5rem;
-  }
-
-  h3 {
-    font-size: 1.25rem;
-  }
-
-  main.container {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-
-  .feed-item {
-    padding: 1.25rem;
-  }
-
-  .note-nav {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .note-nav a {
-    max-width: 100%;
-    text-align: left !important;
-  }
-
-  .code-container pre {
-    font-size: 0.85rem;
-    padding: 1rem;
-  }
-
-  .copy-btn {
-    opacity: 1; /* Always visible on touch */
-  }
-
-  .meta-line {
-    gap: 0.5rem;
+  body { font-size: 1rem; }
+  h1 { font-size: 1.875rem; }
+  h2 { font-size: 1.5rem; }
+  h3 { font-size: 1.25rem; }
+  main.container { padding-left: 1rem; padding-right: 1rem; }
+  .feed-item { padding: 1.25rem; }
+  .note-nav { flex-direction: column; gap: 1rem; }
+  .note-nav a { max-width: 100%; text-align: left !important; }
+  .code-container pre { font-size: 0.85rem; padding: 1rem; }
+  .copy-btn { opacity: 1; }
+  .meta-line { gap: 0.5rem; }
+  
+  .heading-anchor {
+    position: static; display: inline-block; margin-right: 0.5rem; opacity: 0.5;
   }
 }
 
-/* ============================================================
-   PRINT STYLESHEET
-   ============================================================ */
 @media print {
-  header.container,
-  .site-footer,
-  .copy-btn,
-  #theme-toggle,
-  .theme-toggle-btn,
-  .cite-block button,
-  .skip-link,
-  .note-nav,
-  .filter-container,
-  .filter-buttons,
-  a[href^="http"]::after {
+  header.container, .site-footer, .copy-btn, #theme-toggle, .theme-toggle-btn,
+  .cite-block button, .skip-link, .note-nav, .filter-container, .filter-buttons, .heading-anchor, .code-lang {
     display: none !important;
   }
-
-  /* Show URLs after external links in print */
   a[href^="http"]::after {
-    display: inline;
-    content: " (" attr(href) ")";
-    font-size: 0.8em;
-    word-break: break-all;
-    opacity: 0.7;
+    display: inline; content: " (" attr(href) ")";
+    font-size: 0.8em; word-break: break-all; opacity: 0.7;
   }
-
-  main.container {
-    max-width: 100%;
+  main.container { max-width: 100%; }
+  body { color: #000; background: #fff; font-size: 11pt; line-height: 1.5; }
+  .feed-item, .note-sources, .related-notes, .cite-block {
+    break-inside: avoid; box-shadow: none; border: 1px solid #ccc;
   }
-
-  body {
-    color: #000;
-    background: #fff;
-    font-size: 11pt;
-    line-height: 1.5;
-  }
-
-  .feed-item,
-  .note-sources,
-  .related-notes,
-  .cite-block {
-    break-inside: avoid;
-    box-shadow: none;
-    border: 1px solid #ccc;
-  }
-
-  h1, h2, h3 {
-    page-break-after: avoid;
-  }
-
-  pre {
-    white-space: pre-wrap;
-    word-break: break-all;
-    border: 1px solid #ccc;
-    padding: 0.5rem;
-  }
+  h1, h2, h3 { page-break-after: avoid; }
+  pre { white-space: pre-wrap; word-break: break-all; border: 1px solid #ccc; padding: 0.5rem; }
 }
