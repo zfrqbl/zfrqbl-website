@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Graph Engineering Isn’t Magic: It’s Just Loops with State Management — ZFRQBL</title>
+  <title>Graph Engineering Isn’t Magic: It’s Just Loops & State</title>
   <meta name="description" content="Understand graph-based AI agents by following their evolution from plain Python loops to explicit state management and graph execution." />
   <link rel="canonical" href="https://zfrqbl.com/essays/graph-engineering-isnt-magic" />
   <meta name="author" content="Zafar" />
@@ -11,7 +11,7 @@
 
   
   <meta property="og:type" content="article" />
-  <meta property="og:title" content="Graph Engineering Isn’t Magic: It’s Just Loops with State Management" />
+  <meta property="og:title" content="Graph Engineering Isn’t Magic: It’s Just Loops & State" />
   <meta property="og:description" content="Understand graph-based AI agents by following their evolution from plain Python loops to explicit state management and graph execution." />
   <meta property="og:url" content="https://zfrqbl.com/essays/graph-engineering-isnt-magic" />
   <meta property="og:image" content="https://zfrqbl.com/public/og/graph-engineering-isnt-magic.png" />
@@ -23,6 +23,7 @@
   <link rel="stylesheet" href="/vendor/pico.2.1.1.min.css" />
   <link rel="stylesheet" href="/vendor/prism-tomorrow.min.css" />
   <link rel="stylesheet" href="/style.css" />
+  <link rel="preload" as="image" href="/public/images/blog_header_graph_engineering_isnt_magic.webp" fetchpriority="high" />
 
   <script>
     (function () {
@@ -42,8 +43,10 @@
     <nav>
       <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
       <ul>
+        <li><a href="/about">About</a></li>
+        <li><a href="/archive">Archive</a></li>
         <li>
-          <button id="theme-toggle" class="outline secondary theme-toggle-btn" aria-label="Toggle theme">🌙 / ☀️</button>
+          <button id="theme-toggle" class="outline secondary theme-toggle-btn" aria-label="Toggle theme 🌙 / ☀️">🌙 / ☀️</button>
         </li>
       </ul>
     </nav>
@@ -65,7 +68,7 @@
         <img 
           src="/public/images/blog_header_graph_engineering_isnt_magic.webp" 
           alt="Graph Engineering Isn't Magic Header Diagram" 
-          
+          width="1536" height="1024" fetchpriority="high"
         />
       </figure>
 
@@ -78,7 +81,7 @@
         <p>The workflow loop is straightforward:</p>
 
         <figure style="margin: 2rem 0;">
-          <img src="/public/images/code_loop.webp" alt="Coding agent workflow loop diagram" style="width: 100%; height: auto; border-radius: 6px;" />
+          <img src="/public/images/code_loop.webp" alt="Coding agent workflow loop diagram" width="1254" height="1254" style="width: 100%; height: auto; border-radius: 6px;" />
           <figcaption class="secondary" style="font-size: 0.85rem; text-align: center; margin-top: 0.5rem;">Coding agent workflow loop</figcaption>
         </figure>
 
@@ -416,7 +419,7 @@ def evaluate_code(state: AgentState) -> dict:
         <p>The execution now has a clearer shape:</p>
 
         <figure style="margin: 2rem 0;">
-          <img src="/public/images/agent_loop.webp" alt="Explicit state agent graph workflow diagram" style="width: 100%; height: auto; border-radius: 6px;" />
+          <img src="/public/images/agent_loop.webp" alt="Explicit state agent graph workflow diagram" width="1204" height="1306" style="width: 100%; height: auto; border-radius: 6px;" />
           <figcaption class="secondary" style="font-size: 0.85rem; text-align: center; margin-top: 0.5rem;">State and execution graph workflow diagram</figcaption>
         </figure>
 
@@ -856,11 +859,11 @@ raise RuntimeError(
       });
     });
   </script>
-  <script src="/vendor/prism.min.js"></script>
-  <script src="/vendor/prism-python.min.js"></script>
-  <script src="/vendor/prism-javascript.min.js"></script>
-  <script src="/vendor/prism-bash.min.js"></script>
-  <script src="/vendor/prism-sql.min.js"></script>
-  <script src="/vendor/prism-markdown.min.js"></script>
+  <script defer src="/vendor/prism.min.js"></script>
+  <script defer src="/vendor/prism-python.min.js"></script>
+  <script defer src="/vendor/prism-javascript.min.js"></script>
+  <script defer src="/vendor/prism-bash.min.js"></script>
+  <script defer src="/vendor/prism-sql.min.js"></script>
+  <script defer src="/vendor/prism-markdown.min.js"></script>
 </body>
 </html>

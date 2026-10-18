@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Stable Training Is Not Correct Gradients — ZFRQBL</title>
-  <meta name="description" content="A 450M-parameter transformer trained fine for 25 billion tokens, then its gradient norm grew a thousandfold with no NaN and it finished 0.2 nats behind an identical FP32 run. The cause is a BF16 rounding error in FlashAttention-3's backward that breaks a conservation law in the attention gradient, and no forward-pass fix can reach it." />
+  <meta name="description" content="A 450M-parameter transformer trained fine for 25 billion tokens, then its gradient norm grew a thousandfold with no NaN and it finished 0." />
   <link rel="canonical" href="https://zfrqbl.com/notes/stable-training-is-not-correct-gradients" />
   <meta name="author" content="Zafar" />
   <link rel="alternate" type="application/rss+xml" title="ZFRQBL" href="https://zfrqbl.com/rss.xml" />
@@ -12,7 +12,7 @@
 
   <meta property="og:type" content="article" />
   <meta property="og:title" content="Stable Training Is Not Correct Gradients" />
-  <meta property="og:description" content="A 450M-parameter transformer trained fine for 25 billion tokens, then its gradient norm grew a thousandfold with no NaN and it finished 0.2 nats behind an identical FP32 run. The cause is a BF16 rounding error in FlashAttention-3's backward that breaks a conservation law in the attention gradient, and no forward-pass fix can reach it." />
+  <meta property="og:description" content="A 450M-parameter transformer trained fine for 25 billion tokens, then its gradient norm grew a thousandfold with no NaN and it finished 0." />
   <meta property="og:url" content="https://zfrqbl.com/notes/stable-training-is-not-correct-gradients" />
   <meta property="og:image" content="https://zfrqbl.com/public/og/stable-training-is-not-correct-gradients.png" />
   <meta property="og:image:width" content="1200" />
@@ -42,8 +42,10 @@
     <nav>
       <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
       <ul>
+        <li><a href="/about">About</a></li>
+        <li><a href="/archive">Archive</a></li>
         <li>
-          <button id="theme-toggle" class="outline secondary theme-toggle-btn" aria-label="Toggle theme">🌙 / ☀️</button>
+          <button id="theme-toggle" class="outline secondary theme-toggle-btn" aria-label="Toggle theme 🌙 / ☀️">🌙 / ☀️</button>
         </li>
       </ul>
     </nav>

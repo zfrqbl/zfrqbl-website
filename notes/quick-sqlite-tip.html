@@ -4,14 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Quick Tip: Enabling WAL Mode in SQLite Connections — ZFRQBL</title>
-  <meta name="description" content="Preventing concurrent write locking errors during multi-threaded database read/writes." />
+  <meta name="description" content="Preventing concurrent write locking errors during multi-threaded database read/writes — enable WAL mode in SQLite connections." />
   <link rel="canonical" href="https://zfrqbl.com/notes/quick-sqlite-tip" />
   <meta name="author" content="Zafar" />
   <link rel="alternate" type="application/rss+xml" title="ZFRQBL" href="https://zfrqbl.com/rss.xml" />
 
   <meta property="og:type" content="article" />
   <meta property="og:title" content="Quick Tip: Enabling WAL Mode in SQLite Connections" />
-  <meta property="og:description" content="Preventing concurrent write locking errors during multi-threaded database read/writes." />
+  <meta property="og:description" content="Preventing concurrent write locking errors during multi-threaded database read/writes — enable WAL mode in SQLite connections." />
   <meta property="og:url" content="https://zfrqbl.com/notes/quick-sqlite-tip" />
   <meta property="og:image" content="https://zfrqbl.com/public/og/quick-sqlite-tip.png" />
   <meta property="og:image:width" content="1200" />
@@ -41,8 +41,10 @@
     <nav>
       <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
       <ul>
+        <li><a href="/about">About</a></li>
+        <li><a href="/archive">Archive</a></li>
         <li>
-          <button id="theme-toggle" class="outline secondary theme-toggle-btn" aria-label="Toggle theme">🌙 / ☀️</button>
+          <button id="theme-toggle" class="outline secondary theme-toggle-btn" aria-label="Toggle theme 🌙 / ☀️">🌙 / ☀️</button>
         </li>
       </ul>
     </nav>
@@ -98,11 +100,11 @@ PRAGMA synchronous=NORMAL;</code></pre>
       });
     });
   </script>
-  <script src="/vendor/prism.min.js"></script>
-  <script src="/vendor/prism-python.min.js"></script>
-  <script src="/vendor/prism-javascript.min.js"></script>
-  <script src="/vendor/prism-bash.min.js"></script>
-  <script src="/vendor/prism-sql.min.js"></script>
-  <script src="/vendor/prism-markdown.min.js"></script>
+  <script defer src="/vendor/prism.min.js"></script>
+  <script defer src="/vendor/prism-python.min.js"></script>
+  <script defer src="/vendor/prism-javascript.min.js"></script>
+  <script defer src="/vendor/prism-bash.min.js"></script>
+  <script defer src="/vendor/prism-sql.min.js"></script>
+  <script defer src="/vendor/prism-markdown.min.js"></script>
 </body>
 </html>
