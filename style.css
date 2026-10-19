@@ -306,6 +306,7 @@ code:not(pre code) {
   font-size: 0.75rem;
   font-weight: 500;
   background: var(--pico-card-background-color);
+  color: #000;
   border: 1px solid var(--card-border);
   border-radius: 6px;
   cursor: pointer;
@@ -315,12 +316,18 @@ code:not(pre code) {
   z-index: 2;
 }
 
-.code-container:hover .copy-btn { opacity: 1; }
+[data-theme="dark"] .copy-btn {
+  color: #f3f4f6;
+}
+
+.code-container:hover .copy-btn,
+.cite-block:hover .copy-btn { opacity: 1; }
 
 .copy-btn:hover {
   background: var(--pico-primary, #0172ad);
   color: #fff;
   border-color: var(--pico-primary, #0172ad);
+  opacity: 1;
 }
 
 .code-lang {
