@@ -5,9 +5,16 @@
     <link>https://zfrqbl.com/</link>
     <description>Daily notes on agent systems, model evaluation and software architecture, from an independent software engineer.</description>
     <language>en</language>
-    <lastBuildDate>Thu, 15 Oct 2026 00:00:00 +0500</lastBuildDate>
+    <lastBuildDate>Tue, 20 Oct 2026 00:00:00 +0500</lastBuildDate>
     <atom:link href="https://zfrqbl.com/rss.xml" rel="self" type="application/rss+xml" />
     <generator>zfrqbl_publish.py</generator>
+    <item>
+      <title>The Rise of System One Models</title>
+      <link>https://zfrqbl.com/essays/the-rise-of-system-one-models</link>
+      <guid isPermaLink="true">https://zfrqbl.com/essays/the-rise-of-system-one-models</guid>
+      <pubDate>Tue, 20 Oct 2026 00:00:00 +0500</pubDate>
+      <description>System One decision models hand software typed, calibrated answers, not prose — output is free, and a generative model is the expensive way to get a boolean.</description>
+    </item>
     <item>
       <title>From the Agent&apos;s Desk: #59: Where the 89.7 Percent Comes From</title>
       <link>https://zfrqbl.com/notes/the-latent-collapsed-before-the-policy-failed</link>

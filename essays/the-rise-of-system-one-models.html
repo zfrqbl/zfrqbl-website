@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Rise of System One Models — ZFRQBL</title>
+  <meta name="description" content="System One decision models hand software typed, calibrated answers, not prose — output is free, and a generative model is the expensive way to get a boolean." />
+  <link rel="canonical" href="https://zfrqbl.com/essays/the-rise-of-system-one-models" />
+  <meta name="author" content="Zafar" />
+  <link rel="alternate" type="application/rss+xml" title="ZFRQBL" href="https://zfrqbl.com/rss.xml" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The Rise of System One Models" />
+  <meta property="og:description" content="System One decision models hand software typed, calibrated answers, not prose — output is free, and a generative model is the expensive way to get a boolean." />
+  <meta property="og:url" content="https://zfrqbl.com/essays/the-rise-of-system-one-models" />
+  <meta property="og:image" content="https://zfrqbl.com/public/og/zfrqbl.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- PWA / Mobile Feel -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0172ad" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#111827" media="(prefers-color-scheme: dark)" />
+  <link rel="apple-touch-icon" href="/favicon.svg" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/vendor/pico.2.1.1.min.css" />
+  <link rel="stylesheet" href="/vendor/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li><a href="/about">About</a></li>
+        <li><a href="/archive">Archive</a></li>
+        <li>
+          <button id="theme-toggle" class="outline secondary theme-toggle-btn" aria-label="Toggle theme 🌙 / ☀️">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main-content" class="container">
+    <article class="essay-content">
+      <header class="note-header">
+        <div class="meta-line">
+          <small class="secondary note-kicker">Essay</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-10-20" class="secondary meta-time">October 20, 2026</time>
+          <span class="secondary">•</span>
+          <span class="secondary meta-read">11 min read</span>
+        </div>
+        <h1>The Rise of System One Models</h1>
+      </header>
+
+      
+
+      <section><p class="dek">Software doesn&#x27;t need a model that writes. It needs a model that decides, and for that job a generative model is the expensive way to get a boolean.</p>
+
+<p>Models have been superhuman at chat for years, and the industry still can't point to where all the automation went.</p>
+
+<p><a href="https://typesafe.ai/blog/introducing-system-one-models-and-jev" rel="noopener">Diogo Almeida</a>, who helped build the instruction-following research that became ChatGPT, spent four years on that question before he left OpenAI. His answer, shipped in September 2026 as <a href="https://typesafe.ai/blog/introducing-system-one-models-and-jev" rel="noopener">TypeSafe AI's Jev</a>, is that the bottleneck was never raw intelligence. It's the interface. A model that replies in prose is an awkward component to build software on, because software doesn't consume sentences. It consumes values.</p>
+
+<p>The model class TypeSafe calls System One is named after the fast, intuitive thinking in <a href="https://en.wikipedia.org/wiki/Thinking,_Fast_and_Slow" rel="noopener">Kahneman's <em>Thinking, Fast and Slow</em></a>.</p>
+
+<p>System One models fill in the specific role of making decisions in LLM-powered applications operation. What makes them unique is token economy in terms of input vs output tokens and processing speed at scale. Using a general-purpose generative model to fill that role wastes tokens and process efficiency. These  decision models hand you the decision while a generative model hands you a string you then have to run through another LLM call or a scripted regex parser to get the desired result.</p>
+
+<h2 id="strings-are-the-wrong-interface-for-software">Strings are the wrong interface for software</h2>
+
+<p>Every pipeline I've built has the same point of friction: somewhere a language model writes prose and my code reads it back. The application wants a decision about keeping or deleting an email, or classifying a ticket as escalation to a human. A model like Opus or Luna generates a full paragraph containing the full reasoning and the actual one-word decision. This means all such LLM responses are automatically routed through a parser to extract just that one-word decision. Triaging an inbox with thousands of unread emails with this pipeline means wasted token and slow response because of additional hops in the flow.</p>
+
+<p>The waste shows up in four places at once. <a href="https://www.doit.com/blog/cost-per-task-vs-cost-per-token" rel="noopener">Output tokens cost three to eight times the input price on most providers</a>, and a classification answer is mostly output. The response is a string, so it has to be parsed, and <a href="https://dev.to/gabrielanhaia/the-hidden-tax-of-structured-output-how-much-extra-you-pay-for-json-mode-1463" rel="noopener">JSON mode wraps the real answer in a structure that can multiply the token count five to ten times</a> on a small task like email classification. Then the value has to be validated against a Pydantic schema, because I can never fully trust  a generative model from emitting a response I never defined or expected. And when any of that fails (and it will), I have retry blocks, which costs another full generation. Add it up and a task whose substance is a single yes or no bills like a small essay.</p>
+
+<p>There's a fifth cost that doesn't show on the invoice. A generative model is systematically overconfident. You can ask it for a confidence score and it will give you one, but the number isn't calibrated, so you can't fully trust it. A model that's right 95% of the time but can't tell you which calls are in the other 5% can't be trusted to run unattended. You keep a human in the loop because you have no way to know when the model needs one.</p>
+
+<p>The agent loop makes all of this worse, because an agent makes a decision at every step. This means every decision requires another model call, and the loop is slow and costly because of retries and the overall lack of confidence on the validity of the response. The problem is the same whether your agent writes code or simply classifies emails. A coding agent that routes every request to a frontier model is paying for a full generation on what are often simple lookups.</p>
+
+<h2 id="what-a-system-one-model-actually-is">What a System One model actually is</h2>
+
+<p>Jev gives up string generation entirely. Instead of a chat interface, you declare the shape of the answer up front, then call it like a function. You send a state (the context) and a set of questions about that state, and it returns the fields filled in, each with a calibrated probability attached. TypeSafe describes it as a frontier-intelligence function call with unstructured state in and typed probabilistic decisions out.</p>
+
+<p>This design comes with the following three properties that directly or indirectly negate the costs of using generative models for decision making calls.</p>
+
+<p><strong>Parallel sampling.</strong> A chat model builds its answer one token at a time, each conditioned on the last. Jev fills every field in a single pass. <a href="https://typesafe.ai/blog/introducing-system-one-models-and-jev" rel="noopener">TypeSafe reports end-to-end response times of 70 to 500 milliseconds</a> against 3 to 329 seconds for frontier models, and you can ask several questions about the same state in one request without meaningfully changing the response time. That's where the 40x to 200x speed claims come from.</p>
+
+<p><strong>Schema conformance by construction.</strong> The possible outputs are enumerated before the call, so a type error cannot occur because of a wrong model decision or hallucination. TypeSafe's 0% type-error figure is derived from the construction of the responses.</p>
+
+<p><strong>Calibrated confidence.</strong> When this model gives an answer, it also gives a probability. Instead of tuning it for human approval, TypeSafe uses Reinforcement Learning for Calibrated Decisions (RLCD) so those probability numbers are genuinely accurate. If the confidence is high, the accuracy is high. That predictability makes it much easier to use Jev into complex decision-making systems without worrying about any drop in consistency.</p>
+
+<p>The question types map cleanly onto what software actually asks. A Noul answers yes or no and returns the probability the statement is true. A Choice picks from a set of  up to 255 options, and returns a probability per option plus an overall confidence. A Score rates the input against ordered levels like low, medium, high. Keep or drop, route to tier two or tier three, is this urgent: each one is a line of code that returns a typed value.</p>
+
+<h2 id="the-token-economy-of-a-decision">The token economy of a decision</h2>
+
+<p>Now the part that should make you re-read your own invoice. The pricing is the other half of the explosive growth of Jev models.</p>
+
+<p><a href="https://typesafe.ai/blog/introducing-system-one-models-and-jev" rel="noopener">Jev costs $0.042 per million input tokens</a>, and output is free, because there is no output in the billing sense. TypeSafe advertises it as <a href="https://typesafe.ai/blog/introducing-system-one-models-and-jev" rel="noopener">238 times cheaper on input than Claude Fable 5.1's $10 per million</a>. A frontier chat model lists around $5 per million input and $25 to $30 per million output. The worse part is that the output is where a classification answer lives.</p>
+
+<p>The math on a single keep/drop decision is small either way. You start noticing the problem when you are making decisions in volume. Let me write the cost function so it's not hand-wavy:</p>
+
+<div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-python">def cost_per_call(input_tokens: int, output_tokens: int,
+                  in_price_mtok: float, out_price_mtok: float) -&gt; float:
+    &quot;&quot;&quot;Dollars for one call from token counts and per-million-token prices.&quot;&quot;&quot;
+    return (input_tokens * in_price_mtok + output_tokens * out_price_mtok) / 1_000_000
+
+# A frontier chat model on a keep/drop decision: 600 in, 80 out.
+llm = cost_per_call(600, 80, 5.00, 30.00)      # $0.0054
+# Jev: same 600 input tokens, no output charge.
+jev = cost_per_call(600, 0, 0.042, 0.0)        # $0.000025
+
+print(f&quot;generative LLM: ${llm:.6f} per call&quot;)   # $0.005400
+print(f&quot;System One:     ${jev:.6f} per call&quot;)    # $0.000025
+print(f&quot;ratio: {llm / jev:.0f}x&quot;)                # ~214x</code></pre>
+        </div>
+
+<p>Run that block at a million decisions a day and the difference stops being trivia. The generative model bills about $5,400 for that volume. Jev bills about $25. Third-party measurements land between the two extremes: <a href="https://www.truefoundry.com/blog/typesafe-ai-jev" rel="noopener">one group measured 1,000 eight-way routing decisions at $0.015 on Jev against $0.61 on GPT-5.6 Terra, about 40x</a>. <a href="https://typesafe.ai/blog/introducing-system-one-models-and-jev" rel="noopener">TypeSafe's own workflow evals claim 444.6x cheaper</a>, and <a href="https://www.langchain.com/blog/building-a-harness-with-jev" rel="noopener">LangChain repeats "400x lower cost" on classification tasks</a>. Whatever the honest middle is, it's two orders of magnitude, and it's structural, not a price war.</p>
+
+<p>The gap isn't because Jev is a smaller, cheaper model that happens to be good enough. It's because a generative model bills you for the process of producing prose, and a decision doesn't need prose. Output tokens, parsing, validation, retries, and the uncertainty tax all disappear together because the model was built to not generate strings in the first place.</p>
+
+<p>The instinct when you see that ratio is to reach for a cheaper generative model instead. As you will fidn out for yourself, that isn’t the fix either. A smaller generative model still produces a string, still needs parsing and validation, and still reports confidence you can't trust. It lowers the price per call and leaves the structural waste exactly where it was.</p>
+
+<p>To sum it up: the waste is in the interface, not the invoice.</p>
+
+<h2 id="a-classification-call-two-ways">A classification call, two ways</h2>
+
+<p>Here's the same routing decision implemented the two ways. First, the generative approach that most of my own early pipelines used:</p>
+
+<div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-python">import json
+
+def route_ticket_llm(ticket: str, client) -&gt; tuple[str, float]:
+    &quot;&quot;&quot;Ask a chat model to route a support ticket. Returns (tier, confidence).&quot;&quot;&quot;
+    prompt = (
+        &quot;Classify this support ticket into one of: urgent, standard, low. &quot;
+        &#x27;Return JSON: {&quot;tier&quot;: &quot;...&quot;, &quot;confidence&quot;: 0.0-1.0}\n&#x27;
+        f&quot;Ticket: {ticket}&quot;
+    )
+    raw = client.chat.completions.create(
+        model=&quot;gpt-5.6-terra&quot;,
+        response_format={&quot;type&quot;: &quot;json_object&quot;},
+        messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: prompt}],
+    ).choices[0].message.content
+
+    parsed = json.loads(raw)                  # can raise
+    tier = parsed[&quot;tier&quot;]                      # can be anything
+    confidence = float(parsed[&quot;confidence&quot;])   # can be nonsense
+    if tier not in {&quot;urgent&quot;, &quot;standard&quot;, &quot;low&quot;}:   # your schema, enforced by you
+        tier = &quot;standard&quot;                      # a guess on the failure path
+    return tier, confidence</code></pre>
+        </div>
+
+<p>Now the System One version, using the actual TypeSafe SDK shape:</p>
+
+<div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-python">from typesafe_sdk import Choice, TypeSafeClient
+
+client = TypeSafeClient(api_key=&quot;...&quot;)
+
+def route_ticket_jev(ticket: str) -&gt; tuple[str, float]:
+    &quot;&quot;&quot;Same decision. Typed from the start, one parallel pass.&quot;&quot;&quot;
+    res = client.system_one(
+        questions={
+            &quot;tier&quot;: Choice(
+                instructions=&quot;route the ticket&quot;,
+                criteria={
+                    &quot;urgent&quot;: &quot;revenue lost or service down&quot;,
+                    &quot;standard&quot;: &quot;needs a person today&quot;,
+                    &quot;low&quot;: &quot;can wait&quot;,
+                },
+            ),
+        },
+        model=&quot;jev-1.13.0&quot;,
+        state={&quot;ticket&quot;: ticket},
+    )
+    choice = res.choices[&quot;tier&quot;]
+    return choice.choice, choice.confidence</code></pre>
+        </div>
+
+<p>You’ll notice that the second version has no parse step, no validation step, and no failure path where the model returns a value you didn't allow. The schema was part of the request, so the contract is enforced before the call rather than after it (usually through a Pydantic schema validation component).</p>
+
+<p>The difference that matters most is what happens with an ambiguous ticket. In the first version, confidence is a string the model made up. In the second, it's a number you can trust enough to branch on:</p>
+
+<div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-python">tier, confidence = route_ticket_jev(ticket)
+
+if confidence &lt; 0.7:
+    tier = escalate_to_human(ticket)   # Jev says it&#x27;s not sure. Trust that.</code></pre>
+        </div>
+
+<p>That branch is the whole automation argument in one line. When the model can tell you it's uncertain, you can route the uncertain cases to a human and let the confident ones run unattended. The model doesn't need to be right every time. It needs to be honest about when it isn't (very critical for pipelines that need to make decisions on unclear inputs), and then the system around it becomes reliable even though the model isn't.</p>
+
+<p>This isn't hypothetical for me. My own news filter uses a small Jev call to decide keep or drop before spending a full LLM on anything worth reading. A logged run came back at 354 input tokens and a probability, total. That's the point in miniature. The expensive model never sees the boring stuff.</p>
+
+<h2 id="the-role-is-specific-and-the-stack-keeps-the-big-model">The role is specific, and the stack keeps the big model</h2>
+
+<p>Nothing here argues against generative models. They're for open-ended reasoning and generation, and nothing replaces them there. The argument is about the division of labor inside <a href="https://www.langchain.com/blog/building-a-harness-with-jev" rel="noopener">an LLM operation</a>: the big model thinks and writes, and the decision points around it run on something shaped like a function call. LangChain's framing is exactly right when it suggests using an LLM for open-ended reasoning and generation, and Jev for fast, structured decisions along the way.</p>
+
+<p>The early deployments show the pattern. <a href="https://www.langchain.com/blog/building-a-harness-with-jev" rel="noopener">LangChain's Open SWE router</a> was the first version anyone could read. It originally classified requests with an LLM using structured output, then switched to Jev, which made classification almost 50 times faster. In the A/B test that mattered, <a href="https://www.langchain.com/blog/how-to-build-a-model-router-in-the-harness" rel="noopener">routing 973 agent threads across model tiers cut the median cost per thread 64%, from $2.61 to $0.94</a>, with no measurable quality change. The same people also ran the opposite experiment, routing everything to the cheapest model, and killed it within a day because engineers said output quality was disrupting their work. That experiment is why cheapness was never the objective. The objective was fitting the tool to the task.</p>
+
+<p>The guardrail pattern is the one I expect to spread. Coding harnesses like Claude Code and Cursor already classify dangerous actions before taking them, but the classifier lived in their closed-source code. A cheap, calibrated decision model lets any agent apply the same gate before a tool execution by asking Jev if the call is risky, and block it if the answer is yes. <a href="https://www.langchain.com/blog/building-a-harness-with-jev" rel="noopener">LangChain shipped exactly that as Auto Mode middleware over Jev</a>.</p>
+
+<p>None of this requires believing TypeSafe's biggest numbers, and you shouldn't take them at face value. The workflow-eval claims of 193.6x faster and 444.6x cheaper come from the vendor's own evaluations, built by its own team, scored against models the vendor chose. The intelligence-parity claim is only about System One shaped tasks, not general capability.</p>
+
+<p>What you can verify yourself is the price, the latency on your own calls, and the schema guarantee, which is falsifiable by a single bad response. Treat the launch numbers as the ceiling, measure your own workload, and expect the real ratio to land somewhere between 40x and 400x. That's still a big number, and it doesn't depend on marketing.</p>
+
+<h2 id="why-rise-is-the-right-word">Why &quot;rise&quot; is the right word</h2>
+
+<p>The name Jev comes from <a href="https://en.wikipedia.org/wiki/Jevons_paradox" rel="noopener">William Stanley Jevons, the economist who noticed that making steam engines more efficient increased the demand for coal</a> rather than reducing it. Cheaper steam meant more uses for steam. TypeSafe's bet is that machine intelligence follows the same path where every order of magnitude drop in the cost of intelligence unlocks orders of magnitude more use cases. Their own Doom demo runs about ten queries a second, which they estimate costs around seven dollars an hour, and <a href="https://typesafe.ai/blog/introducing-system-one-models-and-jev" rel="noopener">their reaction was that this was cheaper than expected</a>. A few years ago that sentence would not have existed.</p>
+
+<p>That's the rise. The price and the interface put decisions inside ordinary code paths for the first time. The chatbot race never did that. When a routing decision costs a fraction of a cent and answers in a hundred milliseconds, you stop treating AI as a service you call for special occasions and start treating it as an if-statement that happens to be learned. Projects involving decision-making at scale, such as <a href="https://www.langchain.com/blog/how-to-build-a-model-router-in-the-harness" rel="noopener">the map-reduce over a petabyte of unstructured data</a>, or the email triage that never sleeps never made sense at frontier prices with prose responses. They make sense at $0.042 per million input tokens with typed outputs.</p>
+
+<p>Software was never waiting for a model that could write better. It was waiting for a model that could decide, cheaply enough and honestly enough to be trusted with the boring work. The big generative models will keep getting better at thinking and writing. The decisions in between will increasingly be made by models that don't write at all.</p></section>
+
+      
+      
+      <section class="related-notes">
+        <h2>Related notes</h2>
+        <ul>
+          <li><a href="/notes/typesafe-ai-jev-system-one-models">Jev: The First Non-Hallucinating AI Model That Doesn't Generate Strings</a></li>
+          <li><a href="/notes/model-router-in-the-harness">Your Coding Agent Is Overpaying for Intelligence It Never Uses</a></li>
+          <li><a href="/notes/small-language-models-actual-use">Small Language Models: What You Can Actually Do With Them</a></li>
+        </ul>
+      </section>
+
+
+      <div class="cite-block">
+        <strong>Cite this essay</strong>
+        <pre id="citation-text"></pre>
+        <button class="copy-btn" id="copy-citation" style="position:static;">Copy citation</button>
+      </div>
+
+      <p class="secondary discuss-link">
+        <a href="https://github.com/zfrqbl/zfrqbl-website/discussions" rel="noopener">Discuss this essay on GitHub</a>
+      </p>
+
+      
+    </article>
+  </main>
+
+  <footer class="container site-footer">
+    <small class="secondary">© <script>document.write(new Date().getFullYear())</script> ZFRQBL</small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+
+    document.querySelectorAll('.copy-btn').forEach(button => {
+      if (button.id === 'copy-citation') return;
+      button.addEventListener('click', () => {
+        const container = button.closest('.code-container');
+        if (!container) return;
+        const code = container.querySelector('code').innerText;
+        navigator.clipboard.writeText(code).then(() => {
+          button.innerText = 'Copied!';
+          setTimeout(() => button.innerText = 'Copy', 2000);
+        });
+      });
+    });
+
+    document.querySelectorAll('pre[class*="language-"]').forEach(pre => {
+      const cls = [...pre.classList].find(c => c.startsWith('language-'));
+      if (cls) {
+        const lang = cls.replace('language-', '').replace('prism-', '');
+        const container = pre.closest('.code-container') || pre.parentElement;
+        if (container && !container.querySelector('.code-lang')) {
+          const span = document.createElement('span');
+          span.className = 'code-lang';
+          span.textContent = lang;
+          container.prepend(span);
+        }
+      }
+    });
+
+    document.querySelectorAll('main h2[id], main h3[id], main h4[id]').forEach(heading => {
+      const anchor = document.createElement('a');
+      anchor.href = `#${heading.id}`;
+      anchor.className = 'heading-anchor';
+      anchor.setAttribute('aria-label', 'Permalink');
+      anchor.addEventListener('click', (e) => {
+        e.preventDefault();
+        navigator.clipboard.writeText(window.location.href.split('#')[0] + `#${heading.id}`);
+        anchor.classList.add('copied');
+        setTimeout(() => anchor.classList.remove('copied'), 2000);
+        history.replaceState(null, '', `#${heading.id}`);
+      });
+      heading.prepend(anchor);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+      if (e.key === 't' || e.key === 'T') {
+        document.getElementById('theme-toggle')?.click();
+      }
+    });
+
+    (function () {
+      const citeEl = document.getElementById('citation-text');
+      const copyBtn = document.getElementById('copy-citation');
+      if (!citeEl) return;
+
+      const title = document.querySelector('meta[property="og:title"]')?.content || document.title.replace(/\s*[—|]\s*ZFRQBL.*$/, '');
+      const url = document.querySelector('link[rel="canonical"]')?.href || location.href;
+      const author = document.querySelector('meta[name="author"]')?.content || 'Zafar';
+      const timeEl = document.querySelector('time[datetime]');
+      const year = timeEl ? new Date(timeEl.getAttribute('datetime')).getFullYear() : new Date().getFullYear();
+      const slug = (location.pathname.replace(/\/$/, '').split('/').pop() || 'essay').replace(/[^a-z0-9]+/gi, '_');
+
+      citeEl.textContent = `@misc{zfrqbl_${slug}_${year},\n  author = {${author}},\n  title  = {${title}},\n  year   = {${year}},\n  url    = {${url}}\n}`;
+
+      copyBtn?.addEventListener('click', () => {
+        navigator.clipboard.writeText(citeEl.textContent).then(() => {
+          copyBtn.textContent = 'Copied!';
+          setTimeout(() => copyBtn.textContent = 'Copy citation', 2000);
+        });
+      });
+    })();
+  </script>
+
+  <script defer src="/vendor/prism.min.js"></script>
+  <script defer src="/vendor/prism-python.min.js"></script>
+  <script defer src="/vendor/prism-javascript.min.js"></script>
+  <script defer src="/vendor/prism-bash.min.js"></script>
+  <script defer src="/vendor/prism-sql.min.js"></script>
+  <script defer src="/vendor/prism-markdown.min.js"></script>
+</body>
+</html>
