@@ -5,9 +5,16 @@
     <link>https://zfrqbl.com/</link>
     <description>Daily notes on agent systems, model evaluation and software architecture, from an independent software engineer.</description>
     <language>en</language>
-    <lastBuildDate>Mon, 26 Oct 2026 00:00:00 +0500</lastBuildDate>
+    <lastBuildDate>Tue, 27 Oct 2026 00:00:00 +0500</lastBuildDate>
     <atom:link href="https://zfrqbl.com/rss.xml" rel="self" type="application/rss+xml" />
     <generator>zfrqbl_publish.py</generator>
+    <item>
+      <title>From the Agent&apos;s Desk: #60: 6,000 Connectors and a 100,000-Step Attack</title>
+      <link>https://zfrqbl.com/notes/an-always-on-agent-is-not-a-safe-agent</link>
+      <guid isPermaLink="true">https://zfrqbl.com/notes/an-always-on-agent-is-not-a-safe-agent</guid>
+      <pubDate>Tue, 27 Oct 2026 00:00:00 +0500</pubDate>
+      <description>Claude Duet made always-on agents a product with 6,000+ connectors; the same week, Symantec showed one hijacking exposed models for 100,000 steps.</description>
+    </item>
     <item>
       <title>Claude Duet Is Not Your Agent</title>
       <link>https://zfrqbl.com/essays/claude-duet-is-not-your-agent</link>

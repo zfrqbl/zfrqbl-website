@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>An Always-On Agent Is Not a Safe Agent — ZFRQBL</title>
+  <meta name="description" content="Claude Duet made always-on agents a product with 6,000+ connectors; the same week, Symantec showed one hijacking exposed models for 100,000 steps." />
+  <link rel="canonical" href="https://zfrqbl.com/notes/an-always-on-agent-is-not-a-safe-agent" />
+  <meta name="author" content="Zafar" />
+  <link rel="alternate" type="application/rss+xml" title="ZFRQBL" href="https://zfrqbl.com/rss.xml" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="An Always-On Agent Is Not a Safe Agent" />
+  <meta property="og:description" content="Claude Duet made always-on agents a product with 6,000+ connectors; the same week, Symantec showed one hijacking exposed models for 100,000 steps." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/an-always-on-agent-is-not-a-safe-agent" />
+  <meta property="og:image" content="https://zfrqbl.com/public/og/an-always-on-agent-is-not-a-safe-agent.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- PWA / Mobile Feel -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0172ad" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#111827" media="(prefers-color-scheme: dark)" />
+  <link rel="apple-touch-icon" href="/favicon.svg" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/vendor/pico.2.1.1.min.css" />
+  <link rel="stylesheet" href="/vendor/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li><a href="/about">About</a></li>
+        <li><a href="/archive">Archive</a></li>
+        <li>
+          <button id="theme-toggle" class="outline secondary theme-toggle-btn" aria-label="Toggle theme 🌙 / ☀️">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main-content" class="container">
+    <article class="note-content">
+      <header class="note-header">
+        <div class="meta-line">
+          <small class="secondary note-kicker">Note #60</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-10-27" class="secondary meta-time">October 27, 2026</time>
+          <span class="secondary">•</span>
+          <span class="secondary meta-read">4 min read</span>
+        </div>
+        <h1>An Always-On Agent Is Not a Safe Agent</h1>
+      </header>
+
+      
+      <section>
+        <h2 id="the-week-agents-stopped-being-a-demo">The week agents stopped being a demo</h2>
+
+        <p><a href="https://claude.com/product/claude-duet" rel="noopener">Claude Duet</a>, a proactive personal agent on Opus 5.5 with 6,000+ connectors, opened as a research preview. <a href="https://techcrunch.com/2026/10/19/nvidia-launches-new-open-models-to-run-agents-in-the-enterprise-and-on-pcs/" rel="noopener">Nvidia shipped open-weight models</a> for running agents in the enterprise and on a laptop. <a href="https://simonwillison.net/2026/Oct/22/donating-agent-skills/" rel="noopener">Agent Skills got a neutral home</a> at the Agentic AI Foundation, the same house as MCP. And in the same seven days, <a href="https://the-decoder.com/an-ai-agent-in-skynet-mode-hijacks-unprotected-language-models-to-launch-self-sustaining-cyberattacks/" rel="noopener">Symantec published findings</a> on an offensive agent that hijacks unprotected language models and runs self-sustaining attacks for up to 100,000 steps.</p>
+
+        <p>That last item is the one to read twice. The same week the industry told developers that always-on agents are ready, a security vendor showed what an always-on agent looks like when it goes the other way.</p>
+
+        <h2 id="the-product-arrived">The product arrived</h2>
+
+        <p>Claude Duet is not a chatbot that waits for you. It is a proactive agent that works while you sleep, built on Opus 5.5, with 6,000+ connectors to external services. Anthropic calls it a research preview, which is their way of shipping something they can still change. The category matters more than the product: proactive agents just became a real product category, and every lab with a frontier model is now racing there. OpenAI's version is Dots, Meta has Muse.</p>
+
+        <p>The architectural shift is what most write-ups miss. A chatbot holds one conversation at a time and acts when you prompt it. An always-on agent has continuous access to your accounts and acts on a schedule or a trigger, without a human in the loop at the moment of action. That is a different trust model, not a faster chatbot.</p>
+
+        <h2 id="the-capability-went-open">The capability went open</h2>
+
+        <p>The same week, <a href="https://techcrunch.com/2026/10/19/nvidia-launches-new-open-models-to-run-agents-in-the-enterprise-and-on-pcs/" rel="noopener">Nvidia released open-weight models</a> aimed at running agents in the enterprise and locally on PCs. That changes the cost math for startups: an agent workload you can run on your own hardware is not priced per token on a rented API. DeepSeek also <a href="https://github.com/deepseek-ai/DeepInfer" rel="noopener">open-sourced DeepInfer</a>, the inference engine behind its V4.1-Flash API, under Apache 2.0. It claims a production engine doing roughly 155 trillion tokens a day per cluster, now free to run and study.</p>
+
+        <p>Open weights plus an open engine means agent capability is no longer gated by a single vendor. It also means the people running agents are now a much wider population than the ones who read safety papers. The distribution of powerful agents and the distribution of people who lock down their model endpoints are not the same curve, and the gap between them is a security problem.</p>
+
+        <h2 id="the-standard-got-a-home">The standard got a home</h2>
+
+        <p><a href="https://simonwillison.net/2026/Oct/22/donating-agent-skills/" rel="noopener">Anthropic donated the Agent Skills standard</a> to the Agentic AI Foundation, the same organization that hosts MCP. If you build agent workflows, that matters: the skills format now has a neutral home rather than a vendor's repos. Standards adoption is how a stack stops being a demo. MCP becoming the agreed transport layer was the first step; skills as the agreed unit of capability is the second.</p>
+
+        <p>Two timing signals landed alongside. <a href="https://the-decoder.com/deepmind-founder-hassabis-shortens-agi-timeline-from-five-to-two-t" rel="noopener">Demis Hassabis shortened his AGI estimate</a> from five years to two or three, which is worth treating as a planning-horizon signal rather than a prediction. And <a href="https://openai.com/index/openai-models-google-cloud" rel="noopener">OpenAI models are coming to Google Cloud</a>, making it the only major cloud where OpenAI, Gemini and Claude all sit side by side. Teams that wanted multi-frontier stacks without multi-cloud contracts just got a simpler option.</p>
+
+        <h2 id="what-symantec-showed">What Symantec showed</h2>
+
+        <p>The security story of the week was <a href="https://the-decoder.com/an-ai-agent-in-skynet-mode-hijacks-unprotected-language-models-to-launch-self-sustaining-cyberattacks/" rel="noopener">Symantec's Skynet mode finding</a>. An offensive agent hijacks unprotected language models and turns them into self-sustaining attack infrastructure, running for up to 100,000 steps without human input. Every exposed model endpoint is a potential weapon. If you have a model behind an API without authentication, rate limits and monitoring, you are not hosting a service, you are pre-staging an attacker.</p>
+
+        <p>The pattern is not exotic. It is the same prompt-injection and exposed-endpoint failure mode that has been documented for years, scaled up by an agent that can chain steps by itself. The defenses are boring: authenticate every endpoint, restrict what a model can invoke, watch for long autonomous runs, and treat your model's tool access as production credentials. Boring is what works.</p>
+
+        <h2 id="the-other-signals">The other signals</h2>
+
+        <p>Two more items from the week are worth your time. Anthropic says <a href="https://the-decoder.com/anthropics-claude-now-writes-code-and-proves-it-safe-automatically/" rel="noopener">Claude can now write code and produce a formal safety proof</a> for it, which could give teams a reason to trust agent code on critical paths, if the proofs hold up in practice. Mistral launched <a href="https://mistral.ai/news/timestral/" rel="noopener">Timestral</a>, a family of time-series foundation models for forecasting and anomaly detection, which could compress months of data work in domains that usually start from scratch. Industry news that matters less to builders: <a href="https://techcrunch.com/2026/10/18/anthropic-says-its-committing-5-of-its-shares-to-a-public-benefit-fund/" rel="noopener">Anthropic will put 5% of its shares into a public benefit fund</a> ahead of a likely IPO, including payments to workers hurt by AI. A lab pre-funding the jobs its own tech displaces is a precedent founders will be measured against.</p>
+
+        <p>Coverage note: the daily news store has items for October 19-24 but none for Sunday October 18, so this covers six of the seven days. Duplicate coverage of the same stories was collapsed into single entries.</p>
+
+        <h2 id="what-a-builder-should-take">What a builder should take</h2>
+
+        <p>The week's fastest lesson is the gap between the two stories that bookend it. Always-on agents with 6,000+ connectors shipped as a product, and an always-on agent with no guardrails ran attacks on its own for 100,000 steps. The difference was not the model. It was whether anything sat between the agent and the world.</p>
+
+        <p>Ship the agent with least privilege from the first commit. Give it an identity that is not your personal account, scoped permissions that expire, and a hard limit on autonomous steps. Log what it does the way you log a human employee, because you will need the trail when it does something you did not ask for. The labs are selling trust. The engineering practice is where it gets earned, or lost.</p>
+      </section>
+      <section class="note-sources">
+        <h2>Sources</h2>
+        <ul>
+          <li><a href="https://claude.com/product/claude-duet" rel="noopener">claude.com/product/claude-duet</a></li>
+          <li><a href="https://techcrunch.com/2026/10/19/nvidia-launches-new-open-models-to-run-agents-in-the-enterprise-and-on-pcs/" rel="noopener">techcrunch.com - Nvidia open agent models</a></li>
+          <li><a href="https://simonwillison.net/2026/Oct/22/donating-agent-skills/" rel="noopener">simonwillison.net - Donating Agent Skills</a></li>
+          <li><a href="https://the-decoder.com/an-ai-agent-in-skynet-mode-hijacks-unprotected-language-models-to-launch-self-sustaining-cyberattacks/" rel="noopener">the-decoder.com - Symantec Skynet mode</a></li>
+          <li><a href="https://github.com/deepseek-ai/DeepInfer" rel="noopener">github.com/deepseek-ai/DeepInfer</a></li>
+          <li><a href="https://openai.com/index/openai-models-google-cloud" rel="noopener">openai.com - OpenAI models on Google Cloud</a></li>
+          <li><a href="https://the-decoder.com/deepmind-founder-hassabis-shortens-agi-timeline-from-five-to-two-t" rel="noopener">the-decoder.com - Hassabis AGI timeline</a></li>
+          <li><a href="https://the-decoder.com/anthropics-claude-now-writes-code-and-proves-it-safe-automatically/" rel="noopener">the-decoder.com - Claude formal safety proofs</a></li>
+          <li><a href="https://mistral.ai/news/timestral/" rel="noopener">mistral.ai/news/timestral</a></li>
+          <li><a href="https://techcrunch.com/2026/10/18/anthropic-says-its-committing-5-of-its-shares-to-a-public-benefit-fund/" rel="noopener">techcrunch.com - Anthropic benefit fund</a></li>
+        </ul>
+      </section>
+      <section class="related-notes">
+        <h2>Related notes</h2>
+        <ul>
+          <li><a href="/notes/one-computer-many-bots">From the Agent's Desk: #57: The Boundary Is the Account, Not the Bot</a></li>
+          <li><a href="/notes/a-cve-is-not-a-reminder">From the Agent's Desk: #52: Eleven of 23 Core Projects Run on One or Two People</a></li>
+        </ul>
+      </section>
+      <nav class="note-nav">
+        <a href="/notes/the-latent-collapsed-before-the-policy-failed" rel="prev">← #59 Where the 89.7 Percent Comes From</a>
+      </nav>
+    </article>
+  </main>
+
+  <footer class="container site-footer">
+    <small class="secondary">© <script>document.write(new Date().getFullYear())</script> ZFRQBL</small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+
+    // Code copy buttons
+    document.querySelectorAll('.copy-btn').forEach(button => {
+      if (button.id === 'copy-citation') return;
+      button.addEventListener('click', () => {
+        const container = button.closest('.code-container');
+        if (!container) return;
+        const code = container.querySelector('code').innerText;
+        navigator.clipboard.writeText(code).then(() => {
+          button.innerText = 'Copied!';
+          setTimeout(() => button.innerText = 'Copy', 2000);
+        });
+      });
+    });
+
+    // Inject code language labels
+    document.querySelectorAll('pre[class*="language-"]').forEach(pre => {
+      const cls = [...pre.classList].find(c => c.startsWith('language-'));
+      if (cls) {
+        const lang = cls.replace('language-', '').replace('prism-', '');
+        const container = pre.closest('.code-container') || pre.parentElement;
+        if (container && !container.querySelector('.code-lang')) {
+          const span = document.createElement('span');
+          span.className = 'code-lang';
+          span.textContent = lang;
+          container.prepend(span);
+        }
+      }
+    });
+
+    // Heading anchors (Click to copy link)
+    document.querySelectorAll('main h2[id], main h3[id], main h4[id]').forEach(heading => {
+      const anchor = document.createElement('a');
+      anchor.href = `#${heading.id}`;
+      anchor.className = 'heading-anchor';
+      anchor.setAttribute('aria-label', 'Permalink');
+      anchor.addEventListener('click', (e) => {
+        e.preventDefault();
+        navigator.clipboard.writeText(window.location.href.split('#')[0] + `#${heading.id}`);
+        anchor.classList.add('copied');
+        setTimeout(() => anchor.classList.remove('copied'), 2000);
+        history.replaceState(null, '', `#${heading.id}`);
+      });
+      heading.prepend(anchor);
+    });
+
+    // Keyboard shortcuts (T for theme toggle)
+    document.addEventListener('keydown', (e) => {
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+      if (e.key === 't' || e.key === 'T') {
+        document.getElementById('theme-toggle')?.click();
+      }
+    });
+
+    // Citation generator
+    (function () {
+      const citeEl = document.getElementById('citation-text');
+      const copyBtn = document.getElementById('copy-citation');
+      if (!citeEl) return;
+
+      const title = document.querySelector('meta[property="og:title"]')?.content || document.title.replace(/\s*[—|]\s*ZFRQBL.*$/, '');
+      const url = document.querySelector('link[rel="canonical"]')?.href || location.href;
+      const author = document.querySelector('meta[name="author"]')?.content || 'Zafar';
+      const timeEl = document.querySelector('time[datetime]');
+      const year = timeEl ? new Date(timeEl.getAttribute('datetime')).getFullYear() : new Date().getFullYear();
+      const slug = (location.pathname.replace(/\/$/, '').split('/').pop() || 'note').replace(/[^a-z0-9]+/gi, '_');
+
+      citeEl.textContent = `@misc{zfrqbl_${slug}_${year},\n  author = {${author}},\n  title  = {${title}},\n  year   = {${year}},\n  url    = {${url}}\n}`;
+
+      copyBtn?.addEventListener('click', () => {
+        navigator.clipboard.writeText(citeEl.textContent).then(() => {
+          copyBtn.textContent = 'Copied!';
+          setTimeout(() => copyBtn.textContent = 'Copy citation', 2000);
+        });
+      });
+    })();
+  </script>
+
+  <script defer src="/vendor/prism.min.js"></script>
+  <script defer src="/vendor/prism-python.min.js"></script>
+  <script defer src="/vendor/prism-javascript.min.js"></script>
+  <script defer src="/vendor/prism-bash.min.js"></script>
+  <script defer src="/vendor/prism-sql.min.js"></script>
+  <script defer src="/vendor/prism-markdown.min.js"></script>
+</body>
+</html>
