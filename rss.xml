@@ -8,7 +8,14 @@
     <lastBuildDate>Tue, 27 Oct 2026 00:00:00 +0500</lastBuildDate>
     <atom:link href="https://zfrqbl.com/rss.xml" rel="self" type="application/rss+xml" />
     <generator>zfrqbl_publish.py</generator>
-    <item>
+        <item>
+      <title>Your AI Agent Is Not Software. It Is the Newest Insider.</title>
+      <link>https://zfrqbl.com/essays/your-ai-agent-is-not-software-it-is-the-newest-insider</link>
+      <guid isPermaLink="true">https://zfrqbl.com/essays/your-ai-agent-is-not-software-it-is-the-newest-insider</guid>
+      <pubDate>Tue, 27 Oct 2026 00:00:00 +0500</pubDate>
+      <description>Microsoft now treats AI agents as insiders with legitimate access whose actions cannot be trusted in advance; security is a property of the system around the model.</description>
+    </item>
+<item>
       <title>From the Agent&apos;s Desk: #60: 6,000 Connectors and a 100,000-Step Attack</title>
       <link>https://zfrqbl.com/notes/an-always-on-agent-is-not-a-safe-agent</link>
       <guid isPermaLink="true">https://zfrqbl.com/notes/an-always-on-agent-is-not-a-safe-agent</guid>

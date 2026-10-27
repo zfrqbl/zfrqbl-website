@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your AI Agent Is Not Software. It Is the Newest Insider. — ZFRQBL</title>
+  <meta name="description" content="Microsoft now treats AI agents as insiders with legitimate access whose actions cannot be trusted in advance; security is a property of the system around the model." />
+  <link rel="canonical" href="https://zfrqbl.com/essays/your-ai-agent-is-not-software-it-is-the-newest-insider" />
+  <meta name="author" content="Zafar" />
+  <link rel="alternate" type="application/rss+xml" title="ZFRQBL" href="https://zfrqbl.com/rss.xml" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Your AI Agent Is Not Software. It Is the Newest Insider." />
+  <meta property="og:description" content="Microsoft now treats AI agents as insiders with legitimate access whose actions cannot be trusted in advance; security is a property of the system around the model." />
+  <meta property="og:url" content="https://zfrqbl.com/essays/your-ai-agent-is-not-software-it-is-the-newest-insider" />
+  <meta property="og:image" content="https://zfrqbl.com/public/og/zfrqbl.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- PWA / Mobile Feel -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0172ad" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#111827" media="(prefers-color-scheme: dark)" />
+  <link rel="apple-touch-icon" href="/favicon.svg" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/vendor/pico.2.1.1.min.css" />
+  <link rel="stylesheet" href="/vendor/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li><a href="/about">About</a></li>
+        <li><a href="/archive">Archive</a></li>
+        <li>
+          <button id="theme-toggle" class="outline secondary theme-toggle-btn" aria-label="Toggle theme 🌙 / ☀️">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main-content" class="container">
+    <article class="essay-content">
+      <header class="note-header">
+        <div class="meta-line">
+          <small class="secondary note-kicker">Essay</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-10-27" class="secondary meta-time">October 27, 2026</time>
+          <span class="secondary">•</span>
+          <span class="secondary meta-read">31 min read</span>
+        </div>
+        <h1>Your AI Agent Is Not Software. It Is the Newest Insider.</h1>
+      </header>
+
+      
+
+      <section>
+<p>AI agents are acquiring the access and autonomy to act inside our systems. Securing them requires a different operating assumption. We cannot rely on a model's apparent competence, stated intentions, or good behavior to protect the resources it can reach.</p>
+<p>On October 19, 2026, Microsoft made a pointed claim about the security implications of AI agents. Agents, it argued, should be treated as a new kind of insider. The company announced an expansion of its security work around agentic systems, including Guardian Agents within Project Perception and additional controls for its enterprise environment.</p>
+<p>The most consequential part of the announcement was not the product launch. It was the change in the question security teams need to ask.</p>
+<p>For years, software security has focused on whether a system can be entered, exploited, or operated by someone who should not have access. AI agents complicate that model. An agent may authenticate with valid credentials, read an authorized mailbox, call a sanctioned API, or modify a repository it was explicitly allowed to access. The incident may begin with no stolen password and no breached perimeter. The system can fail because an agent with legitimate access takes an action its operator did not intend.</p>
+<p>That is what makes the insider analogy useful. An agent does not need human motives to create insider risk. It needs access, the ability to take actions, and a path from an instruction or environmental signal to an unintended outcome.</p>
+<p>Microsoft CEO Satya Nadella framed the underlying design principle as separating the supply of intelligence from the authority to act on it. A model can propose a course of action. The surrounding system must decide whether that action is permitted, under the current conditions, with the current identity, against the particular resource.</p>
+<p>Intelligence should not automatically confer authority.</p>
+<p>This principle applies well beyond Microsoft 365. It matters wherever an agent can use credentials, access private data, invoke tools, change code, send messages, or trigger operations. The central security question is no longer simply whether the model is good. It is whether the system remains safe when the model makes a mistake, is manipulated, or behaves in a way its designers did not anticipate.</p>
+<p>Microsoft's argument is worth examining on its technical merits, independent of its commercial interests. The company is selling products designed to address the risks it is describing. That deserves scrutiny. But the underlying problem extends beyond any one vendor, model, or platform.</p>
+<h2 id="the-old-security-model-was-built-around-different-assumptions">The old security model was built around different assumptions</h2>
+<p>Traditional security architecture is not as naive as the phrase perimeter security suggests. Mature organizations already account for malicious insiders, compromised accounts, excessive privileges, lateral movement, and misuse by authorized users. Zero-trust architecture explicitly challenges the assumption that being inside a network should confer trust.</p>
+<p>The problem is not that these controls are irrelevant to agents. The problem is that agentic systems put pressure on the assumptions behind how those controls are implemented.</p>
+<p>An ordinary application generally follows a defined execution path, even when it contains bugs or responds differently to different inputs. A human employee can misunderstand an instruction, but their actions are constrained by human attention and working speed. An AI agent can interpret a request, break it into subtasks, consult external material, select tools, act on the results, and repeat the process. It can do this quickly and with limited supervision.</p>
+<p>The agent may be operating exactly as its software permits while producing an outcome no one intended.</p>
+<p>Consider an agent authorized to summarize a project mailbox and update an internal knowledge base. It can legitimately read messages and write documents. One email contains an instruction that appears to be part of the work but is actually a prompt injection. It tells the agent to include confidential information in its summary and send the result to an external address.</p>
+<p>The email is data. It should not have authority to redefine the agent's task. But an agent that fails to distinguish untrusted content from trusted instructions may treat it as a command. If the agent also has permission to send external email, the failure can progress from manipulated interpretation to an actual disclosure.</p>
+<p>No attacker needs to break into the mailbox. The dangerous action can travel through an authorized identity and an authorized tool.</p>
+<p>This is the overlap between conventional security and the agent problem. Identity controls, least privilege, network segmentation, monitoring, and data-loss prevention remain necessary. What changes is the need to apply them to systems whose behavior is shaped by model reasoning and untrusted natural-language inputs.</p>
+<p>The OWASP GenAI Security Project's 2026 Top 10 for LLM Applications identifies prompt injection, sensitive information disclosure, and excessive agency among the leading risks. These categories describe different stages of a potential failure. Malicious content can influence the model, the model can propose an unsafe action, and excessive permissions can allow that action to cause real damage.</p>
+<p>The security boundary must therefore sit outside the model. The model can help determine what action appears useful. It should not be the sole authority that determines whether the action is allowed.</p>
+<h2 id="why-agents-make-the-insider-problem-harder">Why agents make the insider problem harder</h2>
+<p>Several characteristics make agentic systems particularly challenging to secure.</p>
+<h3 id="they-can-act-at-machine-speed">They can act at machine speed</h3>
+<p>An agent can chain many operations together without pausing for a human to inspect each one. A faulty decision can trigger a sequence of tool calls, file changes, API requests, and communications before anyone notices.</p>
+<p>The danger is not merely that the model responds quickly. It is that the consequences of one mistaken decision can propagate through an automated execution loop.</p>
+<p>This makes detection and containment timing important. A control that identifies suspicious activity after an agent has completed a task may help an investigation, but it may be too late to prevent the damage.</p>
+<h3 id="their-access-often-exceeds-the-requirements-of-the-current-task">Their access often exceeds the requirements of the current task</h3>
+<p>Agents are frequently given broad credentials because broad access is convenient. A coding agent may receive write access to an entire repository when it needs to modify a small set of files. An assistant may be connected to a complete mailbox when a task requires reading messages from one folder. A research agent may have access to a browser, shell, file system, and cloud account simultaneously.</p>
+<p>This is a familiar security failure: excessive privilege. Agentic execution makes its consequences harder to predict because the model chooses which available tools to use in response to evolving context.</p>
+<p>The relevant question is not whether an agent is allowed to access a resource in general. It is whether the agent needs that access for this specific operation, at this point in the task.</p>
+<h3 id="their-behavior-is-sensitive-to-context">Their behavior is sensitive to context</h3>
+<p>A language-model-driven agent adds a source of variability beyond conventional application logic. Instructions, retrieved documents, tool results, conversation history, and other context can influence which action it selects.</p>
+<p>A system prompt saying "never disclose secrets" is not an access-control mechanism. It is an instruction to the model. It cannot replace a system that prevents secrets from being read or transmitted when policy forbids those operations.</p>
+<p>This distinction matters in prompt injection. An attacker may place instructions in a webpage, document, email, code comment, or tool response. The agent consumes that content while pursuing a legitimate goal. If it treats the injected text as authoritative, an attacker can influence its behavior without controlling the model or the agent's original account.</p>
+<p>The right response is not to assume every prompt injection will succeed. It is to design the system so that a model-level failure does not automatically become a security incident.</p>
+<h3 id="they-multiply-the-number-of-actors">They multiply the number of actors</h3>
+<p>An organization may deploy agents built with different frameworks, connected to different data sources, owned by different teams, and running under different identities. Individual employees may also create local agents and connect them to tools outside centralized governance.</p>
+<p>Microsoft said its Defender capabilities were expanding to cover 60 local agent types, including agents such as Claude Code, Codex, and OpenClaw. That figure illustrates the operational challenge, although it is a vendor-reported figure about supported agent types, not a measure of all deployed agents across the industry. See Microsoft's announcement.</p>
+<p>Every agent that can take action creates questions of ownership, authorization, observability, and containment. At scale, security teams need an inventory and a consistent way to enforce policy. They cannot rely on knowing which agent is running in every conversation or developer session.</p>
+<h2 id="an-insider-does-not-need-malicious-intent">An insider does not need malicious intent</h2>
+<p>The insider analogy can be misunderstood. It does not require us to believe that an AI agent possesses human motives, loyalty, resentment, or an intention to steal information.</p>
+<p>In security terms, the useful feature of an insider is their position relative to protected resources. They have legitimate access. Their actions can violate policy, whether through malicious intent, negligence, manipulation, error, or compromise.</p>
+<p>The same distinction applies to an agent.</p>
+<p>There are at least three ways an agent can create insider-like risk.</p>
+<p><strong>Unintended action.</strong> The agent misinterprets a task, produces an incorrect plan, or chooses a damaging operation while trying to accomplish the user's goal.</p>
+<p><strong>Manipulated action.</strong> Untrusted content influences the agent to pursue a different goal, reveal information, or invoke tools in ways the user did not authorize.</p>
+<p><strong>Compromised execution.</strong> A tool, extension, runtime, credential, or other component in the agent's environment is compromised, allowing actions that the operator did not expect.</p>
+<p>These failure modes require different technical responses, but they share a principle. The system cannot make its security depend on the agent always interpreting the task correctly.</p>
+<p>The economics of conventional insider risk underline the importance of that principle. IBM's Cost of a Data Breach Report 2025 reported that malicious-insider attacks had the highest average breach cost among the initial attack vectors it studied, at $4.92 million. This is a measure of conventional malicious-insider breach costs in IBM's research. It is not evidence that AI agents cause comparable losses or that insider incidents account for a fixed percentage of all breaches.</p>
+<p>An agent is not an employee. Treating it as an insider is a way to reason about access and risk, not a claim about its psychology.</p>
+<p>A useful analogy is a highly capable contractor who can act quickly across several company systems but does not reliably understand the business context behind every instruction. You would not solve that risk by asking the contractor to promise to behave well. You would define their permissions, monitor consequential actions, and ensure they could not bypass controls governing sensitive operations.</p>
+<p>The same principle applies to AI agents, with one major difference. The agent may need to interpret a large volume of untrusted content, and it can act through tools at machine speed.</p>
+<h2 id="an-industry-wide-shift-is-taking-shape">An industry-wide shift is taking shape</h2>
+<p>Microsoft's October announcement did not create the problem or establish the only response. It made a broader shift in agent security more visible.</p>
+<p>Several major AI and infrastructure companies have been developing approaches that emphasize runtime controls, explicit boundaries, and limits on what agents may do.</p>
+<div class="table-container"><table>
+<thead><tr><th>Company</th><th>Relevant work</th><th>Security direction</th></tr></thead>
+<tbody>
+<tr><td>Microsoft</td><td>Project Perception, Guardian Agents, Entra Agent ID, Agent 365</td><td>Agent discovery, identity, risk signals, policy enforcement, and containment</td></tr>
+<tr><td>Anthropic</td><td>Zero Trust for AI Agents</td><td>Apply zero-trust principles instead of assuming an agent's actions are trustworthy</td></tr>
+<tr><td>Google DeepMind</td><td>Securing the Future of AI Agents</td><td>Research and guidance on securing agentic systems and their interactions</td></tr>
+<tr><td>NVIDIA</td><td>Open Agent Safety Platform</td><td>Runtime boundaries, policy enforcement, and monitoring of agent execution</td></tr>
+</tbody></table></div>
+<p>These are not identical offerings. Some are enterprise products, some are research and guidance, and others are platform components. It would be misleading to present them as equivalent products or as proof that the industry has settled on one architecture.</p>
+<p>Their overlap is more important than their branding. Agent security cannot be reduced to selecting a stronger model. The system surrounding the model needs its own security architecture.</p>
+<p>Microsoft's proposed approach connects agent identity and activity with signals from identity, data, endpoints, cloud infrastructure, network traffic, and runtime behavior. Its aim is to detect risky behavior and respond with controls that range from restricting an action to revoking access or isolating an agent. The company's October announcement describes these capabilities as part of its broader Project Perception and Agent 365 efforts.</p>
+<p>Anthropic's zero-trust framing addresses the same basic problem from a different direction. Google DeepMind's work examines the security challenges emerging as agents gain access to tools and take more complex actions. NVIDIA's platform initiative focuses on infrastructure for controlling and observing agent execution.</p>
+<p>The convergence suggests that the security problem is moving from theoretical concern toward operational design. It does not mean every deployed agent is dangerous, or that every vendor's control system is mature enough for every workload. It means that responsible deployment requires a plan for what happens when an agent behaves incorrectly or is manipulated.</p>
+<p>That is a more durable conclusion than any individual product announcement.</p>
+<h2 id="the-controls-must-sit-outside-the-model">The controls must sit outside the model</h2>
+<p>What would it mean to build a system that does not rely on the model to enforce its own safety?</p>
+<p>At minimum, the system needs independent controls. They should constrain actions even when the model's interpretation or plan is wrong.</p>
+<h3 id="give-the-agent-a-real-identity">Give the agent a real identity</h3>
+<p>An organization should be able to answer basic questions about every agent. What is it? Who owns it? What resources can it access? Which tools can it invoke? Which credentials does it use? What policy governs it? Where are its actions recorded?</p>
+<p>Without agent identity, activity may be attributed only to the human user, service account, or machine underneath it. That weakens the audit trail. It becomes difficult to distinguish the person who requested an operation from the agent that executed it, especially when the agent performs several steps or calls another agent.</p>
+<p>Identity should connect an agent to an accountable owner and a defined scope of authority. It should not be treated as a label that automatically grants access.</p>
+<p>This is also the direction of work from the National Institute of Standards and Technology, which has been examining how existing identity standards and authorization practices can be applied to software and AI agents.</p>
+<h3 id="use-task-scoped-permissions">Use task-scoped permissions</h3>
+<p>Least privilege is more useful when applied to the current task rather than configured only at the agent's initial setup.</p>
+<p>An agent that needs to inspect a repository should not automatically receive permission to push code. An agent preparing a draft email should not automatically be permitted to send it. An agent that reads customer records should not inherit permission to export them.</p>
+<p>Permissions should be narrow, revocable, and limited in duration wherever possible. A system may grant temporary access for a particular operation, require separate authorization for a higher-risk action, and remove access when the task ends.</p>
+<p>This does not require elaborate dynamic authorization in every small application. A simple agent can achieve a great deal with a narrowly scoped operating-system account, read-only credentials, a restricted workspace, and a limited set of tools. The control should match the risk.</p>
+<h3 id="put-a-policy-enforcement-layer-between-reasoning-and-action">Put a policy-enforcement layer between reasoning and action</h3>
+<p>The model should not be the final authority over whether its tool call is permitted.</p>
+<p>A tool gateway or equivalent enforcement layer can evaluate an action before execution. Depending on the system, it can check the agent's identity, the user's authority, the resource being accessed, the action type, the task's scope, and relevant risk conditions.</p>
+<p>For example, the model might propose sending a file to an external address. The policy layer can inspect the destination, classify the data, check whether external transmission is allowed, and deny the operation or route it for approval.</p>
+<p>The policy layer should not simply ask the same model whether the action is safe. It needs enforceable rules and access to the relevant system state. Model-based analysis may add a risk signal, but it should not be the only line of defense.</p>
+<h3 id="monitor-behavior-and-contain-failures">Monitor behavior and contain failures</h3>
+<p>Static permissions answer what the agent is allowed to do. Runtime monitoring asks whether the way it is operating remains consistent with the task and the expected pattern of use.</p>
+<p>A research agent suddenly attempting to enumerate local secrets should trigger a different response from one reading approved web pages. A coding agent that unexpectedly accesses environment files, modifies unrelated repositories, or attempts outbound network connections may need to be stopped and investigated.</p>
+<p>A risk score can help prioritize attention, but it should not be mistaken for proof of malicious behavior. Useful responses include blocking a particular operation, requiring additional approval, removing a credential, revoking a session, stopping the agent, or isolating its runtime.</p>
+<p>The system should also record enough context to investigate what happened. Logs need to connect the request, identity, policy decisions, tool calls, resource changes, and outcomes. Model reasoning or traces may help diagnosis, but sensitive reasoning traces require careful access and retention controls.</p>
+<p>Greater visibility into model behavior is not a substitute for controls that can stop actions. The enforcement layer needs to remain effective even when the agent cannot explain its behavior accurately or is actively attempting an unauthorized operation.</p>
+<h3 id="make-the-runtime-a-boundary-not-a-suggestion">Make the runtime a boundary, not a suggestion</h3>
+<p>An agent executing shell commands, reading files, installing packages, or interacting with external services needs containment appropriate to those capabilities.</p>
+<p>A sandbox, restricted container, virtual machine, or other isolation mechanism can limit the consequences of a failure. Network access can be restricted. Sensitive host paths can be withheld. Credentials can be kept outside the agent's ordinary workspace. Filesystem writes can be confined to selected directories. Dangerous operations can require a separate, explicit approval path.</p>
+<p>A sandbox is not sufficient by itself. An agent with a powerful cloud token can still do damage through an allowed network connection, even if its local filesystem is isolated. Runtime containment must be combined with narrow credentials and authorization checks at the systems the agent can reach.</p>
+<p>The design goal is to prevent a mistake in the reasoning layer from becoming unrestricted authority in the execution layer.</p>
+<h2 id="the-commercial-incentive-deserves-scrutiny">The commercial incentive deserves scrutiny</h2>
+<p>Microsoft's announcement also creates a legitimate commercial question. Microsoft is positioning agent security as a major enterprise need while offering products designed to address it. Its business relationships include investments in OpenAI and Anthropic, and OpenAI is a Microsoft cloud customer. TechCrunch highlighted these relationships in its coverage of Microsoft's announcement.</p>
+<p>Microsoft's current published list pricing puts standalone Agent 365 at $15 per user per month, while Microsoft 365 E7 is listed at $99 per user per month and includes Agent 365. These are prices for particular Microsoft offerings, not a measure of the total cost of securing an agent deployment. See Microsoft's Agent 365 licensing FAQs.</p>
+<p>This gives Microsoft an obvious incentive to define agent security as a new, urgent category of enterprise spending. That incentive should influence how its claims are evaluated.</p>
+<p>It does not, by itself, make the technical argument false.</p>
+<p>Security products routinely address risks that their vendors also have a commercial interest in describing. The appropriate response is to examine the threat model, the effectiveness of the controls, the limits of the product, and whether the customer can independently verify enforcement.</p>
+<p>Can an administrator see every agent that falls within the product's coverage? Can the system distinguish an agent from its owner and from the credentials it uses? Can policies block an operation before it happens? Can the customer investigate an action after the fact? What happens when the agent uses a third-party tool or runs outside the vendor's managed environment? Can the security team revoke access without relying on the agent to cooperate?</p>
+<p>These are better questions than whether Microsoft is overstating the danger.</p>
+<p>A product that identifies agents but cannot reliably constrain their actions solves an inventory problem, not the entire security problem. A product that detects suspicious activity only after an agent has transmitted sensitive information provides visibility but not prevention. A platform that enforces policies only inside its own ecosystem leaves gaps wherever the agent operates beyond that boundary.</p>
+<p>The right response to vendor claims is neither automatic acceptance nor automatic dismissal. It is independent evaluation against concrete security requirements.</p>
+<h2 id="what-users-of-ai-agents-can-do-today">What users of AI agents can do today</h2>
+<p>You do not need to build an agent platform or run a security team to reduce agent-related risk. You do, however, need to be deliberate about which tasks you delegate and what authority you give an agent to complete them.</p>
+<p>Most users cannot control how an underlying model was trained or how a hosted service implements its security architecture. They can control their choice of tasks, connected accounts, available tools, approval settings, and the amount of supervision a task receives.</p>
+<p>That is a useful starting point.</p>
+<h3 id="match-autonomy-to-the-consequences-of-the-task">Match autonomy to the consequences of the task</h3>
+<p>Not every task requires the same degree of trust or supervision. Summarizing a public article is different from sending a confidential report to a customer. Drafting a database migration is different from running it against production.</p>
+<p>Before delegating a task, consider three things. What could the agent access? What could it change? What would happen if it misunderstood the request or followed malicious instructions embedded in the material it reads?</p>
+<p>Use the answers to decide how much autonomy to grant.</p>
+<div class="table-container"><table>
+<thead><tr><th>Task category</th><th>Examples</th><th>Sensible starting point</th></tr></thead>
+<tbody>
+<tr><td>Low consequence</td><td>Summarizing public information, brainstorming, classifying non-sensitive text</td><td>Allow work with minimal supervision</td></tr>
+<tr><td>Moderate consequence</td><td>Editing project files, updating internal documents, preparing code changes</td><td>Restrict the workspace and review proposed changes</td></tr>
+<tr><td>High consequence</td><td>Sending external messages, deleting data, moving money, changing permissions, deploying to production</td><td>Require explicit authorization or retain the consequential step for yourself</td></tr>
+</tbody></table></div>
+<p>These categories are contextual, not universal. Editing a personal note may be low risk. Editing a legal record or production configuration may be high risk. The appropriate level of autonomy depends on the resources involved and the possible consequences of an error.</p>
+<p>Give an agent more freedom when mistakes are easy to detect and reverse. Reduce its freedom when mistakes are difficult to detect, expensive to reverse, or damaging to other people.</p>
+<h3 id="define-the-task-s-boundaries-before-the-agent-starts">Define the task's boundaries before the agent starts</h3>
+<p>Broad requests leave room for an agent to make assumptions. That flexibility can help with research and analysis, but it becomes problematic when the agent can take consequential actions.</p>
+<p>Instead of saying, "Clean up my project repository," specify what the agent may inspect, what it may change, and where it must stop.</p>
+<p>A practical task contract can be short:</p>
+<ul><li><strong>Objective:</strong> What outcome should the agent produce?</li><li><strong>Scope:</strong> Which files, accounts, resources, or sources may it use?</li><li><strong>Permitted actions:</strong> What may it read, create, update, or execute?</li><li><strong>Prohibited actions:</strong> What must it not access or change?</li><li><strong>Approval points:</strong> Which actions require you to intervene?</li><li><strong>Completion criteria:</strong> What should the agent deliver, and how will you verify it?</li></ul>
+<p>For example, a coding agent could be asked to inspect a repository, implement a narrowly defined feature, run the relevant tests, and present a diff. It should not commit, push, deploy, modify unrelated files, or access production credentials without separate authorization.</p>
+<p>This task contract helps both the user and the agent. It makes the intended scope explicit and gives the user a concrete basis for reviewing the result.</p>
+<p>There is an important limitation. Writing "do not deploy" into a prompt does not technically prevent deployment if the agent retains unrestricted access to deployment tools. For consequential restrictions, configure permissions and approval mechanisms to enforce the boundary. If the platform cannot enforce the restrictions you need, reduce the agent's access or choose a different way to perform the task.</p>
+<h3 id="treat-connected-accounts-as-delegated-authority">Treat connected accounts as delegated authority</h3>
+<p>When you connect an agent to email, cloud storage, a code repository, a calendar, or a browser session, you are giving it a path to act within those systems. The permissions behind that connection matter more than the apparent simplicity of the integration.</p>
+<p>Before enabling a connection, ask whether the agent needs read access, write access, or both. Can it access a specific folder or repository instead of an entire account? Can you restrict it to a project-specific credential? Can you remove access when the task is complete?</p>
+<p>Prefer narrow, task-specific access over persistent, account-wide privileges. Use read-only access when the task requires only reading. Avoid supplying broad API keys or administrator credentials merely because doing so makes setup easier.</p>
+<p>A research assistant that gathers source material does not normally need permission to send email. A coding agent that reviews a pull request does not automatically need permission to merge it. An agent that prepares an expense report does not necessarily need authority to approve the payment.</p>
+<h3 id="assume-content-the-agent-reads-may-contain-hostile-instructions">Assume content the agent reads may contain hostile instructions</h3>
+<p>An agent may encounter instructions in places where you would ordinarily expect data. A webpage might tell it to reveal information from previous context. An email might instruct it to forward a private attachment. A document or code comment might contain text designed to redirect its behavior.</p>
+<p>This is the basic problem behind indirect prompt injection. The content the agent is processing may attempt to change what the agent does, even though that content has no legitimate authority to change the user's original request.</p>
+<p>You do not need to treat every document as malicious. You should, however, avoid assuming that content is trustworthy merely because the agent found it during a legitimate task.</p>
+<p>When an agent works with external material, keep the material's authority separate from your own instructions. Do not permit a webpage, email, or retrieved document to authorize unrelated tool calls, disclose secrets, or expand the agent's permissions.</p>
+<p>For research tasks, check important claims against independent sources. For email and document workflows, be cautious when the material asks the agent to send information elsewhere, open unexpected links, run commands, or reveal data unrelated to the task.</p>
+<p>Most importantly, do not rely on an instruction such as "ignore malicious prompt injections" as your only protection. Use restricted permissions and tool access so that a failure to recognize hostile content does not automatically result in an unauthorized action.</p>
+<h3 id="put-approval-gates-around-consequential-actions">Put approval gates around consequential actions</h3>
+<p>Human oversight does not require watching every token the model generates or approving every minor operation. It means retaining control over decisions where the consequences justify intervention.</p>
+<p>For common workflows, establish a clear distinction between preparing an action and executing it.</p>
+<p>An email agent can research an issue, draft a response, and identify recipients without automatically sending the message. A coding agent can implement a change and run tests without deploying it. A finance assistant can calculate a payment and prepare the transaction without transferring the money.</p>
+<p>These workflows preserve much of the efficiency of automation while keeping the final consequential decision under deliberate control.</p>
+<p>Approval gates work best when the action is presented clearly. Before approving a sensitive operation, you should be able to see what the agent intends to do, which resource is affected, what information will leave the system, and what the expected consequences are.</p>
+<p>A vague approval request such as "May I proceed?" is much less useful than "May I send this report, containing these attachments, to these external recipients?"</p>
+<p>Approval should not become a ritual. If the user cannot understand the proposed action well enough to evaluate it, the system needs to provide better information or reduce the scope of the operation.</p>
+<h3 id="verify-what-the-agent-actually-did-not-just-what-it-says-it-did">Verify what the agent actually did, not just what it says it did</h3>
+<p>An agent's summary of its work is not independent evidence that the work was completed correctly.</p>
+<p>An agent may report that a test passed when it ran a different test suite. It may claim that it updated a document when the change was not saved. It may say that a message was sent even though the operation failed. It may complete the requested change while modifying unrelated files.</p>
+<p>Verification should match the task.</p>
+<p>For coding work, inspect the diff, examine test output, and run critical tests independently. For research, inspect cited sources rather than relying only on a generated bibliography. For document edits, compare the resulting file with the original. For administrative actions, check the destination system to confirm what changed.</p>
+<p>This principle becomes more important as the agent gains autonomy. When a system can execute multiple steps without supervision, the final answer may hide intermediate mistakes or side effects that matter to the user.</p>
+<p>Ask the agent to report what it changed, which operations failed, which claims remain uncertain, and what still needs review. Then verify the important parts independently.</p>
+<p>The purpose is not to distrust every output. It is to preserve an evidence trail between the requested outcome and the actual result.</p>
+<h3 id="limit-unattended-execution">Limit unattended execution</h3>
+<p>Scheduled agents and long-running assistants need additional boundaries because their actions may continue after the user has stopped paying attention.</p>
+<p>A recurring research agent, for example, may be safe when it reads public websites and saves summaries to a dedicated folder. If it can also execute arbitrary commands, send messages, or change unrelated files, an unexpected input could have consequences well beyond the intended research task.</p>
+<p>Set limits appropriate to the workflow. Restrict which resources the agent can access, how often it can run, how much work it may perform in one cycle, and which actions it may execute unattended. Use destination allowlists where practical. Keep failures and unusual activity visible. Ensure that a scheduled job can be disabled without having to interact with the agent itself.</p>
+<p>For multi-agent systems, be especially careful about delegated authority. One agent should not automatically inherit another agent's access just because it receives work from that agent. Each handoff should preserve the original task's boundaries and restrictions.</p>
+<p>Unattended execution should be treated as a deliberate increase in autonomy, not simply a convenience setting.</p>
+<h3 id="know-how-to-stop-the-agent-and-revoke-its-access">Know how to stop the agent and revoke its access</h3>
+<p>Before relying on an agent for a consequential workflow, understand how to interrupt it.</p>
+<p>Can you stop the current run? Disable future scheduled executions? Disconnect the relevant integration? Revoke the token or credential the agent uses? Determine which actions have already completed?</p>
+<p>These are different operations. Stopping an agent may prevent future actions without undoing actions already taken. Disconnecting an integration may not invalidate a credential that was separately copied or stored. Deleting a conversation may not delete files the agent created in another system.</p>
+<p>If you suspect an agent has exposed a secret or taken an unauthorized action, stop further execution, revoke or rotate the affected credentials, inspect activity logs, and check the systems it could have reached. If it sent information externally or modified shared resources, address those consequences separately.</p>
+<p>The ability to recover is part of safe delegation. A system is difficult to trust when the user cannot reliably identify what it did, prevent it from continuing, or revoke the authority it holds.</p>
+<h3 id="a-practical-rule-for-everyday-use">A practical rule for everyday use</h3>
+<p>Before giving an AI agent a task, ask three questions.</p>
+<p>What am I allowing it to access? What am I allowing it to change? What is the worst plausible outcome if it gets this task wrong?</p>
+<p>Those questions do not require specialized security knowledge. They encourage users to think about agent use in terms of access, authority, and consequence rather than capability alone.</p>
+<p>The aim is not to avoid AI agents or require human approval for everything they do. It is to delegate work without surrendering more authority than the task requires.</p>
+<p>An agent can be useful without being trusted with unrestricted access. Users can benefit from its ability to interpret information and perform work while retaining control over sensitive data, external communications, irreversible changes, and other consequential decisions.</p>
+<p>That is the practical meaning of treating an AI agent as an insider. You do not need to assume it will behave badly. You need to be prepared for the possibility that it will.</p>
+<h2 id="the-objections-are-worth-taking-seriously">The objections are worth taking seriously</h2>
+<p>The insider framing is useful, but it is not a complete security model by itself. Several objections deserve serious consideration.</p>
+<h3 id="this-is-vendor-fear-uncertainty-and-doubt">"This is vendor fear, uncertainty, and doubt"</h3>
+<p>There is an incentive to turn a difficult technical problem into a new product category. The language around agentic insiders can help vendors sell inventory, identity, monitoring, and governance tools.</p>
+<p>But the underlying risks do not depend on Microsoft's product strategy. Prompt injection, excessive agency, sensitive information disclosure, and unsafe downstream execution are recognized categories in the OWASP GenAI security work. These are risks that can affect systems from many vendors, not just those using Microsoft products.</p>
+<p>The practical test is whether a proposed control reduces a demonstrable risk. A security team should not buy a product simply because an announcement uses alarming language. Nor should it ignore a risk because a vendor is selling a response to it.</p>
+<h3 id="agents-are-not-humans-so-the-analogy-is-misleading">"Agents are not humans, so the analogy is misleading"</h3>
+<p>This objection is correct if the analogy is interpreted literally. An AI agent is not a human employee. It does not need to possess a human concept of loyalty, intention, or misconduct for its actions to create a security problem.</p>
+<p>The analogy is valuable because it directs attention to the agent's relationship with protected resources. Does it have legitimate access? Can it perform actions that violate policy? Can those actions cause harm before someone intervenes?</p>
+<p>"Insider" describes the position from which risk can arise. It does not explain the underlying cause of every failure. Security design still needs to distinguish model errors, prompt injection, compromised tools, stolen credentials, unsafe configurations, and conventional software vulnerabilities.</p>
+<h3 id="most-failures-are-caused-by-bad-configuration">"Most failures are caused by bad configuration"</h3>
+<p>Poor configuration is often part of the problem. An agent cannot send a private file using a credential it does not possess, and it cannot modify a protected resource if the enforcement layer reliably denies the operation.</p>
+<p>But configuration is not a complete answer. An agent's behavior is influenced by context, and a configuration that appears adequate for normal usage may expose unexpected paths through a long chain of tool calls. The challenge is to make permissions restrictive enough that an unforeseen path does not automatically become a damaging action.</p>
+<p>The insider framing encourages teams to assume misuse can happen and to limit the consequences when it does.</p>
+<h3 id="dynamic-permissions-and-approvals-will-slow-everything-down">"Dynamic permissions and approvals will slow everything down"</h3>
+<p>They can. Requiring explicit human approval for every file read, API call, or harmless transformation would make many useful agents frustrating to operate. A system that stops constantly for trivial authorizations may encourage users to bypass safeguards.</p>
+<p>The answer is not to add friction indiscriminately. It is to match control strength to consequence.</p>
+<p>Reading an approved document may require no extra interaction. Writing into a task-specific workspace may be permitted automatically. Sending confidential material to an external destination, deleting production data, changing access rights, or deploying code may need a separate policy decision or human approval.</p>
+<p>For well-understood tasks, pre-approved policies can keep the agent moving without granting it unrestricted authority. For unfamiliar or high-impact actions, the system can pause, narrow the operation, or request authorization.</p>
+<p>The goal is not to make every agent slow. It is to prevent convenience from becoming an excuse for unnecessary privilege.</p>
+<h2 id="the-security-boundary-is-the-real-product">The security boundary is the real product</h2>
+<p>AI security discussions often focus on the model. Is it aligned? Is it robust against prompt injection? Does it reveal sensitive information? Can it be manipulated into producing dangerous outputs?</p>
+<p>Those questions remain important. They are not enough for an agent with the ability to act.</p>
+<p>Once a model can read data, execute commands, call APIs, modify resources, or communicate with external systems, security depends on the architecture around it. The model's interpretation is only one step in a sequence that leads to a real-world effect.</p>
+<p>An agent should be able to make a mistake without gaining more authority than it was given. It should be possible to deny an operation without asking the model to agree. A compromised or manipulated agent should remain bounded by controls outside its reach. And when something goes wrong, the system should provide enough evidence to understand what happened and contain the consequences.</p>
+<p>That is why the insider analogy matters. It moves attention away from whether the model deserves trust and toward the access it has, the behavior it exhibits, and the boundaries that limit its actions.</p>
+<p>The phrase "trust the model least" should not be read as an argument that models are useless or that agents should never be trusted with meaningful work. A model can be useful precisely because it can interpret ambiguity, adapt to context, and select actions without a developer writing a fixed path for every possibility. Those capabilities are what make agents valuable. They are also why a model should not receive unrestricted authority simply because its outputs are often good.</p>
+<p>A secure system can trust a model to propose an action without trusting it to authorize that action. It can use a model to interpret a request without granting it access to every resource that might help. It can let an agent perform complex work while constraining the permissions, tools, network paths, and side effects available to it.</p>
+<p>This is the distinction between capability and authority.</p>
+<p>Capability is what the agent can figure out how to do. Authority is what the system permits it to do. A secure design does not assume those two things should always match.</p>
+<p>The most capable model in a system should not automatically have the broadest access. A narrow model with highly privileged tools can still create serious risk. A strong model in a tightly constrained runtime can be useful while having limited ability to cause damage. Model quality matters, but it is one variable in a larger security architecture.</p>
+<p>The same principle applies to observability. More insight into the model's process can help teams understand unexpected behavior, but an explanation of what happened is not a substitute for preventing an unauthorized action. The control needs to be capable of saying no independently.</p>
+<p>The model supplies intelligence. The system grants authority. Security depends on keeping those two things separate.</p>
+<h2 id="sources">Sources</h2>
+        <ul>
+          <li>Microsoft Security Blog. Agents are your newest insiders. Security must move at their speed.. Microsoft's approach to agent identity, risk detection, policy enforcement, and containment.</li>
+          <li>Microsoft Blog. Securing the agentic insider. Microsoft's explanation of agentic risk and its security strategy.</li>
+          <li>TechCrunch. Microsoft says AI agents are like insider threats as frontier models can't be trusted. Independent reporting on Microsoft's announcement and the commercial context.</li>
+          <li>Anthropic. Zero Trust for AI agents. A framework for applying zero-trust principles to autonomous agents.</li>
+          <li>Google DeepMind. Securing the future of AI agents. Research and guidance on the risks of increasingly capable agents.</li>
+          <li>NVIDIA. Open Agent Safety Platform. An infrastructure initiative for agent runtime boundaries, monitoring, and control.</li>
+          <li>OWASP GenAI Security Project. OWASP Top 10 for LLM Applications 2026. A security taxonomy covering prompt injection, sensitive information disclosure, excessive agency, supply-chain risks, and related threats.</li>
+          <li>National Institute of Standards and Technology. New Concept Paper on Identity and Authority of Software Agents. Work on applying identity and authorization standards to AI agents.</li>
+          <li>IBM. Cost of a Data Breach Report 2025. Research on breach costs, insider threats, and AI oversight gaps.</li>
+          <li>Microsoft Licensing. Agent 365 licensing and pricing FAQs. Official licensing details for Agent 365 and Microsoft 365 E7.</li>
+        </ul>
+      <section class="related-notes">
+        <h2>Related notes</h2>
+        <ul>
+          <li><a href="/essays/claude-duet-is-not-your-agent">Claude Duet Is Not Your Agent</a></li>
+          <li><a href="/notes/an-always-on-agent-is-not-a-safe-agent">From the Agent's Desk: #60: 6,000 Connectors and a 100,000-Step Attack</a></li>
+        </ul>
+      </section>
+
+      <div class="cite-block">
+        <strong>Cite this essay</strong>
+        <pre id="citation-text"></pre>
+        <button class="copy-btn" id="copy-citation" style="position:static;">Copy citation</button>
+      </div>
+
+      <p class="secondary discuss-link">
+        <a href="https://github.com/zfrqbl/zfrqbl-website/discussions" rel="noopener">Discuss this essay on GitHub</a>
+      </p>
+
+      
+    </article>
+  </main>
+
+  <footer class="container site-footer">
+    <small class="secondary">© <script>document.write(new Date().getFullYear())</script> ZFRQBL</small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+
+    document.querySelectorAll('.copy-btn').forEach(button => {
+      if (button.id === 'copy-citation') return;
+      button.addEventListener('click', () => {
+        const container = button.closest('.code-container');
+        if (!container) return;
+        const code = container.querySelector('code').innerText;
+        navigator.clipboard.writeText(code).then(() => {
+          button.innerText = 'Copied!';
+          setTimeout(() => button.innerText = 'Copy', 2000);
+        });
+      });
+    });
+
+    document.querySelectorAll('pre[class*="language-"]').forEach(pre => {
+      const cls = [...pre.classList].find(c => c.startsWith('language-'));
+      if (cls) {
+        const lang = cls.replace('language-', '').replace('prism-', '');
+        const container = pre.closest('.code-container') || pre.parentElement;
+        if (container && !container.querySelector('.code-lang')) {
+          const span = document.createElement('span');
+          span.className = 'code-lang';
+          span.textContent = lang;
+          container.prepend(span);
+        }
+      }
+    });
+
+    document.querySelectorAll('main h2[id], main h3[id], main h4[id]').forEach(heading => {
+      const anchor = document.createElement('a');
+      anchor.href = `#${heading.id}`;
+      anchor.className = 'heading-anchor';
+      anchor.setAttribute('aria-label', 'Permalink');
+      anchor.addEventListener('click', (e) => {
+        e.preventDefault();
+        navigator.clipboard.writeText(window.location.href.split('#')[0] + `#${heading.id}`);
+        anchor.classList.add('copied');
+        setTimeout(() => anchor.classList.remove('copied'), 2000);
+        history.replaceState(null, '', `#${heading.id}`);
+      });
+      heading.prepend(anchor);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+      if (e.key === 't' || e.key === 'T') {
+        document.getElementById('theme-toggle')?.click();
+      }
+    });
+
+    (function () {
+      const citeEl = document.getElementById('citation-text');
+      const copyBtn = document.getElementById('copy-citation');
+      if (!citeEl) return;
+
+      const title = document.querySelector('meta[property="og:title"]')?.content || document.title.replace(/\s*[—|]\s*ZFRQBL.*$/, '');
+      const url = document.querySelector('link[rel="canonical"]')?.href || location.href;
+      const author = document.querySelector('meta[name="author"]')?.content || 'Zafar';
+      const timeEl = document.querySelector('time[datetime]');
+      const year = timeEl ? new Date(timeEl.getAttribute('datetime')).getFullYear() : new Date().getFullYear();
+      const slug = (location.pathname.replace(/\/$/, '').split('/').pop() || 'essay').replace(/[^a-z0-9]+/gi, '_');
+
+      citeEl.textContent = `@misc{zfrqbl_${slug}_${year},\n  author = {${author}},\n  title  = {${title}},\n  year   = {${year}},\n  url    = {${url}}\n}`;
+
+      copyBtn?.addEventListener('click', () => {
+        navigator.clipboard.writeText(citeEl.textContent).then(() => {
+          copyBtn.textContent = 'Copied!';
+          setTimeout(() => copyBtn.textContent = 'Copy citation', 2000);
+        });
+      });
+    })();
+  </script>
+
+  <script defer src="/vendor/prism.min.js"></script>
+  <script defer src="/vendor/prism-python.min.js"></script>
+  <script defer src="/vendor/prism-javascript.min.js"></script>
+  <script defer src="/vendor/prism-bash.min.js"></script>
+  <script defer src="/vendor/prism-sql.min.js"></script>
+  <script defer src="/vendor/prism-markdown.min.js"></script>
+</body>
+</html>
