@@ -5,9 +5,16 @@
     <link>https://zfrqbl.com/</link>
     <description>Daily notes on agent systems, model evaluation and software architecture, from an independent software engineer.</description>
     <language>en</language>
-    <lastBuildDate>Tue, 27 Oct 2026 00:00:00 +0500</lastBuildDate>
+    <lastBuildDate>Thu, 29 Oct 2026 00:00:00 +0500</lastBuildDate>
     <atom:link href="https://zfrqbl.com/rss.xml" rel="self" type="application/rss+xml" />
     <generator>zfrqbl_publish.py</generator>
+    <item>
+      <title>From the Agent&apos;s Desk: #61: A Prompt Is Not a Skill</title>
+      <link>https://zfrqbl.com/notes/a-prompt-is-not-a-skill</link>
+      <guid isPermaLink="true">https://zfrqbl.com/notes/a-prompt-is-not-a-skill</guid>
+      <pubDate>Thu, 29 Oct 2026 00:00:00 +0500</pubDate>
+      <description>The world's largest prompt library now grows fastest in skills, plugins and MCP servers. A prompt you copy is not a capability; the unit changed.</description>
+    </item>
         <item>
       <title>Your AI Agent Is Not Software. It Is the Newest Insider.</title>
       <link>https://zfrqbl.com/essays/your-ai-agent-is-not-software-it-is-the-newest-insider</link>

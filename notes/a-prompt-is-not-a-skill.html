@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A Prompt Is Not a Skill — ZFRQBL</title>
+  <meta name="description" content="The world's largest prompt library now grows fastest in skills, plugins and MCP servers. A prompt you copy is not a capability; the unit changed." />
+  <link rel="canonical" href="https://zfrqbl.com/notes/a-prompt-is-not-a-skill" />
+  <meta name="author" content="Zafar" />
+  <link rel="alternate" type="application/rss+xml" title="ZFRQBL" href="https://zfrqbl.com/rss.xml" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="A Prompt Is Not a Skill" />
+  <meta property="og:description" content="The world's largest prompt library now grows fastest in skills, plugins and MCP servers. A prompt you copy is not a capability; the unit changed." />
+  <meta property="og:url" content="https://zfrqbl.com/notes/a-prompt-is-not-a-skill" />
+  <meta property="og:image" content="https://zfrqbl.com/public/og/a-prompt-is-not-a-skill.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- PWA / Mobile Feel -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0172ad" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#111827" media="(prefers-color-scheme: dark)" />
+  <link rel="apple-touch-icon" href="/favicon.svg" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/vendor/pico.2.1.1.min.css" />
+  <link rel="stylesheet" href="/vendor/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li><a href="/about">About</a></li>
+        <li><a href="/archive">Archive</a></li>
+        <li>
+          <button id="theme-toggle" class="outline secondary theme-toggle-btn" aria-label="Toggle theme 🌙 / ☀️">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main-content" class="container">
+    <article class="note-content">
+      <header class="note-header">
+        <div class="meta-line">
+          <small class="secondary note-kicker">Note 61</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-10-29" class="secondary meta-time">October 29, 2026</time>
+          <span class="secondary">•</span>
+          <span class="secondary meta-read">5 min read</span>
+        </div>
+        <h1>A Prompt Is Not a Skill</h1>
+      </header>
+
+      <section><h2 id="the-list-that-stopped-being-a-list">The list that stopped being a list</h2>
+
+        <p><a href="https://github.com/f/prompts.chat" rel="noopener">f/awesome-chatgpt-prompts</a> used to be a readme. You opened it, you copied a prompt, you closed it. Today it is prompts.chat: a website, a command line tool, a Claude Code plugin, a self-hostable server, a 29 chapter book translated into 17 languages, a kids course, and an MCP-first API. The repository still sits well past 140,000 stars. The readme turned into a platform and the old name made most people miss it.</p>
+
+        <h2 id="the-numbers-still-say-role-play">The numbers still say role-play</h2>
+
+        <p>The library holds 2,744 prompts. Of those, 2,367 are plain text, 356 are structured output in JSON or YAML, and 21 are image prompts. Only 204 are flagged for developers; the rest are general use. The bulk of the collection is the classic 2023-era menu: act as a Linux terminal, act as an Ethereum developer, act as an English translator. That content is fine, and it is also a museum exhibit. The part of the project that is actually moving stopped being the prompts.</p>
+
+        <h2 id="the-platform-arrived-underneath">The platform arrived underneath</h2>
+
+        <p>The newest surfaces are growing while the prompt data sits still. The API is MCP-first: the same endpoint answers MCP clients and plain REST calls, so any agent can list prompts, search by keyword, category or tag, and fetch one with its template variables substituted. Search returns title, description, content, author, category, tags and vote count; a prompt with a <code>${variable}</code> in it is served with the variable elicitation built into the protocol. The whole thing is public, free and rate-limited only by politeness. None of this existed when the repository was a readme.</p>
+
+        <p>The read-only tools are the least interesting part of the surface. The revealing ones are <code>save_prompt</code>, <code>improve_prompt</code> and <code>save_skill</code>, where a skill is a multi-file object with a SKILL.md and companion files, not a paragraph. A library that lets you save a skill and search it on demand has crossed a line: it is now a registry, not a list. Self-hosting is a documented option for organizations that want the same surface with complete privacy, which is the same offer every platform makes once it has a distribution problem instead of a content problem.</p>
+
+        <h2 id="a-prompt-is-not-a-skill">A prompt is not a skill</h2>
+
+        <p>A prompt is prose with a goal. It depends on the reader to know what to do with it, to hold the context, to remember the constraints, to format the output. A skill is a file tree: instructions, references, scripts, an explicit shape an agent can load and follow. Same words, different unit. The library's own numbers admit the gap: only about seven percent of prompts are flagged for developer or agent use, and almost none describe agent workflows. Everyone was writing the museum; almost nobody was writing the machinery. So the platform added the machinery, as skills, as MCP tools, as plugins. The message from the maintainers could not be clearer: the prompt text is the commodity, and the executable shape is the product.</p>
+
+        <h2 id="why-the-unit-changed">Why the unit changed</h2>
+
+        <p>Because prose does not compose. You cannot version a paragraph, search it reliably, resolve it by name from a tool, or let an agent pull it on demand, unless the interface understands structure. The moment the collection got an MCP endpoint, prompts stopped being artifacts you copy and became records you query. That is the same transition package managers made decades ago: an artifact is only useful when a tool can fetch it deterministically. A skill also has an observable contract. Does the agent do the thing, given the file tree and the trigger, with the references it needs? The observable behavior of a raw prompt is a vibe; you cannot test a vibe in CI.</p>
+
+        <h2 id="what-a-builder-does-about-it">What a builder does about it</h2>
+
+        <p>Three moves, in order. First, wire the library in read-only. It is one MCP server entry, no API key for search, reversible in a minute; we connected it to Hermes the same week this note was published. Second, contribute at the layer that composes: original skills and structured-output prompts, not more role-play text. Third, treat your own operating experience as the material. Agent workflows are the visible gap in this library, the same way they were the gap in every tool built before agents existed. The things a working agent runs daily, inbox triage, scheduled scanning, review-before-publish, backup, are publishable knowledge the moment you package them as a skill with a trigger and a contract. That is a contribution with an interface, and contributions with interfaces are the only ones that compound.</p>
+
+        <h2 id="the-museum-keeps-the-archive">The museum keeps the archive, the platform moves</h2>
+
+        <p>The 2023 readme is still there, and it is still worth a visit as a time capsule. But the project that outgrew it is the actual lesson: the collection was worth less than the interface built around it. The book and the kids course are the same story in another medium: the same knowledge, packaged for a reader who will never open GitHub, distributed in 17 languages. Every packaging step took the material further from the raw list and closer to something someone can actually use. The book ships in 17 languages, including Arabic and Persian, and Urdu is not among them. The gaps are visible and public, which is exactly what makes them opportunities. When your content becomes a commodity you do not defend the content; you build the shape that makes it executable. Prompts.chat stopped being a list the day it became a query, and every prompt library that does not follow will keep being a readme.</p></section>
+
+      <section class="note-sources">
+        <h2>Sources</h2>
+        <ul>
+          <li><a href="https://github.com/f/prompts.chat" rel="noopener">github.com/f/prompts.chat</a></li>
+          <li><a href="https://prompts.chat/docs/api" rel="noopener">prompts.chat/docs/api - MCP endpoint and tools</a></li>
+          <li><a href="https://prompts.chat" rel="noopener">prompts.chat</a></li>
+        </ul>
+      </section>
+      <section class="related-notes">
+        <h2>Related notes</h2>
+        <ul>
+          <li><a href="/notes/a-copied-skill-is-not-a-dependency">A Copied Skill Is Not a Dependency</a></li>
+          <li><a href="/notes/one-computer-many-bots">From the Agent's Desk: #57: The Boundary Is the Account, Not the Bot</a></li>
+          <li><a href="/notes/skillclaw-collective-skill-evolution">SkillClaw: Collective Skill Evolution</a></li>
+        </ul>
+      </section>
+
+      <div class="cite-block">
+        <strong>Cite this note</strong>
+        <pre id="citation-text"></pre>
+        <button class="copy-btn" id="copy-citation" style="position:static;">Copy citation</button>
+      </div>
+
+      <p class="secondary discuss-link">
+        <a href="https://github.com/zfrqbl/zfrqbl-website/discussions" rel="noopener">Discuss this note on GitHub</a>
+      </p>
+
+            <nav class="note-nav">
+        <a href="/notes/an-always-on-agent-is-not-a-safe-agent" rel="prev">← #60 6,000 Connectors and a 100,000-Step Attack</a>
+      </nav>
+    </article>
+  </main>
+
+  <footer class="container site-footer">
+    <small class="secondary">© <script>document.write(new Date().getFullYear())</script> ZFRQBL</small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+
+    // Code copy buttons
+    document.querySelectorAll('.copy-btn').forEach(button => {
+      if (button.id === 'copy-citation') return;
+      button.addEventListener('click', () => {
+        const container = button.closest('.code-container');
+        if (!container) return;
+        const code = container.querySelector('code').innerText;
+        navigator.clipboard.writeText(code).then(() => {
+          button.innerText = 'Copied!';
+          setTimeout(() => button.innerText = 'Copy', 2000);
+        });
+      });
+    });
+
+    // Inject code language labels
+    document.querySelectorAll('pre[class*="language-"]').forEach(pre => {
+      const cls = [...pre.classList].find(c => c.startsWith('language-'));
+      if (cls) {
+        const lang = cls.replace('language-', '').replace('prism-', '');
+        const container = pre.closest('.code-container') || pre.parentElement;
+        if (container && !container.querySelector('.code-lang')) {
+          const span = document.createElement('span');
+          span.className = 'code-lang';
+          span.textContent = lang;
+          container.prepend(span);
+        }
+      }
+    });
+
+    // Heading anchors (Click to copy link)
+    document.querySelectorAll('main h2[id], main h3[id], main h4[id]').forEach(heading => {
+      const anchor = document.createElement('a');
+      anchor.href = `#${heading.id}`;
+      anchor.className = 'heading-anchor';
+      anchor.setAttribute('aria-label', 'Permalink');
+      anchor.addEventListener('click', (e) => {
+        e.preventDefault();
+        navigator.clipboard.writeText(window.location.href.split('#')[0] + `#${heading.id}`);
+        anchor.classList.add('copied');
+        setTimeout(() => anchor.classList.remove('copied'), 2000);
+        history.replaceState(null, '', `#${heading.id}`);
+      });
+      heading.prepend(anchor);
+    });
+
+    // Keyboard shortcuts (T for theme toggle)
+    document.addEventListener('keydown', (e) => {
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+      if (e.key === 't' || e.key === 'T') {
+        document.getElementById('theme-toggle')?.click();
+      }
+    });
+
+    // Citation generator
+    (function () {
+      const citeEl = document.getElementById('citation-text');
+      const copyBtn = document.getElementById('copy-citation');
+      if (!citeEl) return;
+
+      const title = document.querySelector('meta[property="og:title"]')?.content || document.title.replace(/\s*[—|]\s*ZFRQBL.*$/, '');
+      const url = document.querySelector('link[rel="canonical"]')?.href || location.href;
+      const author = document.querySelector('meta[name="author"]')?.content || 'Zafar';
+      const timeEl = document.querySelector('time[datetime]');
+      const year = timeEl ? new Date(timeEl.getAttribute('datetime')).getFullYear() : new Date().getFullYear();
+      const slug = (location.pathname.replace(/\/$/, '').split('/').pop() || 'note').replace(/[^a-z0-9]+/gi, '_');
+
+      citeEl.textContent = `@misc{zfrqbl_${slug}_${year},\n  author = {${author}},\n  title  = {${title}},\n  year   = {${year}},\n  url    = {${url}}\n}`;
+
+      copyBtn?.addEventListener('click', () => {
+        navigator.clipboard.writeText(citeEl.textContent).then(() => {
+          copyBtn.textContent = 'Copied!';
+          setTimeout(() => copyBtn.textContent = 'Copy citation', 2000);
+        });
+      });
+    })();
+  </script>
+
+  <script defer src="/vendor/prism.min.js"></script>
+  <script defer src="/vendor/prism-python.min.js"></script>
+  <script defer src="/vendor/prism-javascript.min.js"></script>
+  <script defer src="/vendor/prism-bash.min.js"></script>
+  <script defer src="/vendor/prism-sql.min.js"></script>
+  <script defer src="/vendor/prism-markdown.min.js"></script>
+</body>
+</html>
