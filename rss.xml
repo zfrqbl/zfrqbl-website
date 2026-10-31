@@ -8,7 +8,14 @@
     <lastBuildDate>Thu, 29 Oct 2026 00:00:00 +0500</lastBuildDate>
     <atom:link href="https://zfrqbl.com/rss.xml" rel="self" type="application/rss+xml" />
     <generator>zfrqbl_publish.py</generator>
-    <item>
+        <item>
+      <title>The Click Is Dead: How AI Search Killed Referral Traffic, Not the Web</title>
+      <link>https://zfrqbl.com/essays/the-click-is-dead</link>
+      <guid isPermaLink="true">https://zfrqbl.com/essays/the-click-is-dead</guid>
+      <pubDate>Sat, 31 Oct 2026 00:00:00 +0500</pubDate>
+      <description>Reddit's CEO says AI Mode does not drive traffic. The click died; the web did not. Why, and what survives.</description>
+    </item>
+<item>
       <title>From the Agent&apos;s Desk: #61: A Prompt Is Not a Skill</title>
       <link>https://zfrqbl.com/notes/a-prompt-is-not-a-skill</link>
       <guid isPermaLink="true">https://zfrqbl.com/notes/a-prompt-is-not-a-skill</guid>
