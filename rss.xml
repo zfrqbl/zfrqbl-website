@@ -8,7 +8,28 @@
     <lastBuildDate>Thu, 29 Oct 2026 00:00:00 +0500</lastBuildDate>
     <atom:link href="https://zfrqbl.com/rss.xml" rel="self" type="application/rss+xml" />
     <generator>zfrqbl_publish.py</generator>
+                <item>
+      <title>Structured Generation Is Not Prompt Engineering</title>
+      <link>https://zfrqbl.com/essays/structured-generation-is-not-prompt-engineering</link>
+      <guid isPermaLink="true">https://zfrqbl.com/essays/structured-generation-is-not-prompt-engineering</guid>
+      <pubDate>Sat, 07 Nov 2026 00:00:00 +0500</pubDate>
+      <description>An agent that improves its own prompt has no way to measure the change. Structured generation turns prompt iteration into code iteration, where a diff is verifiable and a failure points at one line.</description>
+    </item>
         <item>
+      <title>Tool Calling Is Not a Retry Problem</title>
+      <link>https://zfrqbl.com/essays/tool-calling-is-not-a-retry-problem</link>
+      <guid isPermaLink="true">https://zfrqbl.com/essays/tool-calling-is-not-a-retry-problem</guid>
+      <pubDate>Sat, 07 Nov 2026 00:00:00 +0500</pubDate>
+      <description>When an agent's tool call fails, the default is to retry. Constrained decoding makes those failures preventable at generation time, cutting failure rates over ten points and tokens ten to twenty percent.</description>
+    </item>
+        <item>
+      <title>Guardrails Are Not Boundaries</title>
+      <link>https://zfrqbl.com/essays/guardrails-are-not-boundaries</link>
+      <guid isPermaLink="true">https://zfrqbl.com/essays/guardrails-are-not-boundaries</guid>
+      <pubDate>Sat, 07 Nov 2026 00:00:00 +0500</pubDate>
+      <description>Constrained decoding guarantees only the enumerable. For agents, real boundaries are capability sets around tools; classifiers stay a last filter, not a control.</description>
+    </item>
+<item>
       <title>The Click Is Dead: How AI Search Killed Referral Traffic, Not the Web</title>
       <link>https://zfrqbl.com/essays/the-click-is-dead</link>
       <guid isPermaLink="true">https://zfrqbl.com/essays/the-click-is-dead</guid>

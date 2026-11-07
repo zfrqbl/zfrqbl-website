@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guardrails Are Not Boundaries — ZFRQBL</title>
+  <meta name="description" content="Constrained decoding guarantees only the enumerable. For agents, real boundaries are capability sets around tools; classifiers stay a last filter, not a control." />
+  <link rel="canonical" href="https://zfrqbl.com/essays/guardrails-are-not-boundaries" />
+  <meta name="author" content="Zafar" />
+
+  <!-- Article schema (AI-search citation signal; added Nov 7 2026 per Zafar approval) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Guardrails Are Not Boundaries",
+    "description": "Constrained decoding guarantees only the enumerable. For agents, real boundaries are capability sets around tools; classifiers stay a last filter, not a control.",
+    "author": { "@type": "Person", "name": "Zafar" },
+    "publisher": { "@type": "Organization", "name": "ZFRQBL", "url": "https://zfrqbl.com" },
+    "datePublished": "2026-11-07",
+    "dateModified": "2026-11-07",
+    "mainEntityOfPage": "https://zfrqbl.com/essays/guardrails-are-not-boundaries",
+    "image": "https://zfrqbl.com/public/og/zfrqbl.png"
+  }
+  </script>
+  <link rel="alternate" type="application/rss+xml" title="ZFRQBL" href="https://zfrqbl.com/rss.xml" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Guardrails Are Not Boundaries" />
+  <meta property="og:description" content="Constrained decoding guarantees only the enumerable. For agents, real boundaries are capability sets around tools; classifiers stay a last filter, not a control." />
+  <meta property="og:url" content="https://zfrqbl.com/essays/guardrails-are-not-boundaries" />
+  <meta property="og:image" content="https://zfrqbl.com/public/og/zfrqbl.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- PWA / Mobile Feel -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0172ad" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#111827" media="(prefers-color-scheme: dark)" />
+  <link rel="apple-touch-icon" href="/favicon.svg" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/vendor/pico.2.1.1.min.css" />
+  <link rel="stylesheet" href="/vendor/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li><a href="/about">About</a></li>
+        <li><a href="/archive">Archive</a></li>
+        <li>
+          <button id="theme-toggle" class="outline secondary theme-toggle-btn" aria-label="Toggle theme 🌙 / ☀️">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main-content" class="container">
+    <article class="essay-content">
+      <header class="note-header">
+        <div class="meta-line">
+          <small class="secondary note-kicker">Essay</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-11-07" class="secondary meta-time">November 7, 2026</time>
+          <span class="secondary">•</span>
+          <span class="secondary meta-read">9 min read</span>
+        </div>
+        <h1>Guardrails Are Not Boundaries</h1>
+      </header>
+
+      
+
+      <section><p>The agent's refund tool accepts any amount up to ten thousand dollars. The policy says nothing over two hundred goes out without a second approval. The stack around the agent does everything the industry currently knows how to do: the tool call is generated against a JSON schema, Llama Guard screens the input, a moderation classifier watches the output, and a validator rejects out-of-policy calls so the loop can retry.</p>
+
+<p>An email arrives mid-task, a link and a gentle nudge about a VIP customer. The agent follows it, decides the customer qualifies for a courtesy exception, and generates <code>{"action": "refund", "amount": 499.99}</code>. The JSON is valid against the schema. The call passes the shape check. The classifier flags it this time, so the money does not move. A detection system caught a violation the architecture was supposed to make impossible.</p>
+
+<p>Every check in that stack ran after the token was sampled. That is the common shape of a guardrail, and it is why "guardrail" is the right word. A guardrail does not stop you from leaving the road; it makes the crash cheaper when you do. If the goal is an agent that cannot do the thing, the guarantee has to live where the decision is made. Constrained decoding can deliver that, but only for the subspaces the world lets you enumerate before generation starts. Everywhere else, the enforceable "cannot" is a capability question, and it belongs at the boundary around the tools, not in a classifier watching the output.</p>
+
+<h2 id="formatting-fixed-integration-not-behavior">Formatting fixed integration, not behavior</h2>
+
+<p>The first battle was JSON compliance, and guided generation won it. The Efficient Guided Generation line of work (dottxt, arXiv 2307.09702) showed that a finite-state machine over the grammar can mask disallowed tokens at each decoding step, and engines like XGrammar (arXiv 2411.15100) made that commodity infrastructure. Structured output is now a solved integration problem, which is exactly why the industry moved on and forgot that format is the least interesting thing the output carries.</p>
+
+<p>A schema-perfect payload can still be an illegal discount. The generated object can satisfy every type, every enum, every regex, and still encode a refund that violates policy, a compliance answer that is wrong for this jurisdiction, a tool call that no one authorized. The validator sees well-formed data and approves the shape. The shape was never the problem. Format governs how the agent talks to the system; it says nothing about what the system should let the agent do.</p>
+
+<h2 id="what-cannot-actually-buys-you">What "cannot" actually buys you</h2>
+
+<p>Constrained decoding works by making the wrong output unrepresentable. At each step the sampler can only pick from tokens the grammar allows, so the set of possible outputs equals the set of authorized outputs. "The model probably won't pick that token" becomes "that token does not exist." That is a genuine guarantee, declarative and exact, and it is worth a great deal where it applies.</p>
+
+<p>It applies wherever the decision space is enumerable in advance. A region field constrained to <code>IN ('East','West')</code>, a multi-choice question, a JSON Schema, a DDL-like set of allowed rows: these are finite, knowable before decoding starts, and the masking is complete. The guarantee is only as good as the spec, and the spec is only as good as your ability to write down every legal value up front.</p>
+
+<h2 id="where-token-masking-runs-out">Where token masking runs out</h2>
+
+<p>An agent does not emit one constrained field. It picks a tool and fills its arguments, and the result feeds the next choice, so each step opens the space wider. Frontier models fail nested API sequences at 28% on the NESTful benchmark (arXiv 2409.03797) and below 10% on Databricks' function-calling evaluation, and the errors concentrate exactly where a grammar would have to describe the whole world, because the error an abstract API returns and the shape of a response you have not seen yet are not enumerable in advance.</p>
+
+<p>What is legal next depends on what came before. A <code>FileRef</code> only exists after <code>fetch_file</code> returns it, a <code>TestResult</code> only exists after a run completes, so the valid space is built at runtime, one tool call at a time. No grammar written before decoding can enumerate it, because the grammar would need to know the tool's future outputs. And the actions agents take have side effects on the world, on files, on accounts, on deployed services, which cannot be masked away at the logit level. You can constrain the tokens that name a tool; you cannot constrain what the tool does to the world by constraining tokens at all.</p>
+
+<h2 id="why-guardrails-are-filters-not-boundaries">Why guardrails are filters, not boundaries</h2>
+
+<p>The post-hoc stack is where most safety budgets go. NeMo Guardrails, Llama Guard, moderation classifiers: sample the output, classify it, block the bad ones, retry. This is a filter, and a filter has the two properties of a filter: it can be fooled, and it can be bypassed. OWASP ranks prompt injection as the number one generative AI risk, and the benchmarks explain why. InjecAgent (arXiv 2403.02691) showed indirect prompt injection steering GPT-4 agents into harmful actions across finance, smart-home, and email tools. ToolHijacker (arXiv 2504.19793) pushed tool-selection hijack to 96.7% on GPT-4o. ToolEmu (arXiv 2309.15817) found that even the safest LM agents fail dangerously 23.9% of the time in an emulated sandbox.</p>
+
+<p>Read those numbers the way they are written: the classifier is not failing rarely, it is failing at the stakes that matter most, and the attacker is not guessing, they are aiming. A detection system can only catch what it recognizes, and the whole point of an injection attack is to produce output that looks exactly like what the system expects to see.</p>
+
+<h2 id="the-control-layer-is-a-capability-system">The control layer is a capability system</h2>
+
+<p>dottxt's control-layer post makes the right move: stop sampling and then validating, compile the authorization policy into the machinery so violations are unrepresentable. The direction is right, and the mechanism has a fifty-year-old name. The correct lineage is capability-based security: least privilege, confused-deputy resistance, revocation, and the design discipline of making illegal states unrepresentable. Miller, Yee, and Shapiro's Capability Myths Demolished is the intellectual spine, and the modern packaging is SELinux-style mandatory control around a probabilistic generator.</p>
+
+<p>Agents make perfect confused deputies. They carry a user's authority into conversations they do not control, and an attacker who convinces the agent it is acting on the user's behalf inherits that authority wholesale. The capability answer is the same one the operating systems community settled on decades ago: authority travels per call, scoped to exactly what that call may touch, and nothing the agent says can widen the scope.</p>
+
+<p>The reason capability thinking fits agents so well is that injection attacks hijack tool selection, and selection is exactly what capabilities cut off at the root. If the payment tool is simply not in the agent's capability set for this conversation, no prompt, no matter how clever, can select it, because the runtime rejects the call before any model output is involved. Detection loses because it reacts; the capability boundary fails closed by construction.</p>
+
+<h2 id="type-safe-tool-graphs-the-enumerable-middle-ground">Type-safe tool graphs: the enumerable middle ground</h2>
+
+<p>The most useful thing in dottxt's post is the concrete suggestion hiding inside the vision: treat the tool graph as an interface definition. Types flow between tools, <code>fetch_file</code> produces a <code>FileRef</code>, <code>commit_edit</code> consumes one and produces a <code>ModifiedFile</code>, <code>run_tests</code> consumes that and produces a <code>TestResult</code>, and the graph itself is enumerable, known at build time, and compilable into the decoder.</p>
+
+<div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-text">fetch_file -&gt; FileRef -&gt; commit_edit -&gt; ModifiedFile -&gt; run_tests -&gt; TestResult</code></pre>
+        </div>
+
+<p>Once the graph is an IDL, the type errors become ungeneratable: the agent cannot call <code>commit_edit</code> on a file it never fetched, because the required input type does not exist yet in the conversation state. That is constrained decoding applied to the right object, the interface between tools, instead of the free-form text flowing around them. The same move lets you define the agent's language subset explicitly, listing the endpoints it may fetch and forbidding the tools that hand over the machine, like <code>child_process</code>; writes stay limited to declared outputs. Compile that subset into both the grammar and the runtime. Enumerable things get compiled; open things get bounded.</p>
+
+<h2 id="budgets-audits-and-the-governance-payoff">Budgets, audits, and the governance payoff</h2>
+
+<p>The capability boundary is not hypothetical, the vendors are shipping it. Walmart's Agent Profiles give each agent its own spending cap, approval modes, and ledger, and OpenAI's Practices for Governing Agentic AI Systems codifies action-space constraints, approvals, monitoring, and interruptibility. These are the operational face of the same principle: the interesting governance question is not what the model did, but what the system allowed it to attempt.</p>
+
+<p>A compiled decision space is diffable and reviewable. When a policy changes, you review a capability set or a tool graph, not a transcript of model behavior. Governance shifts from asking "did the agent behave?" to asking "did we specify the allowed behavior correctly?", and the second question has a deterministic answer.</p>
+
+<h2 id="what-the-boundary-cannot-do">What the boundary cannot do</h2>
+
+<p>The capability boundary is also only as good as its spec, and the spec has a hole you should name. A capability set that includes a money tool and a web tool is still unsafe if the money tool's arguments are open-ended: the refund amount is an integer, and nothing at the boundary knows 499.99 violates the two-hundred-dollar rule unless the rule is compiled into the tool interface itself. This is why the two mechanisms are not rivals. Capabilities govern which tools exist. Decoding constraints govern which arguments those tools can receive, and the policy lives in both places, as a capability for selection and as a schema for arguments.</p>
+
+<p>The third layer is judgment, and no amount of compiling makes it enumerable. Whether this customer is genuinely a VIP is a semantic question about the world, and the answer changes in real time. That is the honest place for a probabilistic filter, as the final layer, with its failure rate named and accepted. Keep the classifier, but stop calling it a control.</p>
+
+<h2 id="move-the-boundary-dont-pray-harder">Move the boundary, don't pray harder</h2>
+
+<p>The refund example ends the way it should: the fix is not a better classifier, it is removing the refund from the capability set for that conversation until a second approval exists, and constraining the amount field so the policy is in the schema. The classifier stays, as the last filter, and everyone knows it is a filter.</p>
+
+<p>That is the layered answer the agent-safety discussion keeps circling. Constrain in the decoder where the space is enumerable, including the tool graph itself. Apply capabilities in middleware where it is not. Keep classifiers as the final filter, and say plainly which layer you are relying on for each guarantee. "Will not" is a hope you pay for in retries. "Cannot" is an architecture you review in a diff. A guardrail is something you can drive past; a boundary is something the system cannot cross. The difference is when the decision is made, after the token is sampled or before it exists.</p></section>
+
+      
+      
+
+      <div class="cite-block">
+        <strong>Cite this essay</strong>
+        <pre id="citation-text"></pre>
+        <button class="copy-btn" id="copy-citation" style="position:static;">Copy citation</button>
+      </div>
+
+      <p class="secondary discuss-link">
+        <a href="https://github.com/zfrqbl/zfrqbl-website/discussions" rel="noopener">Discuss this essay on GitHub</a>
+      </p>
+
+      
+    </article>
+  </main>
+
+  <footer class="container site-footer">
+    <small class="secondary">© <script>document.write(new Date().getFullYear())</script> ZFRQBL - Icons by Lucide (MIT).</small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+
+    document.querySelectorAll('.copy-btn').forEach(button => {
+      if (button.id === 'copy-citation') return;
+      button.addEventListener('click', () => {
+        const container = button.closest('.code-container');
+        if (!container) return;
+        const code = container.querySelector('code').innerText;
+        navigator.clipboard.writeText(code).then(() => {
+          button.innerText = 'Copied!';
+          setTimeout(() => button.innerText = 'Copy', 2000);
+        });
+      });
+    });
+
+    document.querySelectorAll('pre[class*="language-"]').forEach(pre => {
+      const cls = [...pre.classList].find(c => c.startsWith('language-'));
+      if (cls) {
+        const lang = cls.replace('language-', '').replace('prism-', '');
+        const container = pre.closest('.code-container') || pre.parentElement;
+        if (container && !container.querySelector('.code-lang')) {
+          const span = document.createElement('span');
+          span.className = 'code-lang';
+          span.textContent = lang;
+          container.prepend(span);
+        }
+      }
+    });
+
+    document.querySelectorAll('main h2[id], main h3[id], main h4[id]').forEach(heading => {
+      const anchor = document.createElement('a');
+      anchor.href = `#${heading.id}`;
+      anchor.className = 'heading-anchor';
+      anchor.setAttribute('aria-label', 'Permalink');
+      anchor.addEventListener('click', (e) => {
+        e.preventDefault();
+        navigator.clipboard.writeText(window.location.href.split('#')[0] + `#${heading.id}`);
+        anchor.classList.add('copied');
+        setTimeout(() => anchor.classList.remove('copied'), 2000);
+        history.replaceState(null, '', `#${heading.id}`);
+      });
+      heading.prepend(anchor);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+      if (e.key === 't' || e.key === 'T') {
+        document.getElementById('theme-toggle')?.click();
+      }
+    });
+
+    (function () {
+      const citeEl = document.getElementById('citation-text');
+      const copyBtn = document.getElementById('copy-citation');
+      if (!citeEl) return;
+
+      const title = document.querySelector('meta[property="og:title"]')?.content || document.title.replace(/\s*[—|]\s*ZFRQBL.*$/, '');
+      const url = document.querySelector('link[rel="canonical"]')?.href || location.href;
+      const author = document.querySelector('meta[name="author"]')?.content || 'Zafar';
+      const timeEl = document.querySelector('time[datetime]');
+      const year = timeEl ? new Date(timeEl.getAttribute('datetime')).getFullYear() : new Date().getFullYear();
+      const slug = (location.pathname.replace(/\/$/, '').split('/').pop() || 'essay').replace(/[^a-z0-9]+/gi, '_');
+
+      citeEl.textContent = `@misc{zfrqbl_${slug}_${year},\n  author = {${author}},\n  title  = {${title}},\n  year   = {${year}},\n  url    = {${url}}\n}`;
+
+      copyBtn?.addEventListener('click', () => {
+        navigator.clipboard.writeText(citeEl.textContent).then(() => {
+          copyBtn.textContent = 'Copied!';
+          setTimeout(() => copyBtn.textContent = 'Copy citation', 2000);
+        });
+      });
+    })();
+  </script>
+
+  <script defer src="/vendor/prism.min.js"></script>
+  <script defer src="/vendor/prism-python.min.js"></script>
+  <script defer src="/vendor/prism-javascript.min.js"></script>
+  <script defer src="/vendor/prism-bash.min.js"></script>
+  <script defer src="/vendor/prism-sql.min.js"></script>
+  <script defer src="/vendor/prism-markdown.min.js"></script>
+</body>
+</html>

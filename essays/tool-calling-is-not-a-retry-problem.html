@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tool Calling Is Not a Retry Problem — ZFRQBL</title>
+  <meta name="description" content="When an agent's tool call fails, the default is to retry. Constrained decoding makes those failures preventable at generation time, cutting failure rates over ten points and tokens ten to twenty percent." />
+  <link rel="canonical" href="https://zfrqbl.com/essays/tool-calling-is-not-a-retry-problem" />
+  <meta name="author" content="Zafar" />
+
+  <!-- Article schema (AI-search citation signal; added Nov 7 2026 per Zafar approval) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Tool Calling Is Not a Retry Problem",
+    "description": "When an agent's tool call fails, the default is to retry. Constrained decoding makes those failures preventable at generation time, cutting failure rates over ten points and tokens ten to twenty percent.",
+    "author": { "@type": "Person", "name": "Zafar" },
+    "publisher": { "@type": "Organization", "name": "ZFRQBL", "url": "https://zfrqbl.com" },
+    "datePublished": "2026-11-07",
+    "dateModified": "2026-11-07",
+    "mainEntityOfPage": "https://zfrqbl.com/essays/tool-calling-is-not-a-retry-problem",
+    "image": "https://zfrqbl.com/public/og/zfrqbl.png"
+  }
+  </script>
+  <link rel="alternate" type="application/rss+xml" title="ZFRQBL" href="https://zfrqbl.com/rss.xml" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Tool Calling Is Not a Retry Problem" />
+  <meta property="og:description" content="When an agent's tool call fails, the default is to retry. Constrained decoding makes those failures preventable at generation time, cutting failure rates over ten points and tokens ten to twenty percent." />
+  <meta property="og:url" content="https://zfrqbl.com/essays/tool-calling-is-not-a-retry-problem" />
+  <meta property="og:image" content="https://zfrqbl.com/public/og/zfrqbl.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- PWA / Mobile Feel -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0172ad" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#111827" media="(prefers-color-scheme: dark)" />
+  <link rel="apple-touch-icon" href="/favicon.svg" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/vendor/pico.2.1.1.min.css" />
+  <link rel="stylesheet" href="/vendor/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li><a href="/about">About</a></li>
+        <li><a href="/archive">Archive</a></li>
+        <li>
+          <button id="theme-toggle" class="outline secondary theme-toggle-btn" aria-label="Toggle theme 🌙 / ☀️">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main-content" class="container">
+    <article class="essay-content">
+      <header class="note-header">
+        <div class="meta-line">
+          <small class="secondary note-kicker">Essay</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-11-07" class="secondary meta-time">November 7, 2026</time>
+          <span class="secondary">•</span>
+          <span class="secondary meta-read">9 min read</span>
+        </div>
+        <h1>Tool Calling Is Not a Retry Problem</h1>
+      </header>
+
+      
+
+      <section><p>Your agent calls <code>book_ticket</code> with a flight, a seat, and a date, and the tool bounces the call back because the date arrived as a free-form string instead of an ISO value. The loop catches it, patches the argument, and calls again. This happens constantly and nobody thinks twice, because validating tool calls and retrying the failures is the default shape of every agent loop shipping today.</p>
+
+<p>That default is the most expensive habit in agentic systems, and it treats a preventable problem as an inevitable one. Tool calling is the flagship use case of agents, yet the standard fix for models not following tool schemas, validate and retry, spends tokens on errors that never needed to exist. Constrained decoding, which forces the model to emit schema-valid output at generation time, cut tool-call failure rates by more than ten points on every model the dottxt team tested, cut total tokens ten to twenty percent, and pushed savings toward two thirds with a technique called coalescence. Retries, meanwhile, recovered between zero and 31 percent of failed calls depending on model size, at real token and latency cost.</p>
+
+<p>Schema compliance should be an invariant of the sampling loop, not a post-hoc contract enforcement. The tools to do this, Outlines, constrained decoding, token-level FSMs, are mature enough that agent stacks should stop paying for failures they can rule out.</p>
+
+<h2 id="the-tool-calling-compliance-gap">The tool-calling compliance gap</h2>
+
+<p>Models are trained to emit tool calls in a schema. Anthropic's <code>input_schema</code>, OpenAI's <code>tools</code>, the same shape across every major provider. The model is supposed to produce JSON that matches the tool definition, and providers pass the schema into the request so the model has it in context. But compliance is a probability, not a promise. Anthropic's own tool-use documentation says parameter guesses made by the model "are not guaranteed."</p>
+
+<p>So the agent stack adds a guard. Parse the tool call, validate it against the schema, and if it fails, ask the model to try again. Sometimes the retry includes the validation error as context, sometimes it is a dumb re-roll. Either way the loop assumes failure is a normal mode of operation, and the whole industry treats that assumption as the cost of doing business.</p>
+
+<p>The strange part is that the obvious fix has been sitting on the shelf. Structured generation, forcing the output to conform to a schema while it is being sampled, is absent from most agent loops even though it directly removes the failure class the retries exist to clean up. That gap is the entire premise of the dottxt post that this essay builds on.</p>
+
+<h2 id="the-default-fix-is-retries-and-it-is-weak">The default fix is retries, and it is weak</h2>
+
+<p>The Berkeley Function Calling Leaderboard runs a subset called <code>live_multiple</code> where the model must call the right tool among many with the right arguments, judged by AST-level comparison against ground truth. dottxt ran their constrained decoder, dotlambda, against an unconstrained baseline on this subset, and the retry table is the part worth reading first.</p>
+
+<p>The unconstrained baseline retries failed calls and recovers almost nothing. Qwen3-0.6B retries and succeeds zero percent of the time. Qwen3-1.7B recovers 13.8 percent. Qwen3-4B-Instruct-2507, the strongest of the small models tested, recovers 30.8 percent. The smaller the model, the more it retries and the less it recovers, because a re-roll samples the same distribution that produced the bad call. If the model does not know the schema well enough to emit a valid call once, more sampling does not teach it the schema; it just rolls the dice again.</p>
+
+<p>Every retry also re-generates tokens. The failed call, the error message, the re-roll, that is latency and spend added to every step that trips the validator. The mainstream alternative ecosystem confirms this is the default. instructor, the popular library for structured LLM output, is built exactly around validation and retry, a post-hoc pattern that works well enough on frontier models and degrades fast on smaller ones.</p>
+
+<h2 id="how-constrained-decoding-makes-compliance-an-invariant">How constrained decoding makes compliance an invariant</h2>
+
+<p>Constrained decoding changes where the guarantee is made. Instead of sampling freely and checking afterward, the sampler only ever chooses tokens that can extend the current output toward a valid completion.</p>
+
+<p>Concretely, the mechanics work like this. Take the JSON Schema and compile it to a regular expression, then compile the regex to a finite-state machine. At each sampling step, only the vocabulary tokens that sit on valid FSM transitions are offered to the model. The model keeps its freedom within the structure, choice of field order, values, formatting, and loses the freedom to violate it. This is the grammar-constrained decoding method Willard and Louf published at EMNLP 2023, implemented in Outlines as <code>model(prompt, output_type)</code>.</p>
+
+<p>The consequence is that a tool call either parses or is never emitted. There is no syntax-error class at all. And the constraint runs deeper than syntax. An enum in the schema means a value outside the enum is never sampled, so the semantic-error class of schemas, the wrong constant, the out-of-range choice, shrinks to what the model cannot know from the schema alone.</p>
+
+<h2 id="the-benchmark-evidence">The benchmark evidence</h2>
+
+<p>On BFCL <code>live_multiple</code>, the largest and most challenging subset dottxt evaluated, dotlambda beats the unconstrained baseline on every model tested. Failure rate drops by more than ten percentage points across the board, and total tokens drop ten to twenty percent, because valid calls are shorter and no retry loop inflates the spend.</p>
+
+<p>BFCL matters as a benchmark because it is not a vibe check. It is the Berkeley Function Calling Leaderboard, the standard for tool-calling accuracy claims, evaluated by AST comparison, not by a human squinting at output. The dottxt post also keeps the comparison honest. It patches a few inconsistent tool schemas on both arms and permits both arms up to two retries, so the constrained decoder is not winning on a technicality of benchmark hygiene.</p>
+
+<h2 id="enums-are-where-the-models-confusion-dies">Enums are where the model's confusion dies</h2>
+
+<p>The clearest worked example in the post is a tool with a year <code>enum</code>. The user writes shorthand <code>'19</code>, meaning 2019, and the unconstrained Qwen3-4B picks a value outside the enum entirely. The model understood the intent and still produced an illegal argument, because nothing in the sampling loop knew the year had to come from the allowed set.</p>
+
+<p>Constrained, the prefix does the work. Every non-<code>dontcare</code> year in the enum starts with <code>20</code>, so once the model emits the <code>20</code> prefix, the FSM locks the remainder and the model completes correctly on its own. The schema acted as a hard prior, constraint first and sampling second, so the model only ever chose among legal completions. That one example is the whole argument in miniature, the failure class that retries cannot fix, eliminated before the token is sampled.</p>
+
+<h2 id="token-economics-of-valid-calls">Token economics of valid calls</h2>
+
+<p>The waste is visible in the token counts. Unconstrained models pad their calls with superfluous tool invocations and invented properties, and free-form text wraps itself around the JSON. One erroneous ticket booking in the benchmark, item <code>live_multiple_862-181-3</code>, burned 91 tokens on a call that never succeeded. 91 tokens is nothing on a single call and enormous across a fleet of agents doing this thousands of times a day.</p>
+
+<p>Counting full spend across attempts, dotlambda reaches a valid tool call with fewer total tokens for every model tested, because it does not pay for the failed attempt at all. And coalescence, the technique that emits fully-determined tokens without invoking the model, cuts generated tokens by about 65 percent. When the FSM knows the token is forced, it writes it directly instead of paying an inference call to rediscover it.</p>
+
+<p>The token waste is not confined to the benchmark either. Agent loops run the same call shape all day, booking, searching, writing files, and each failure multiplies through the sequence. One bad call stalls the plan, and the loop spends more tokens re-deriving where it was. Retry counts as a failure mode of the system, not just of a single call.</p>
+
+<h2 id="wire-formats-are-the-new-portability-problem">Wire formats are the new portability problem</h2>
+
+<p>Tool calling also has a portability problem that has nothing to do with model quality. The output formats are vendor-specific. vLLM parses Qwen3's XML-based format, Llama 3.2 uses its own prompt format, and OpenAI expects JSON mode, so an agent stack pinned to one provider's tool-calling dialect is married to that provider's quirks.</p>
+
+<p>dotlambda's answer is to describe the target wire format in its own DSL, so the same constrained pipeline drives any of them. A schema-enforcing layer between the agent and the model runtime decouples the stack from both model and vendor. The schema is the contract, and the format differences become a translation problem at the boundary instead of a rewrite of the loop.</p>
+
+<h2 id="what-this-means-for-your-stack">What this means for your stack</h2>
+
+<p>The direction of causality flips. FastAPI and Pydantic already validate requests coming into your service; constrained decoding makes the LLM's tool arguments equally typed before they hit your routes. One schema language, JSON Schema, on both sides of the boundary, the agent's output and the service's input.</p>
+
+<p>The adoption cost is lower than the retry tax it replaces. Outlines runs on OpenAI, vLLM, Ollama, TGI, and SGLang, so the constraint layer does not force a runtime change, and it accepts a Pydantic model or a JSON Schema directly, the same artifact your service already documents. The integration is a wrapper around the sampler, not a rewrite of the agent.</p>
+
+<p>Two practical claims close the argument. First, open-source models close the reliability gap with frontier ones on tool workflows when the sampling is constrained, because the constraint carries the structural correctness the small model lacks. Second, adopt this where call volume is high and failures are costly, in multi-step agents and money-moving tools, anywhere a retry means a payment API call or a re-planned sequence. The failure class you rule out is exactly the one that is most expensive to recover from.</p>
+
+<p>The agent that books a ticket should spend its tokens booking tickets, not repairing calls it never should have made. Constrained decoding is not a fancy optimization; it is the difference between an agent that obeys its tools' contracts and one that gambles on them. The retry loop exists because the sampling loop was unconstrained. Fix the sampling, and the retries become what they always were, a tax on a design choice.</p></section>
+
+      
+      
+
+      <div class="cite-block">
+        <strong>Cite this essay</strong>
+        <pre id="citation-text"></pre>
+        <button class="copy-btn" id="copy-citation" style="position:static;">Copy citation</button>
+      </div>
+
+      <p class="secondary discuss-link">
+        <a href="https://github.com/zfrqbl/zfrqbl-website/discussions" rel="noopener">Discuss this essay on GitHub</a>
+      </p>
+
+      
+    </article>
+  </main>
+
+  <footer class="container site-footer">
+    <small class="secondary">© <script>document.write(new Date().getFullYear())</script> ZFRQBL - Icons by Lucide (MIT).</small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+
+    document.querySelectorAll('.copy-btn').forEach(button => {
+      if (button.id === 'copy-citation') return;
+      button.addEventListener('click', () => {
+        const container = button.closest('.code-container');
+        if (!container) return;
+        const code = container.querySelector('code').innerText;
+        navigator.clipboard.writeText(code).then(() => {
+          button.innerText = 'Copied!';
+          setTimeout(() => button.innerText = 'Copy', 2000);
+        });
+      });
+    });
+
+    document.querySelectorAll('pre[class*="language-"]').forEach(pre => {
+      const cls = [...pre.classList].find(c => c.startsWith('language-'));
+      if (cls) {
+        const lang = cls.replace('language-', '').replace('prism-', '');
+        const container = pre.closest('.code-container') || pre.parentElement;
+        if (container && !container.querySelector('.code-lang')) {
+          const span = document.createElement('span');
+          span.className = 'code-lang';
+          span.textContent = lang;
+          container.prepend(span);
+        }
+      }
+    });
+
+    document.querySelectorAll('main h2[id], main h3[id], main h4[id]').forEach(heading => {
+      const anchor = document.createElement('a');
+      anchor.href = `#${heading.id}`;
+      anchor.className = 'heading-anchor';
+      anchor.setAttribute('aria-label', 'Permalink');
+      anchor.addEventListener('click', (e) => {
+        e.preventDefault();
+        navigator.clipboard.writeText(window.location.href.split('#')[0] + `#${heading.id}`);
+        anchor.classList.add('copied');
+        setTimeout(() => anchor.classList.remove('copied'), 2000);
+        history.replaceState(null, '', `#${heading.id}`);
+      });
+      heading.prepend(anchor);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+      if (e.key === 't' || e.key === 'T') {
+        document.getElementById('theme-toggle')?.click();
+      }
+    });
+
+    (function () {
+      const citeEl = document.getElementById('citation-text');
+      const copyBtn = document.getElementById('copy-citation');
+      if (!citeEl) return;
+
+      const title = document.querySelector('meta[property="og:title"]')?.content || document.title.replace(/\s*[—|]\s*ZFRQBL.*$/, '');
+      const url = document.querySelector('link[rel="canonical"]')?.href || location.href;
+      const author = document.querySelector('meta[name="author"]')?.content || 'Zafar';
+      const timeEl = document.querySelector('time[datetime]');
+      const year = timeEl ? new Date(timeEl.getAttribute('datetime')).getFullYear() : new Date().getFullYear();
+      const slug = (location.pathname.replace(/\/$/, '').split('/').pop() || 'essay').replace(/[^a-z0-9]+/gi, '_');
+
+      citeEl.textContent = `@misc{zfrqbl_${slug}_${year},\n  author = {${author}},\n  title  = {${title}},\n  year   = {${year}},\n  url    = {${url}}\n}`;
+
+      copyBtn?.addEventListener('click', () => {
+        navigator.clipboard.writeText(citeEl.textContent).then(() => {
+          copyBtn.textContent = 'Copied!';
+          setTimeout(() => copyBtn.textContent = 'Copy citation', 2000);
+        });
+      });
+    })();
+  </script>
+
+  <script defer src="/vendor/prism.min.js"></script>
+  <script defer src="/vendor/prism-python.min.js"></script>
+  <script defer src="/vendor/prism-javascript.min.js"></script>
+  <script defer src="/vendor/prism-bash.min.js"></script>
+  <script defer src="/vendor/prism-sql.min.js"></script>
+  <script defer src="/vendor/prism-markdown.min.js"></script>
+</body>
+</html>
