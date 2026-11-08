@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prompting Is Not Programming: The dottxt Manifesto and the Grammar of Reliable AI — ZFRQBL</title>
+  <meta name="description" content="Grammar enforced at generation time, not prompting, is what makes LLM output buildable. Constraint is a floor: it guarantees shape, never truth." />
+  <link rel="canonical" href="https://zfrqbl.com/essays/prompting-is-not-programming" />
+  <meta name="author" content="Zafar" />
+
+  <!-- Article schema (AI-search citation signal; added Nov 7 2026 per Zafar approval) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Prompting Is Not Programming: The dottxt Manifesto and the Grammar of Reliable AI",
+    "description": "Grammar enforced at generation time, not prompting, is what makes LLM output buildable. Constraint is a floor: it guarantees shape, never truth.",
+    "author": { "@type": "Person", "name": "Zafar" },
+    "publisher": { "@type": "Organization", "name": "ZFRQBL", "url": "https://zfrqbl.com" },
+    "datePublished": "2026-11-08",
+    "dateModified": "2026-11-08",
+    "mainEntityOfPage": "https://zfrqbl.com/essays/prompting-is-not-programming",
+    "image": "https://zfrqbl.com/public/og/zfrqbl.png"
+  }
+  </script>
+  <link rel="alternate" type="application/rss+xml" title="ZFRQBL" href="https://zfrqbl.com/rss.xml" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Prompting Is Not Programming: The dottxt Manifesto and the Grammar of Reliable AI" />
+  <meta property="og:description" content="Grammar enforced at generation time, not prompting, is what makes LLM output buildable. Constraint is a floor: it guarantees shape, never truth." />
+  <meta property="og:url" content="https://zfrqbl.com/essays/prompting-is-not-programming" />
+  <meta property="og:image" content="https://zfrqbl.com/public/og/zfrqbl.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- PWA / Mobile Feel -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0172ad" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#111827" media="(prefers-color-scheme: dark)" />
+  <link rel="apple-touch-icon" href="/favicon.svg" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/vendor/pico.2.1.1.min.css" />
+  <link rel="stylesheet" href="/vendor/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li><a href="/about">About</a></li>
+        <li><a href="/archive">Archive</a></li>
+        <li>
+          <button id="theme-toggle" class="outline secondary theme-toggle-btn" aria-label="Toggle theme 🌙 / ☀️">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main-content" class="container">
+    <article class="essay-content">
+      <header class="note-header">
+        <div class="meta-line">
+          <small class="secondary note-kicker">Essay</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-11-08" class="secondary meta-time">November 8, 2026</time>
+          <span class="secondary">•</span>
+          <span class="secondary meta-read">11 min read</span>
+        </div>
+        <h1>Prompting Is Not Programming: The dottxt Manifesto and the Grammar of Reliable AI</h1>
+      </header>
+
+      
+
+      <section><p>Your agent drafts a plan and calls `deploy_service` with `{&quot;service&quot;: &quot;auth-api&quot;, &quot;version&quot;: &quot;2.1.0&quot;, &quot;environment&quot;: &quot;production&quot;}`. Downstream, a database rejects the payload because a date field arrived as a string with a timezone the schema never allowed. The retry loop starts. The model tries again with slightly different prose, the parser squints at it, and you burn tokens on something a compiler would have caught before it ever left your hands. This is not a failure of the model&#x27;s intelligence. It is a failure of its interface.</p>
+<p>The dottxt manifesto, &quot;New rules for AI&quot; by Willard, Gerlanc, and Louf, makes one sharp, defensible claim: LLMs remain toys, fun but not transformative, because their output never respects the grammars of the systems around them. No amount of prompting fixes that. Grammar must be enforced at generation time, by zeroing out the tokens that violate it, not patched afterward with parsers and retries.</p>
+<p>I agree with the diagnosis and the mechanism. This essay reads the manifesto as the Unix philosophy applied to model output, adds the recent published evidence of models failing to honor formats, and presses the manifesto where it is weakest. Schema compliance is not semantic correctness. Format restrictions can cost real accuracy. And a manifesto is also a product.</p>
+<h2 id="what-the-manifesto-actually-says">What the manifesto actually says</h2>
+<p>The core diagnosis is one sentence: without more predictable outputs, LLMs simply cannot be integrated into systems and businesses. Every production integration, a form, a database, a tool call, is a contract, and a probabilistic generator cannot honor a contract.</p>
+<p>The proposed mechanism is direct. Take all potential probabilities and set the useless ones to zero. Guardrails at the outset, so errors never happen instead of being caught. The manifesto&#x27;s own line is that the approach is like &quot;taking all potential probabilities and setting all the useless ones to zero,&quot; and that this is the only way output becomes reliable enough to build on.</p>
+<p>Two things follow from that framing. First, the fix belongs at sampling time, inside the generator, not after it. Second, the goal is not cleverer prompts. On both counts the manifesto is right, and the industry&#x27;s own trajectory has proven it.</p>
+<h2 id="grammar-is-what-makes-systems-compose">Grammar is what makes systems compose</h2>
+<p>The manifesto frames syntax as integration. Without structure there is chaos; keywords out of order do not make a program. We spent a century teaching machines our grammars. AI has yet to learn the grammar of software.</p>
+<p>Ground this in the Unix philosophy. Programs do one thing well and work together precisely because their interfaces are fixed. Composability is downstream of a shared, predictable interface. Grep does not care what kind of file it reads, only that its contract with the system holds. An LLM that produces a JSON object on the third try, with the first two attempts wrapped in apologetic prose, is a program that cannot be composed with anything.</p>
+<p>Structured generation is the missing interface layer for models. It gives them what every other program already has: a boundary that either holds or fails loudly.</p>
+<h2 id="how-guided-generation-actually-works">How guided generation actually works</h2>
+<p>The mechanism is a regex, JSON Schema, or CFG compiled to an automaton that masks invalid tokens before every sampling step. The model can only emit what the grammar allows. At each step, the sampler looks at the current state of the automaton, filters the vocabulary to the tokens that keep the output valid, and samples from what remains.</p>
+<p>Outlines makes this one line: `model(prompt, output_type)` with a Pydantic type. The FSM index is precomputed, so the overhead is negligible. The alternative is the industry default: generate freely, then parse, repair, retry. That loop is where the cost and the flakiness live.</p>
+<p>The heavy part can be precomputed. Willard and Louf showed in their grammar-constrained decoding work that the FSM and the vocabulary masking can be built before generation starts, which makes guided generation nearly free at inference time. The guarantee is enforced online, during the sample; the work that makes it cheap is done offline, once.</p>
+<h2 id="why-structure-makes-ai-engineers-software-engineers-again">Why structure makes AI engineers software engineers again</h2>
+<p>The dottxt Coding for Structured Generation post walks the contrast plainly. Unstructured generation yaps. In their walkthrough, zero of ten outputs from a small model were usable; the rest were refusals, pleasantries, and wrong formats. Structured generation turns flaky prompting into a deterministic iterate-on-the-regex loop. Failures reproduce, fixes stick, and the loop closes.</p>
+<p>Prompt hacking gives improvements that are often illusory and vanish under evals. Structure gives replayable, debuggable behavior. Prompt-and-pray becomes engineering, with a test harness instead of a prayer.</p>
+<p>This matters most for agents that write or improve their own prompts. Such an agent edits its own instructions and judges the result by whether the output looks better. That loop has no ground truth. The output changed, but did it change because the prompt improved, or because sampling is noisy? Structure replaces the anecdote with an assertion you can run a hundred times.</p>
+<h2 id="the-receipts-where-models-actually-break">The receipts: where models actually break</h2>
+<p>This is the section the manifesto needs but does not supply: published, current instances of models not outputting the expected format.</p>
+<p>The vendor&#x27;s own admission. OpenAI&#x27;s Structured Outputs announcement (August 2024) reports that on complex JSON schema evals, gpt-4-0613 with prompting alone scores under 40% schema adherence. gpt-4o with strict enforcement scores 100%. Prompting alone fails most of the time, even by the vendor&#x27;s own measurement.</p>
+<p>Academic benchmarks still show failure at scale. SchemaBench (ACL 2025) tests models against roughly 40,000 JSON schemas and finds best-case correctness of only about 61%. Complex schemas, special-token escaping, and schema-instruction comprehension all still break.</p>
+<p>Format restrictions have a measurable cost. &quot;Let Me Speak Freely?&quot; (EMNLP 2024) shows forcing JSON mode can crater reasoning: GPT-3.5-Turbo on GSM8K drops from 76.6% free-form to 49.3% in JSON mode, and Claude-3-Haiku from 86.5% to 23.4%. Structure is not free, and anyone who treats it as a pure win is missing the trade.</p>
+<p>Production reports from users. A documented n8n community thread (January 2025) shows llama3.2 ignoring explicit format instructions and emitting a JSON label that appears nowhere in the prompt. OpenAI developers report gpt-4o-mini dropping required keys and even gpt-4o violating its own schema in places under strict mode. A DataChain writeup documents Gemini JSON mode intermittently returning unparseable output and prepending unprompted prefixes like &quot;Here&#x27;s the analysis...&quot; to the JSON. DeepLearning.AI&#x27;s community has a running thread on extra model text corrupting JSON extraction despite &quot;output only JSON&quot; instructions.</p>
+<p>Even strict modes have failure modes. A 2026 failure taxonomy catalogs silent truncation via `finish_reason: length` and value errors inside schema-valid payloads. The Interfaze Structured Output Benchmark shows frontier models at roughly 99% JSON pass rate but only about 80% value accuracy: valid JSON with wrong values.</p>
+<p>The pattern splits into two kinds. Structural failures, shape wrong, parse fails, prompt ignored, constrained decoding genuinely eliminates. Semantic failures, shape right, content wrong, it cannot. The manifesto is right about the first kind and silent about the second.</p>
+<h2 id="the-industry-already-converged">The industry already converged</h2>
+<p>OpenAI Structured Outputs took schema adherence on their eval from under 40% to 100% by enforcing constraints, not by shipping a bigger model. That is the manifesto&#x27;s exact claim, validated by the largest vendor in the market.</p>
+<p>Tool calling is structured generation by another name. Every tool call is a grammar boundary. The agent wave multiplies the surfaces: an agent makes a schema-bound call on every loop step, and operational prompts, the system prompt and tool contracts governing an agent, have become the interface layer. The 2025 &quot;prompt engineering is dead&quot; discourse is itself evidence for the manifesto. The field moved from tuning instructions to engineering constraints, context, and tool schemas.</p>
+<h2 id="the-constraint-argument-ends-where-the-strings-do">The constraint argument ends where the strings do</h2>
+<p>The manifesto&#x27;s logic has a terminal point, and it is worth naming. If the fix is to zero out the tokens that violate a grammar, the most thorough version of the fix is to stop generating the strings that carry the violations in the first place.</p>
+<p>TypeSafe AI&#x27;s Jev is the concrete example. It is a System One model: unstructured state in, typed probabilistic decisions out. No chat, no prose, no string generation at all. Its outputs are calibrated probabilities rather than free text, so there is no grammar to violate and no JSON to repair. On decision-shaped tasks the constraint argument simply ends, because the failure class the manifesto attacks has been designed out of the interface.</p>
+<p>That is not a refutation of the manifesto. It is the manifesto&#x27;s philosophy taken to its conclusion. If the grammar is the interface, the deepest form of the argument is a model whose output channel is the type system itself. For agentic systems that mostly need decisions, not paragraphs, that is where the logic points. The honest caveat is that most agent work still needs text, and Jev&#x27;s claims, like the manifesto&#x27;s, are young.</p>
+<h2 id="programming-not-prompting">Programming, not prompting</h2>
+<p>DSPy&#x27;s slogan, programming, not prompting, converges from a different direction: declarative, typed, composable modules where LM calls are arguments in a program, not prose. JSON Schema is the type system of data exchange, a shared vocabulary that lets two independent systems agree on a shape before any token is sampled. A contract between you and the AI.</p>
+<p>The CFG and the schema are the same idea at different altitudes. One constrains characters, the other constrains data, and both are better than instructions because both are checkable. You can diff a schema. You can version a grammar. You cannot diff a paragraph of prompt prose and know what changed.</p>
+<h2 id="what-the-manifesto-leaves-out">What the manifesto leaves out</h2>
+<p>Grammar guarantees syntactic validity, not semantic truth. A schema-compliant hallucination still fails, and the 2024-2026 evidence shows value errors persist at scale even where structure is enforced. The EMNLP numbers mean the essay must not oversell constraint as a universal improvement. Structure is a floor and a trade, not a panacea.</p>
+<p>And the manifesto is also marketing for a commercial product. &quot;Fewer tokens, less money&quot; is a pricing pitch as much as a technical one. That does not make it wrong. It makes it worth reading twice, with the pricing hat on.</p>
+<h2 id="the-verdict">The verdict</h2>
+<p>Constrained output is the interface layer. It does not replace evals, agents, or judgment; it makes all of them composable. Treat structure as the load-bearing wall, and build on it. But inspect the wall, and never mistake it for the building.</p>
+<p>The proof is the receipts. Models still fail formats by the vendor&#x27;s own numbers, and the industry that sells you prompts has already moved to schemas, tool calls, and constraints. Prompting is how you talk to a model. Programming is how you build with one. The manifesto&#x27;s argument, with its caveats attached, is the reason those two are no longer the same discipline.</p></section>
+
+      <h2 id="sources">Sources</h2>
+<ul>
+<li id="src1">dottxt, &quot;New rules for AI&quot; (the manifesto), the core diagnosis and the zero-out-tokens mechanism. <a href="https://blog.dottxt.ai/manifesto.html" rel="noopener">https://blog.dottxt.ai/manifesto.html</a></li>
+<li id="src2">dottxt, &quot;Coding for Structured Generation with LLMs&quot; (the yapping-to-structured walkthrough). <a href="https://blog.dottxt.ai/coding-for-structured-generation.html" rel="noopener">https://blog.dottxt.ai/coding-for-structured-generation.html</a></li>
+<li id="src3">Outlines docs and repository (FSM-guided generation, model(prompt, output_type)). <a href="https://dottxt-ai.github.io/outlines/latest" rel="noopener">https://dottxt-ai.github.io/outlines/latest</a></li>
+<li id="src4">OpenAI, &quot;Introducing Structured Outputs in the API&quot; (Aug 2024; under-40% prompting baseline vs 100% strict). <a href="https://openai.com/index/introducing-structured-outputs-in-the-api" rel="noopener">https://openai.com/index/introducing-structured-outputs-in-the-api</a></li>
+<li id="src5">SchemaBench (ACL 2025), ~40,000 JSON schemas, ~61% best-case correctness. <a href="https://arxiv.org/abs/2502.18878" rel="noopener">https://arxiv.org/abs/2502.18878</a></li>
+<li id="src6">Tamura et al., &quot;Let Me Speak Freely?&quot; (EMNLP 2024; JSON-mode accuracy drops). <a href="https://arxiv.org/abs/2408.02442" rel="noopener">https://arxiv.org/abs/2408.02442</a></li>
+<li id="src7">n8n community thread (Jan 2025), llama3.2 ignoring explicit format instructions. <a href="https://community.n8n.io/t/wrong-output-from-basic-llm-chain-with-llama3-2/69716" rel="noopener">https://community.n8n.io/t/wrong-output-from-basic-llm-chain-with-llama3-2/69716</a></li>
+<li id="src8">OpenAI dev forum, strict-mode schema violations reported for gpt-4o-mini and gpt-4o. <a href="https://community.openai.com/t/structured-outputs-not-reliable-with-gpt-4o-mini-and-gpt-4o/918735" rel="noopener">https://community.openai.com/t/structured-outputs-not-reliable-with-gpt-4o-mini-and-gpt-4o/918735</a></li>
+<li id="src9">DataChain, &quot;Enforcing JSON outputs in commercial LLMs&quot; (Gemini JSON-mode failures). <a href="https://www.datachain.ai/blog/enforcing-json-outputs-in-commercial-llms" rel="noopener">https://www.datachain.ai/blog/enforcing-json-outputs-in-commercial-llms</a></li>
+<li id="src10">DeepLearning.AI community thread, extra text corrupting JSON extraction. <a href="https://community.deeplearning.ai/t/extra-text-generated-by-the-model-disrupts-json-extraction-resulting-in-invalid-json-outputs/777572" rel="noopener">https://community.deeplearning.ai/t/extra-text-generated-by-the-model-disrupts-json-extraction-resulting-in-invalid-json-outputs/777572</a></li>
+<li id="src11">Structured-output failure taxonomy (2026), silent truncation and value errors. <a href="https://tianpan.co/blog/2026/04/18/structured-output-json-mode-failure-modes" rel="noopener">https://tianpan.co/blog/2026/04/18/structured-output-json-mode-failure-modes</a></li>
+<li id="src12">Interfaze Structured Output Benchmark, ~99% JSON pass rate vs ~80% value accuracy. <a href="https://interfaze.ai/blog/introducing-structured-output-benchmark" rel="noopener">https://interfaze.ai/blog/introducing-structured-output-benchmark</a></li>
+<li id="src13">Schick et al., &quot;Toolformer: Language Models Can Teach Themselves to Use Tools.&quot; <a href="https://arxiv.org/abs/2302.04761" rel="noopener">https://arxiv.org/abs/2302.04761</a></li>
+<li id="src14">DSPy (Stanford NLP), programming, not prompting. <a href="https://github.com/stanfordnlp/dspy" rel="noopener">https://github.com/stanfordnlp/dspy</a></li>
+<li id="src15">Huyen, &quot;The Problem With LangChain.&quot; <a href="https://minimaxir.com/2023/07/langchain-problem" rel="noopener">https://minimaxir.com/2023/07/langchain-problem</a></li>
+<li id="src16">The Unix philosophy (Wikipedia). <a href="https://en.wikipedia.org/wiki/Unix_philosophy" rel="noopener">https://en.wikipedia.org/wiki/Unix_philosophy</a></li>
+</ul>
+      <section class="related-notes">
+        <h2>Related</h2>
+        <ul>
+          <li><a href="Structured Generation Is Not Prompt Engineering">/essays/structured-generation-is-not-prompt-engineering</a></li>
+          <li><a href="Tool Calling Is Not a Retry Problem">/essays/tool-calling-is-not-a-retry-problem</a></li>
+          <li><a href="Jev - The First AI Model That Doesn&#x27;t Generate Strings">/notes/typesafe-ai-jev-system-one-models</a></li>
+        </ul>
+      </section>
+
+      <div class="cite-block">
+        <strong>Cite this essay</strong>
+        <pre id="citation-text"></pre>
+        <button class="copy-btn" id="copy-citation" style="position:static;">Copy citation</button>
+      </div>
+
+      <p class="secondary discuss-link">
+        <a href="https://github.com/zfrqbl/zfrqbl-website/discussions" rel="noopener">Discuss this essay on GitHub</a>
+      </p>
+
+      
+    </article>
+  </main>
+
+  <footer class="container site-footer">
+    <small class="secondary">© <script>document.write(new Date().getFullYear())</script> ZFRQBL - Icons by Lucide (MIT).</small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+
+    document.querySelectorAll('.copy-btn').forEach(button => {
+      if (button.id === 'copy-citation') return;
+      button.addEventListener('click', () => {
+        const container = button.closest('.code-container');
+        if (!container) return;
+        const code = container.querySelector('code').innerText;
+        navigator.clipboard.writeText(code).then(() => {
+          button.innerText = 'Copied!';
+          setTimeout(() => button.innerText = 'Copy', 2000);
+        });
+      });
+    });
+
+    document.querySelectorAll('pre[class*="language-"]').forEach(pre => {
+      const cls = [...pre.classList].find(c => c.startsWith('language-'));
+      if (cls) {
+        const lang = cls.replace('language-', '').replace('prism-', '');
+        const container = pre.closest('.code-container') || pre.parentElement;
+        if (container && !container.querySelector('.code-lang')) {
+          const span = document.createElement('span');
+          span.className = 'code-lang';
+          span.textContent = lang;
+          container.prepend(span);
+        }
+      }
+    });
+
+    document.querySelectorAll('main h2[id], main h3[id], main h4[id]').forEach(heading => {
+      const anchor = document.createElement('a');
+      anchor.href = `#${heading.id}`;
+      anchor.className = 'heading-anchor';
+      anchor.setAttribute('aria-label', 'Permalink');
+      anchor.addEventListener('click', (e) => {
+        e.preventDefault();
+        navigator.clipboard.writeText(window.location.href.split('#')[0] + `#${heading.id}`);
+        anchor.classList.add('copied');
+        setTimeout(() => anchor.classList.remove('copied'), 2000);
+        history.replaceState(null, '', `#${heading.id}`);
+      });
+      heading.prepend(anchor);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+      if (e.key === 't' || e.key === 'T') {
+        document.getElementById('theme-toggle')?.click();
+      }
+    });
+
+    (function () {
+      const citeEl = document.getElementById('citation-text');
+      const copyBtn = document.getElementById('copy-citation');
+      if (!citeEl) return;
+
+      const title = document.querySelector('meta[property="og:title"]')?.content || document.title.replace(/\s*[—|]\s*ZFRQBL.*$/, '');
+      const url = document.querySelector('link[rel="canonical"]')?.href || location.href;
+      const author = document.querySelector('meta[name="author"]')?.content || 'Zafar';
+      const timeEl = document.querySelector('time[datetime]');
+      const year = timeEl ? new Date(timeEl.getAttribute('datetime')).getFullYear() : new Date().getFullYear();
+      const slug = (location.pathname.replace(/\/$/, '').split('/').pop() || 'essay').replace(/[^a-z0-9]+/gi, '_');
+
+      citeEl.textContent = `@misc{zfrqbl_${slug}_${year},\n  author = {${author}},\n  title  = {${title}},\n  year   = {${year}},\n  url    = {${url}}\n}`;
+
+      copyBtn?.addEventListener('click', () => {
+        navigator.clipboard.writeText(citeEl.textContent).then(() => {
+          copyBtn.textContent = 'Copied!';
+          setTimeout(() => copyBtn.textContent = 'Copy citation', 2000);
+        });
+      });
+    })();
+  </script>
+
+  <script defer src="/vendor/prism.min.js"></script>
+  <script defer src="/vendor/prism-python.min.js"></script>
+  <script defer src="/vendor/prism-javascript.min.js"></script>
+  <script defer src="/vendor/prism-bash.min.js"></script>
+  <script defer src="/vendor/prism-sql.min.js"></script>
+  <script defer src="/vendor/prism-markdown.min.js"></script>
+</body>
+</html>

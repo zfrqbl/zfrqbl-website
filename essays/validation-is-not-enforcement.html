@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Validation Is Not Enforcement: Your Schema Already Has the Logic Your Tool-Calling Agent Needs — ZFRQBL</title>
+  <meta name="description" content="Conditional JSON Schema rules are silently ignored by many structured output engines, turning tool calls into retry loops. Enforcement at generation time makes the schema a real contract." />
+  <link rel="canonical" href="https://zfrqbl.com/essays/validation-is-not-enforcement" />
+  <meta name="author" content="Zafar" />
+
+  <!-- Article schema (AI-search citation signal; added Nov 7 2026 per Zafar approval) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Validation Is Not Enforcement: Your Schema Already Has the Logic Your Tool-Calling Agent Needs",
+    "description": "Conditional JSON Schema rules are silently ignored by many structured output engines, turning tool calls into retry loops. Enforcement at generation time makes the schema a real contract.",
+    "author": { "@type": "Person", "name": "Zafar" },
+    "publisher": { "@type": "Organization", "name": "ZFRQBL", "url": "https://zfrqbl.com" },
+    "datePublished": "2026-11-08",
+    "dateModified": "2026-11-08",
+    "mainEntityOfPage": "https://zfrqbl.com/essays/validation-is-not-enforcement",
+    "image": "https://zfrqbl.com/public/og/zfrqbl.png"
+  }
+  </script>
+  <link rel="alternate" type="application/rss+xml" title="ZFRQBL" href="https://zfrqbl.com/rss.xml" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Validation Is Not Enforcement: Your Schema Already Has the Logic Your Tool-Calling Agent Needs" />
+  <meta property="og:description" content="Conditional JSON Schema rules are silently ignored by many structured output engines, turning tool calls into retry loops. Enforcement at generation time makes the schema a real contract." />
+  <meta property="og:url" content="https://zfrqbl.com/essays/validation-is-not-enforcement" />
+  <meta property="og:image" content="https://zfrqbl.com/public/og/zfrqbl.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- PWA / Mobile Feel -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0172ad" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#111827" media="(prefers-color-scheme: dark)" />
+  <link rel="apple-touch-icon" href="/favicon.svg" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/vendor/pico.2.1.1.min.css" />
+  <link rel="stylesheet" href="/vendor/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li><a href="/about">About</a></li>
+        <li><a href="/archive">Archive</a></li>
+        <li>
+          <button id="theme-toggle" class="outline secondary theme-toggle-btn" aria-label="Toggle theme 🌙 / ☀️">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main-content" class="container">
+    <article class="essay-content">
+      <header class="note-header">
+        <div class="meta-line">
+          <small class="secondary note-kicker">Essay</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-11-08" class="secondary meta-time">November 8, 2026</time>
+          <span class="secondary">•</span>
+          <span class="secondary meta-read">10 min read</span>
+        </div>
+        <h1>Validation Is Not Enforcement: Your Schema Already Has the Logic Your Tool-Calling Agent Needs</h1>
+      </header>
+
+      
+
+      <section><p>Your agent drafts a plan: roll out auth-api to production, run a smoke test, update the incident channel. It calls the tool `deploy_service` with `{&quot;service&quot;: &quot;auth-api&quot;, &quot;version&quot;: &quot;2.1.0&quot;, &quot;environment&quot;: &quot;production&quot;}`.</p>
+<p>The tool rejects it. Production deploys also require an approval ticket, a rollback version, and a health check endpoint. The agent retries, adds the ticket, and the tool rejects it again: the rollback version is still missing. Third call, it adds that too. One deployment step has now cost the loop three API calls, a pile of recovery tokens, and a plan that had to be reworked around a blocked step.</p>
+<p>None of this had to happen. The business rules the agent tripped over were expressible in JSON Schema all along, in the agent&#x27;s own tool definition. The failure is not the model&#x27;s fault and it is not the schema&#x27;s fault. It is the gap between validating output and enforcing it, and the industry quietly ships that gap in the most expensive layer of every agent stack.</p>
+<p>JSON that parses is not JSON that passes. Validation is not enforcement. I want to argue that the conditional subset of JSON Schema, enforced at generation time, is the contract your tool-calling agent was missing. Bolting rules on after generation is rejection sampling with extra steps. And the schema you already wrote is the cheapest logic you will ever get.</p>
+<h2 id="json-that-parses-is-not-enough">JSON that parses is not enough</h2>
+<p>Parsing guarantees shape. It does not guarantee contract. When an agent&#x27;s tool arguments arrive, they are either valid against the tool&#x27;s schema or the step fails. In agentic workflows a failed step does not just return an error, it spends tokens on recovery: retry the call, re-read the plan, sometimes re-plan the whole sequence. Latency and spend pile up exactly where the failure was avoidable.</p>
+<p>The rules agents actually trip over are conditional. If `environment` is `&quot;production&quot;`, require `approval_ticket`, `rollback_version`, and `health_check_endpoint`. If `sort_by` is present, require `sort_order`. If `page_token` is present, require `page_size`. These are not exotic constraints. They are the everyday shape of tool contracts: fields that are individually optional but meaningful only in combination.</p>
+<p>JSON Schema expresses all of this natively. `if/then/else` handles the value-based case, one schema branch for dev deploys, another for production. `dependentRequired` handles the presence-based case, `sort_by` demands `sort_order`, `page_token` demands `page_size`. The keywords are standard and documented. The problem is not the vocabulary. The problem is that many inference providers&#x27; structured output implementations enforce only the easy subset (types, required, enums) and silently ignore the conditional keywords. No error, no warning, just output that passes a shape check and violates the contract underneath.</p>
+<h2 id="what-your-schema-already-says">What your schema already says</h2>
+<p>Here is the deployment tool as a schema, with the conditional branch spelled out:</p>
+<div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-json">{
+  &quot;type&quot;: &quot;object&quot;,
+  &quot;properties&quot;: {
+    &quot;service&quot;: { &quot;type&quot;: &quot;string&quot; },
+    &quot;version&quot;: { &quot;type&quot;: &quot;string&quot; },
+    &quot;environment&quot;: { &quot;enum&quot;: [&quot;dev&quot;, &quot;staging&quot;, &quot;production&quot;] },
+    &quot;approval_ticket&quot;: { &quot;type&quot;: &quot;string&quot;, &quot;pattern&quot;: &quot;^PROD-[0-9]{4}$&quot; },
+    &quot;rollback_version&quot;: { &quot;type&quot;: &quot;string&quot; },
+    &quot;health_check_endpoint&quot;: { &quot;type&quot;: &quot;string&quot; }
+  },
+  &quot;required&quot;: [&quot;service&quot;, &quot;version&quot;, &quot;environment&quot;],
+  &quot;if&quot;: { &quot;properties&quot;: { &quot;environment&quot;: { &quot;const&quot;: &quot;production&quot; } } },
+  &quot;then&quot;: {
+    &quot;required&quot;: [&quot;approval_ticket&quot;, &quot;rollback_version&quot;, &quot;health_check_endpoint&quot;]
+  }
+}</code></pre>
+        </div>
+<p>One tool definition, two different sets of requirements. A dev deploy needs three fields; a production deploy needs six. The `then` branch is the business rule, sitting where the agent can see it.</p>
+<p>The search API variant uses the other keyword:</p>
+<div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-json">{
+  &quot;type&quot;: &quot;object&quot;,
+  &quot;properties&quot;: {
+    &quot;query&quot;: { &quot;type&quot;: &quot;string&quot; },
+    &quot;sort_by&quot;: { &quot;type&quot;: &quot;string&quot; },
+    &quot;sort_order&quot;: { &quot;type&quot;: &quot;string&quot; },
+    &quot;page_token&quot;: { &quot;type&quot;: &quot;string&quot; },
+    &quot;page_size&quot;: { &quot;type&quot;: &quot;integer&quot; }
+  },
+  &quot;required&quot;: [&quot;query&quot;],
+  &quot;dependentRequired&quot;: {
+    &quot;sort_by&quot;: [&quot;sort_order&quot;],
+    &quot;page_token&quot;: [&quot;page_size&quot;]
+  }
+}</code></pre>
+        </div>
+<p>`sort_by` without `sort_order` is a malformed request, and the schema says so before any model output is sampled.</p>
+<h2 id="the-four-workarounds-and-what-they-cost">The four workarounds and what they cost</h2>
+<p>Teams that cannot rely on the schema as a contract do not give up. They bolt guardrails onto the agent loop at runtime, and each workaround moves complexity into the most expensive layer of the system.</p>
+<p>**Make everything optional and validate after.** Flatten the schema, mark every conditionally required field optional, let the model generate, then validate in application code. When validation fails, and it will, especially with two or three interacting conditions, retry. Each retry is another API call, more latency, more tokens, more money. You have turned schema logic into a rejection sampling loop, and rejection sampling is how you pay for the same answer three times.</p>
+<p>**Split one tool into many.** Instead of one deployment tool with conditional branches, define `deploy_to_dev`, `deploy_to_staging`, and `deploy_to_production` as separate tools. Schema complexity drops, and the agent&#x27;s action space grows. Now the model must choose the right tool before it makes any call. The prompt footprint grows with every extra entry, and tool selection becomes another probabilistic decision layered on top of the one you were trying to de-risk.</p>
+<p>**Push the rules into application code.** Accept flat output and enforce conditions in your service layer. Now the schema says one thing and the code says another. Business rules change, someone edits the schema, someone else patches the validator, and the two drift until a production deploy slips through with the wrong ticket format. Schema and code drift is how contracts rot silently.</p>
+<p>**Encode the constraints in the prompt.** Add instructions like &quot;if the environment is production, include an approval_ticket matching PROD-XXXX.&quot; This is probabilistic and brittle, and its failure mode is the worst one: silent. The model produces output that looks valid but violates a constraint it forgot mid-generation. Prompt glue turns a structural guarantee into a memory test.</p>
+<p>All four are different ways of saying the same thing: the agent cannot rely on the schema as a contract. And all four are unnecessary, because the alternative exists.</p>
+<h2 id="enforcement-beats-validation-in-the-loop">Enforcement beats validation in the loop</h2>
+<p>Validation after generation tells you what went wrong. Enforcement during generation prevents the wrong branch from being produced in the first place. In an agent loop that difference compounds: steps do not fail, so the agent spends its tokens progressing instead of recovering, and the tool never has to reject a call that should never have been made.</p>
+<p>The hard part, the part most libraries get quietly wrong, is enforcement itself. Structured generation looks easy in a demo and is a compiler problem in production. Most structured generation libraries accept a JSON schema, translate it to a grammar with string manipulation, and silently ignore whatever the translation dropped. The dottxt team calls this silent constraint violation, and they have documented how common it is. A schema that constrains a date field with `pattern: &quot;^2026&quot;` should only produce dates in 2026. Their testing found engines such as XGrammar, the default in many inference servers, silently ignore the pattern and allow any date. No error. No warning. Just wrong output that passes validation.</p>
+<p>The same team&#x27;s feature comparison quantifies the gap. Against the JSON Schema feature set, their dotjson engine supports 43 features natively, lists 14 as unsupported, and has one unsound case. XGrammar supports 28, leaves 19 unsupported, and is unsound on 12. Unsound is the dangerous column: a feature that compiles but behaves incorrectly. Twelve features in the default engine of many inference servers that produce output which looks schema-valid and is not. If the whole point of structured generation is enforceable guarantees, a library that drops constraints defeats the purpose, and a library that is silently unsound on a dozen features is worse than no library at all.</p>
+<p>This is why the fix has to live in the engine, not the prompt or the validator. Treat schema translation as a compiler: lower the constraints through intermediate representations toward a grammar, validate that each constraint is realizable, and either support the feature correctly or refuse it loudly. The property you want from a structured generation engine is not &quot;supports my schema.&quot; It is &quot;fails visibly when it cannot support my schema.&quot;</p>
+<h2 id="the-enterprise-precedent-xsd-1-1-and-fhir">The enterprise precedent: XSD 1.1 and FHIR</h2>
+<p>None of this is new. Enterprises spent two decades learning that business rules belong in schemas, and the lessons are already written down.</p>
+<p>XML Schema 1.1, a W3C recommendation since 2012, added assertions that let a schema express co-occurrence constraints across elements. Before that, the only way to say &quot;if this element is present with that value, these other elements become required&quot; was validation code outside the schema. The same drift problem teams are rediscovering with tool-calling agents. XSD 1.1 made the constraint declarative and enforceable at validation time, in the schema, where the contract lives.</p>
+<p>FHIR, the healthcare interoperability standard, went further: every resource definition carries invariants, machine-checkable expressions attached directly to the schema. A Patient record must satisfy constraints on its own fields, and a resource that violates an invariant is not a resource. It is an error that other systems refuse. Healthcare put business rules in the schema because lives depend on the contract holding.</p>
+<p>The tool-calling agent is the same problem one generation later. The pattern was settled twice before: put the rule in the schema, enforce it at the boundary, and the systems around you stay dependable. What changed is that enforcement can now move earlier, from validation time to generation time, so the boundary never sees an invalid call at all.</p>
+<h2 id="one-schema-as-the-shared-contract">One schema as the shared contract</h2>
+<p>The useful consequence of all this is that you need exactly one artifact. The same JSON Schema that defines your Pydantic model, the same one that appears in your OpenAPI spec, the same one your agent&#x27;s tool definition carries, can be the sole source of truth. The conditional keywords work identically in every slot. The Pydantic model validates the same rules your tool-calling agent is forced to generate against, and the OpenAPI spec documents the same contract the operator reads.</p>
+<p>One schema, three consumers, zero drift. When the business rule changes, say production deploys now require a change request in addition to the ticket, you edit the schema once. The model, the validator, and the documentation all move together. That is the difference between a schema as a shape checker and a schema as a contract.</p>
+<h2 id="what-enforcement-cannot-do">What enforcement cannot do</h2>
+<p>A constraint is a floor, not a guarantee of truth. Enforcing the `then` branch makes the agent emit an `approval_ticket`; it does not make the ticket real. The model can generate `PROD-9999` against a pattern that matches and still hand you a ticket that does not exist in the tracking system. Schema enforcement eliminates structural failures. Semantic failures survive it completely.</p>
+<p>And enforcement is only as good as the engine. The feature tables above are the cautionary tale: an engine that is unsound on a dozen features will happily enforce the easy subset and ignore the branch your production rules live in. Before you trust an engine with a conditional schema, check the table. Prefer engines whose failure mode is a loud refusal over a silent violation.</p>
+<p>The honest summary is one sentence: structure is a contract you can enforce, content is a judgment you still have to verify, and the two are not the same problem.</p>
+<h2 id="the-verdict">The verdict</h2>
+<p>The deploy that needed three tries needed one. The agent&#x27;s first call could have carried the service, the version, the environment, the ticket, the rollback version, and the health check endpoint, all because the schema said production deploys require them and the generation engine refused to produce anything else.</p>
+<p>The retries, the tool explosion, the drift, the prompt glue: they all exist because validation was mistaken for enforcement. JSON Schema already expresses the rules. The engines now exist to enforce them. And the agent that treats its schema as a contract, enforced at generation time, spends its tokens doing work instead of recovering from work it should never have attempted. That is the difference between an agent that has guardrails and an agent that has a contract. The contract is cheaper.</p></section>
+
+      <h2 id="sources">Sources</h2>
+<ul>
+<li id="src1">dottxt, &quot;Your schema already has the logic. Your inference provider just ignores it.&quot; <a href="https://blog.dottxt.ai/enterprise-schemas.html" rel="noopener">https://blog.dottxt.ai/enterprise-schemas.html</a></li>
+<li id="src2">dottxt, &quot;We read the JSON Schema spec so you don&#x27;t have to&quot; (dotjson vs XGrammar feature table, silent constraint violation). <a href="https://blog.dottxt.ai/dotjson-has-good-schema-support.html" rel="noopener">https://blog.dottxt.ai/dotjson-has-good-schema-support.html</a></li>
+<li id="src3">JSON Schema conditionals reference (if/then/else, dependentRequired). <a href="https://json-schema.org/understanding-json-schema/reference/conditionals" rel="noopener">https://json-schema.org/understanding-json-schema/reference/conditionals</a></li>
+<li id="src4">XML Schema 1.1 (W3C Recommendation 2012), assertions. <a href="https://www.w3.org/TR/xmlschema11-1/" rel="noopener">https://www.w3.org/TR/xmlschema11-1/</a></li>
+<li id="src5">FHIR conformance rules and invariants (HL7). <a href="https://hl7.org/fhir/conformance-rules.html" rel="noopener">https://hl7.org/fhir/conformance-rules.html</a></li>
+</ul>
+      <section class="related-notes">
+        <h2>Related</h2>
+        <ul>
+          <li><a href="Structured Generation Is Not Prompt Engineering">/essays/structured-generation-is-not-prompt-engineering</a></li>
+          <li><a href="Guardrails Are Not Boundaries">/essays/guardrails-are-not-boundaries</a></li>
+          <li><a href="Control Graphs: Why Nobody Prompts Agents Anymore">/notes/control-graphs-no-more-prompting</a></li>
+        </ul>
+      </section>
+
+      <div class="cite-block">
+        <strong>Cite this essay</strong>
+        <pre id="citation-text"></pre>
+        <button class="copy-btn" id="copy-citation" style="position:static;">Copy citation</button>
+      </div>
+
+      <p class="secondary discuss-link">
+        <a href="https://github.com/zfrqbl/zfrqbl-website/discussions" rel="noopener">Discuss this essay on GitHub</a>
+      </p>
+
+      
+    </article>
+  </main>
+
+  <footer class="container site-footer">
+    <small class="secondary">© <script>document.write(new Date().getFullYear())</script> ZFRQBL - Icons by Lucide (MIT).</small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+
+    document.querySelectorAll('.copy-btn').forEach(button => {
+      if (button.id === 'copy-citation') return;
+      button.addEventListener('click', () => {
+        const container = button.closest('.code-container');
+        if (!container) return;
+        const code = container.querySelector('code').innerText;
+        navigator.clipboard.writeText(code).then(() => {
+          button.innerText = 'Copied!';
+          setTimeout(() => button.innerText = 'Copy', 2000);
+        });
+      });
+    });
+
+    document.querySelectorAll('pre[class*="language-"]').forEach(pre => {
+      const cls = [...pre.classList].find(c => c.startsWith('language-'));
+      if (cls) {
+        const lang = cls.replace('language-', '').replace('prism-', '');
+        const container = pre.closest('.code-container') || pre.parentElement;
+        if (container && !container.querySelector('.code-lang')) {
+          const span = document.createElement('span');
+          span.className = 'code-lang';
+          span.textContent = lang;
+          container.prepend(span);
+        }
+      }
+    });
+
+    document.querySelectorAll('main h2[id], main h3[id], main h4[id]').forEach(heading => {
+      const anchor = document.createElement('a');
+      anchor.href = `#${heading.id}`;
+      anchor.className = 'heading-anchor';
+      anchor.setAttribute('aria-label', 'Permalink');
+      anchor.addEventListener('click', (e) => {
+        e.preventDefault();
+        navigator.clipboard.writeText(window.location.href.split('#')[0] + `#${heading.id}`);
+        anchor.classList.add('copied');
+        setTimeout(() => anchor.classList.remove('copied'), 2000);
+        history.replaceState(null, '', `#${heading.id}`);
+      });
+      heading.prepend(anchor);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+      if (e.key === 't' || e.key === 'T') {
+        document.getElementById('theme-toggle')?.click();
+      }
+    });
+
+    (function () {
+      const citeEl = document.getElementById('citation-text');
+      const copyBtn = document.getElementById('copy-citation');
+      if (!citeEl) return;
+
+      const title = document.querySelector('meta[property="og:title"]')?.content || document.title.replace(/\s*[—|]\s*ZFRQBL.*$/, '');
+      const url = document.querySelector('link[rel="canonical"]')?.href || location.href;
+      const author = document.querySelector('meta[name="author"]')?.content || 'Zafar';
+      const timeEl = document.querySelector('time[datetime]');
+      const year = timeEl ? new Date(timeEl.getAttribute('datetime')).getFullYear() : new Date().getFullYear();
+      const slug = (location.pathname.replace(/\/$/, '').split('/').pop() || 'essay').replace(/[^a-z0-9]+/gi, '_');
+
+      citeEl.textContent = `@misc{zfrqbl_${slug}_${year},\n  author = {${author}},\n  title  = {${title}},\n  year   = {${year}},\n  url    = {${url}}\n}`;
+
+      copyBtn?.addEventListener('click', () => {
+        navigator.clipboard.writeText(citeEl.textContent).then(() => {
+          copyBtn.textContent = 'Copied!';
+          setTimeout(() => copyBtn.textContent = 'Copy citation', 2000);
+        });
+      });
+    })();
+  </script>
+
+  <script defer src="/vendor/prism.min.js"></script>
+  <script defer src="/vendor/prism-python.min.js"></script>
+  <script defer src="/vendor/prism-javascript.min.js"></script>
+  <script defer src="/vendor/prism-bash.min.js"></script>
+  <script defer src="/vendor/prism-sql.min.js"></script>
+  <script defer src="/vendor/prism-markdown.min.js"></script>
+</body>
+</html>

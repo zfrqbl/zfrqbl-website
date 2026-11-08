@@ -9,6 +9,20 @@
     <atom:link href="https://zfrqbl.com/rss.xml" rel="self" type="application/rss+xml" />
     <generator>zfrqbl_publish.py</generator>
                 <item>
+      <title>Prompting Is Not Programming: The dottxt Manifesto and the Grammar of Reliable AI</title>
+      <link>https://zfrqbl.com/essays/prompting-is-not-programming</link>
+      <guid isPermaLink="true">https://zfrqbl.com/essays/prompting-is-not-programming</guid>
+      <pubDate>Sun, 08 Nov 2026 00:00:00 +0500</pubDate>
+      <description>Grammar enforced at generation time, not prompting, is what makes LLM output buildable. Constraint is a floor: it guarantees shape, never truth.</description>
+    </item>
+        <item>
+      <title>Validation Is Not Enforcement: Your Schema Already Has the Logic Your Tool-Calling Agent Needs</title>
+      <link>https://zfrqbl.com/essays/validation-is-not-enforcement</link>
+      <guid isPermaLink="true">https://zfrqbl.com/essays/validation-is-not-enforcement</guid>
+      <pubDate>Sun, 08 Nov 2026 00:00:00 +0500</pubDate>
+      <description>Conditional JSON Schema rules are silently ignored by many structured output engines, turning tool calls into retry loops. Enforcement at generation time makes the schema a real contract.</description>
+    </item>
+        <item>
       <title>Structured Generation Is Not Prompt Engineering</title>
       <link>https://zfrqbl.com/essays/structured-generation-is-not-prompt-engineering</link>
       <guid isPermaLink="true">https://zfrqbl.com/essays/structured-generation-is-not-prompt-engineering</guid>
