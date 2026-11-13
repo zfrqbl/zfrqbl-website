@@ -17,6 +17,7 @@ Author: Zafar (LinkedIn: https://www.linkedin.com/in/zfrqbl/)
 
 ## Essays
 
+- [Context Engineering with Deep Agents](https://zfrqbl.com/essays/context-engineering-with-deep-agents)
 - [Graph Engineering Isn't Magic: It's Just Loops with State Management](https://zfrqbl.com/essays/graph-engineering-isnt-magic)
 - [The Modern Python Developer's Trap: When Code Looks Right But Isn't](https://zfrqbl.com/essays/the-modern-python-developers-trap-when-code-looks-right-but-isnt)
 

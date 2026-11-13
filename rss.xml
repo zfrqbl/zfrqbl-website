@@ -8,6 +8,13 @@
     <lastBuildDate>Thu, 29 Oct 2026 00:00:00 +0500</lastBuildDate>
     <atom:link href="https://zfrqbl.com/rss.xml" rel="self" type="application/rss+xml" />
     <generator>zfrqbl_publish.py</generator>
+        <item>
+      <title>Context Engineering with Deep Agents</title>
+      <link>https://zfrqbl.com/essays/context-engineering-with-deep-agents</link>
+      <guid isPermaLink="true">https://zfrqbl.com/essays/context-engineering-with-deep-agents</guid>
+      <pubDate>Fri, 13 Nov 2026 00:00:00 +0500</pubDate>
+      <description>Memory is eight distinct problems and a vector database solves one. Context engineering, not more storage, is where agent memory actually gets built.</description>
+    </item>
                 <item>
       <title>Prompting Is Not Programming: The dottxt Manifesto and the Grammar of Reliable AI</title>
       <link>https://zfrqbl.com/essays/prompting-is-not-programming</link>

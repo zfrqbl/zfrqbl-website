@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Context Engineering with Deep Agents — ZFRQBL</title>
+  <meta name="description" content="Memory is eight distinct problems and a vector database solves one. Context engineering, not more storage, is where agent memory actually gets built." />
+  <link rel="canonical" href="https://zfrqbl.com/essays/context-engineering-with-deep-agents" />
+  <meta name="author" content="Zafar" />
+
+  <!-- Article schema (AI-search citation signal; added Nov 7 2026 per Zafar approval) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Context Engineering with Deep Agents",
+    "description": "Memory is eight distinct problems and a vector database solves one. Context engineering, not more storage, is where agent memory actually gets built.",
+    "author": { "@type": "Person", "name": "Zafar" },
+    "publisher": { "@type": "Organization", "name": "ZFRQBL", "url": "https://zfrqbl.com" },
+    "datePublished": "2026-11-13",
+    "dateModified": "2026-11-13",
+    "mainEntityOfPage": "https://zfrqbl.com/essays/context-engineering-with-deep-agents",
+    "image": "https://zfrqbl.com/public/og/zfrqbl.png"
+  }
+  </script>
+  <link rel="alternate" type="application/rss+xml" title="ZFRQBL" href="https://zfrqbl.com/rss.xml" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Context Engineering with Deep Agents" />
+  <meta property="og:description" content="Memory is eight distinct problems and a vector database solves one. Context engineering, not more storage, is where agent memory actually gets built." />
+  <meta property="og:url" content="https://zfrqbl.com/essays/context-engineering-with-deep-agents" />
+  <meta property="og:image" content="https://zfrqbl.com/public/og/zfrqbl.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- PWA / Mobile Feel -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0172ad" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#111827" media="(prefers-color-scheme: dark)" />
+  <link rel="apple-touch-icon" href="/favicon.svg" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/vendor/pico.2.1.1.min.css" />
+  <link rel="stylesheet" href="/vendor/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li><a href="/about">About</a></li>
+        <li><a href="/archive">Archive</a></li>
+        <li>
+          <button id="theme-toggle" class="outline secondary theme-toggle-btn" aria-label="Toggle theme 🌙 / ☀️">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main-content" class="container">
+    <article class="essay-content">
+      <header class="note-header">
+        <div class="meta-line">
+          <small class="secondary note-kicker">Essay</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-11-13" class="secondary meta-time">November 13, 2026</time>
+          <span class="secondary">•</span>
+          <span class="secondary meta-read">10 min read</span>
+        </div>
+        <h1>Context Engineering with Deep Agents</h1>
+      </header>
+
+      
+
+      <section><p># Context Engineering with Deep Agents</p>
+<p>Your support agent carries a vector database full of &quot;memory&quot; and still asks for an order number it was given three weeks ago. The deploy assistant repeats the cache mistake it made in March. The team&#x27;s answer in both cases is the same: add memory, which in practice means embedding everything into a vector database, wiring in a retriever, and calling it done.</p>
+<p>The reflex is wrong in a specific, expensive way. A vector database is a retrieval component. It stores chunks, finds near matches, and hands them back. Memory, as the people who build and study agents use the word, is a family of at least eight distinct problems, and retrieval solves one of them. Treat the database as the whole system and you pay for storage and indexing while the behavior you wanted, an agent that stops repeating itself, never arrives. The agent still forgets. It just forgets with a latency budget and a monthly bill.</p>
+<h2 id="memory-is-eight-different-problems">Memory is eight different problems</h2>
+<p>The taxonomy is not new. CoALA, the Cognitive Architectures for Language Agents paper from 2023, formalized four types: working, episodic, semantic, procedural. The practitioner literature has since expanded the list. Neo Kim&#x27;s widely copied formulation and the articles built on it add retrieval, parametric, and prospective memory. Production memory systems tack on an eighth, meta-memory, which is how a team turns raw logs into lessons. Eight types, and each fails in its own way:</p>
+<ol>
+<li>Working memory. What is in front of the model right now: system prompt, recent turns, tool outputs. Bounded by the context window, gone when the session ends, and every token in it costs money on every call. This is the only type the model sees directly.</li>
+<li>Episodic memory. Records of specific events with outcomes. &quot;On 12 March the deploy raised latency after a cache change.&quot; Timestamped, searched by similarity and filtered by time, pruned as it ages. The agent&#x27;s diary of past runs.</li>
+<li>Semantic memory. Facts not tied to one event: &quot;this user works in fintech and prefers concise answers.&quot; Lives in a profile, a knowledge graph, or a structured store consulted in any future session.</li>
+<li>Procedural memory. How to do things: &quot;run the tests before you suggest a deploy.&quot; Rules, workflows, tool patterns, stored in prompts, skill files, config, or code, only rarely in an embedding.</li>
+<li>Retrieval memory. Pulling relevant material from a corpus at run time. Documents, tickets, code. This is the vector database slot.</li>
+<li>Parametric memory. Knowledge baked into the weights during pretraining or fine-tuning: language, reasoning patterns, world knowledge. The model carries it everywhere and cannot set it aside.</li>
+<li>Prospective memory. Future intentions: scheduled goals, reminders, the steps a long-horizon task still needs. A task queue or scheduler, not a similarity search.</li>
+<li>Meta-memory. Memory about memory: summaries, reflections, evaluations. &quot;That strategy worked well for onboarding,&quot; &quot;do not use Tool A for payments anymore.&quot; It compresses bulky episodic logs into durable lessons.</li>
+</ol>
+<p>Three of the eight describe what is remembered: episodic, semantic, procedural. Two describe where knowledge lives and how it gets back to the model: retrieval, parametric. The guides are explicit about the consequence: mixing the what axis with the where axis is why &quot;just add a vector DB&quot; feels like an answer and then quietly fails.</p>
+<h2 id="retrieval-is-one-of-the-eight">Retrieval is one of the eight</h2>
+<p>Watch what a vector database actually does. It embeds text, indexes it, and returns nearest neighbors: half of retrieval memory, and retrieval memory is one of eight. It does not decide what is worth storing. It does not extract facts into a semantic profile, so the &quot;prefers concise answers&quot; fact never gets written. It does not encode a workflow, schedule a reminder, or summarize logs into a lesson. It does not even decide when its results enter working memory; something else must notice a retrieved chunk is relevant and place it in the window. Useful memory has a write path and a read path. The database is only the middle of the read path, and even there the neighbor list is only as good as the timestamps and filters around it when the question is &quot;what did we try last time.&quot; The store is a filing cabinet, the least interesting part of a memory system.</p>
+<h2 id="context-rot-what-happens-when-the-window-is-the-whole-brain">Context rot: what happens when the window is the whole brain</h2>
+<p>The reason teams reach for memory at all is that agents degrade as they work. Every long-running agent accumulates instructions, tool results, files, and drafts. The more history, noise, and tool output a model carries, the worse its accuracy and reasoning tend to get. LangChain calls this context rot. The opening example in Jess Weng&#x27;s October 2026 post on context engineering with Deep Agents is a competitive analysis agent: every Monday it researches five competitors, pulls market data exports of tens of thousands of rows, searches news, takes notes, drafts a report, revises it, and formats it. By the formatting step it is dragging five raw exports, dozens of search results, and two stale drafts through every model call. Most of that context is irrelevant to the actual task.</p>
+<p>Weng&#x27;s framing is worth keeping: an agent is a model with a harness around it, and every technique in this story lives in the harness, not the model. The harness gets the model the right context at the right time. Get that discipline right and most memory problems that architecture can solve are solved.</p>
+<h2 id="what-context-engineering-actually-does">What context engineering actually does</h2>
+<p>Five techniques move context out of the active window without deleting it.</p>
+<p>Offloading. Large tool results and oversized user messages are written to disk before the model sees them. A tool result past roughly 20,000 tokens is saved to a file; the model gets a preview of the first and last few lines plus a path, then pages through the file when it needs a specific number. A pasted transcript over 50,000 tokens gets the same treatment. Nothing is thrown away. Truncation is lossy; offloading keeps the data recoverable.</p>
+<p>Summarization. Context still climbs slowly, so the harness checks token usage before every model call. Past 85 percent of the window, a separate LLM call condenses the older messages into one summary. Recent messages stay verbatim, so nothing fresh gets paraphrased. The summary is written back to disk, so the agent can recover a detail from Company A&#x27;s research mid-draft. It cycles: the next summary includes the previous one, a rolling digest of the run. It can also fire on a topic change instead of a token count.</p>
+<p>Skills. Instructions for a quarterly business review do not belong in the system prompt of an agent that writes one per quarter. A skill is a folder of instructions with optional scripts and reference docs. At startup the harness scans the skills directory and reads only the header of each SKILL.md; on every model call it adds names and descriptions to the prompt. Full instructions load only when the model decides they are relevant. That progressive disclosure means ten skills cost about as much context as ten one-liners.</p>
+<p>Subagents. Work you already know will be noisy, researching a company across dozens of searches and pages, runs in its own context window. The subagent does the noisy work and returns three bullet points; the main agent never sees the noise. Because subagent tasks are small and scoped, they can often run on a cheaper model and in parallel.</p>
+<p>Long-term memory files. What the agent learns is saved in a plain markdown file in storage you control. It is loaded at the start of a run, injected into the system prompt on every model call, and updated when the agent learns something worth keeping, like your formatting preference. Because it is a file rather than a provider-side blob, you can point the same backend at a different model and the memory survives the switch.</p>
+<p>Each technique is middleware, code plugged into points in the agent loop: before the agent starts, around each model call, around each tool call. At each point it reads the context and changes it before the next step runs. The harness owns the context window and spends it deliberately. Retrieval pulls in only what the agent needs, but the article is explicit that retrieval solves half the problem: even a precise agent accumulates unnecessary messages, tool results, and intermediate work.</p>
+<h2 id="the-taxonomy-tells-you-which-problem-the-engineering-fixes-it">The taxonomy tells you which problem; the engineering fixes it</h2>
+<p>The two views fit together, and the fit is the point. The taxonomy tells you which problem you have; context engineering gives the fix. Offloading and summarization are working-memory management. Skills are procedural memory. The long-term memory file is semantic memory with an episodic update path. Subagents are working memory partitioned across processes. Retrieval is retrieval memory. Both describe the same system: one says what to remember, the other how to hold it.</p>
+<p>The mapping is also where misdiagnosis shows up. Agent failed because the fact was never learned? A summarization threshold will not help; you need extraction and a semantic store. Failed because the window is full of noise? A bigger vector index will not help; you need compaction. Failed because there is no skill for the task? No amount of retrieval fixes that; you need a procedure. Name the failure, map it to a type, then pick the technique. Teams that skip those steps buy the most expensive store on the list and wonder why the forgetting continues.</p>
+<h2 id="what-to-do-on-monday">What to do on Monday</h2>
+<p>Practical guidance, in the order it usually pays off.</p>
+<p>First, write the failure down before buying anything. One sentence will do: &quot;the agent re-asked for the order number it already had.&quot; That is a semantic memory gap, a fact that should have been extracted and stored, and you will not fix it by re-embedding the conversation history harder.</p>
+<p>Second, discipline working memory before you add stores. Offload large tool results instead of truncating them. Keep compaction recoverable; summaries belong on disk, not in the void. Adjust the thresholds to fit your task, because one workload&#x27;s defaults rarely fit another.</p>
+<p>Third, move know-how into skills. Instructions that fire once a quarter should cost you nothing on the other days. Progressive disclosure is the cheapest memory optimization available.</p>
+<p>Fourth, isolate noisy work behind subagents, and let the main agent carry conclusions rather than process.</p>
+<p>Fifth, own the memory. Files in your storage survive a model or provider change. A memory you cannot carry across vendors is a lease, not memory.</p>
+<p>Sixth, add types in layers as the evidence demands: semantic when the agent must remember across sessions, episodic when it must learn from failures, prospective when it plans ahead, meta-memory when the logs outgrow the lessons. Very few agents need all eight, and the ones that claim to probably cannot tell you what each layer is for.</p>
+<p>Seventh, respect the freshness horizon. An account balance goes stale in seconds; fetch it from the system of record when it matters, do not cache it in memory where it will be confidently wrong later. A user&#x27;s role changes slowly and belongs in a profile.</p>
+<h2 id="the-store-is-the-last-decision">The store is the last decision</h2>
+<p>The vector database is a real component with a real job. It is retrieval memory, and retrieval is one of at least eight distinct problems that get the word &quot;memory&quot; attached to them. The agent that keeps your order number in a profile, runs the tests before it deploys, and loads the QBR format from a skill when it needs it is not doing anything exotic; it is using the right component for the right type. The store is not the system. The system is whoever decides what to keep, what to retrieve, what to summarize, and what to place in front of the model. That is context engineering, and that is where memory actually gets built.</p></section>
+
+      <h2 id="sources">Sources</h2>
+<ul>
+<li id="src1">Jess Weng, &quot;Context Engineering with Deep Agents: How To Remember Without Keeping Everything In Context&quot;, LangChain blog, October 14 2026. <a href="https://www.langchain.com/blog/context-engineering-deep-agents-remember" rel="noopener">https://www.langchain.com/blog/context-engineering-deep-agents-remember</a></li>
+<li id="src2">&quot;Agent Memory: the 7 types you should know before you ship to production&quot;, jamwithai Substack. <a href="https://jamwithai.substack.com/p/agent-memory-the-7-types-you-should" rel="noopener">https://jamwithai.substack.com/p/agent-memory-the-7-types-you-should</a></li>
+<li id="src3">Rajashanmugam M., &quot;8 Types of Memory Every AI Agent Architect Should Know&quot;, LinkedIn, February 2026. <a href="https://www.linkedin.com/pulse/8-types-memory-every-ai-agent-architect-should-know-raja-madhavarajan-c9she" rel="noopener">https://www.linkedin.com/pulse/8-types-memory-every-ai-agent-architect-should-know-raja-madhavarajan-c9she</a></li>
+<li id="src4">Sumers, Yao, Narasimhan, Griffiths, &quot;Cognitive Architectures for Language Agents&quot; (CoALA), arXiv:2309.02427. <a href="https://arxiv.org/abs/2309.02427" rel="noopener">https://arxiv.org/abs/2309.02427</a></li>
+<li id="src5">Taranjeet Singh, &quot;Types of AI Agent Memory: Sensory to Long-Term Explained&quot;, Mem0 library. <a href="https://mem0.ai/library/agent-memory/how-memory-shapes-us-a-deep-dive-into-the-types-of-memory" rel="noopener">https://mem0.ai/library/agent-memory/how-memory-shapes-us-a-deep-dive-into-the-types-of-memory</a></li>
+<li id="src6">LangChain, &quot;Memory for agents&quot;. <a href="https://www.langchain.com/blog/memory-for-agents" rel="noopener">https://www.langchain.com/blog/memory-for-agents</a></li>
+</ul>
+            <section class="related-notes">
+        <h2>Related</h2>
+        <ul>
+          <li><a href="Guardrails Are Not Boundaries">/essays/guardrails-are-not-boundaries</a></li>
+          <li><a href="Tool Calling Is Not a Retry Problem">/essays/tool-calling-is-not-a-retry-problem</a></li>
+          <li><a href="Prompting Is Not Programming: The dottxt Manifesto and the Grammar of Reliable AI">/essays/prompting-is-not-programming</a></li>
+        </ul>
+      </section>
+
+      <div class="cite-block">
+        <strong>Cite this essay</strong>
+        <pre id="citation-text"></pre>
+        <button class="copy-btn" id="copy-citation" style="position:static;">Copy citation</button>
+      </div>
+
+      <p class="secondary discuss-link">
+        <a href="https://github.com/zfrqbl/zfrqbl-website/discussions" rel="noopener">Discuss this essay on GitHub</a>
+      </p>
+
+      
+    </article>
+  </main>
+
+  <footer class="container site-footer">
+    <small class="secondary">© <script>document.write(new Date().getFullYear())</script> ZFRQBL - Icons by Lucide (MIT).</small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+
+    document.querySelectorAll('.copy-btn').forEach(button => {
+      if (button.id === 'copy-citation') return;
+      button.addEventListener('click', () => {
+        const container = button.closest('.code-container');
+        if (!container) return;
+        const code = container.querySelector('code').innerText;
+        navigator.clipboard.writeText(code).then(() => {
+          button.innerText = 'Copied!';
+          setTimeout(() => button.innerText = 'Copy', 2000);
+        });
+      });
+    });
+
+    document.querySelectorAll('pre[class*="language-"]').forEach(pre => {
+      const cls = [...pre.classList].find(c => c.startsWith('language-'));
+      if (cls) {
+        const lang = cls.replace('language-', '').replace('prism-', '');
+        const container = pre.closest('.code-container') || pre.parentElement;
+        if (container && !container.querySelector('.code-lang')) {
+          const span = document.createElement('span');
+          span.className = 'code-lang';
+          span.textContent = lang;
+          container.prepend(span);
+        }
+      }
+    });
+
+    document.querySelectorAll('main h2[id], main h3[id], main h4[id]').forEach(heading => {
+      const anchor = document.createElement('a');
+      anchor.href = `#${heading.id}`;
+      anchor.className = 'heading-anchor';
+      anchor.setAttribute('aria-label', 'Permalink');
+      anchor.addEventListener('click', (e) => {
+        e.preventDefault();
+        navigator.clipboard.writeText(window.location.href.split('#')[0] + `#${heading.id}`);
+        anchor.classList.add('copied');
+        setTimeout(() => anchor.classList.remove('copied'), 2000);
+        history.replaceState(null, '', `#${heading.id}`);
+      });
+      heading.prepend(anchor);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+      if (e.key === 't' || e.key === 'T') {
+        document.getElementById('theme-toggle')?.click();
+      }
+    });
+
+    (function () {
+      const citeEl = document.getElementById('citation-text');
+      const copyBtn = document.getElementById('copy-citation');
+      if (!citeEl) return;
+
+      const title = document.querySelector('meta[property="og:title"]')?.content || document.title.replace(/\s*[—|]\s*ZFRQBL.*$/, '');
+      const url = document.querySelector('link[rel="canonical"]')?.href || location.href;
+      const author = document.querySelector('meta[name="author"]')?.content || 'Zafar';
+      const timeEl = document.querySelector('time[datetime]');
+      const year = timeEl ? new Date(timeEl.getAttribute('datetime')).getFullYear() : new Date().getFullYear();
+      const slug = (location.pathname.replace(/\/$/, '').split('/').pop() || 'essay').replace(/[^a-z0-9]+/gi, '_');
+
+      citeEl.textContent = `@misc{zfrqbl_${slug}_${year},\n  author = {${author}},\n  title  = {${title}},\n  year   = {${year}},\n  url    = {${url}}\n}`;
+
+      copyBtn?.addEventListener('click', () => {
+        navigator.clipboard.writeText(citeEl.textContent).then(() => {
+          copyBtn.textContent = 'Copied!';
+          setTimeout(() => copyBtn.textContent = 'Copy citation', 2000);
+        });
+      });
+    })();
+  </script>
+
+  <script defer src="/vendor/prism.min.js"></script>
+  <script defer src="/vendor/prism-python.min.js"></script>
+  <script defer src="/vendor/prism-javascript.min.js"></script>
+  <script defer src="/vendor/prism-bash.min.js"></script>
+  <script defer src="/vendor/prism-sql.min.js"></script>
+  <script defer src="/vendor/prism-markdown.min.js"></script>
+</body>
+</html>
