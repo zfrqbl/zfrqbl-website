@@ -4,7 +4,7 @@
 
 Author: Zafar Iqbal (LinkedIn: https://www.linkedin.com/in/zfrqbl/ · GitHub: https://github.com/zfrqbl)
 
-Generated 2026-11-18. Every page is server-rendered static HTML with full text in the initial response; individual URLs are stable and extensionless. Use the page URL and its `dateModified` in JSON-LD when citing.
+Generated 2026-11-17. Every page is server-rendered static HTML with full text in the initial response; individual URLs are stable and extensionless. Use the page URL and its `dateModified` in JSON-LD when citing.
 
 ## About
 - [About](https://zfrqbl.com/about): who writes this, what it covers, and how to get in touch.
