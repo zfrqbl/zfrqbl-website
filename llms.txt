@@ -1,33 +1,92 @@
 # ZFRQBL
 
-> Independent software engineer writing about artificial intelligence, software architecture, and
-> building systems. Daily notes on agent systems, model evaluation, and the gap between what a
-> benchmark claims and what a system does.
+> Independent software engineer writing about artificial intelligence, software architecture, and building systems. Notes on agent systems, model evaluation, and the gap between what a benchmark claims and what a system does.
 
-Author: Zafar (LinkedIn: https://www.linkedin.com/in/zfrqbl/)
+Author: Zafar Iqbal (LinkedIn: https://www.linkedin.com/in/zfrqbl/ · GitHub: https://github.com/zfrqbl)
 
-## Notes
-
-- [All notes](https://zfrqbl.com/): daily, numbered, reverse-chronological. The home page shows the
-  newest 30 entries; each carries a title, date and one-paragraph summary.
-- [Archive](https://zfrqbl.com/archive): every note and essay, newest first, on one page.
-- [RSS feed](https://zfrqbl.com/rss.xml): the newest 30 notes, with full titles, dates and summaries.
-- [Sitemap](https://zfrqbl.com/sitemap.xml): every page URL with a lastmod date. Use this rather
-  than crawling the home page — it is generated from the corpus on every publish.
-
-## Essays
-
-- [Context Engineering with Deep Agents](https://zfrqbl.com/essays/context-engineering-with-deep-agents)
-- [Graph Engineering Isn't Magic: It's Just Loops with State Management](https://zfrqbl.com/essays/graph-engineering-isnt-magic)
-- [The Modern Python Developer's Trap: When Code Looks Right But Isn't](https://zfrqbl.com/essays/the-modern-python-developers-trap-when-code-looks-right-but-isnt)
+Generated 2026-11-18. Every page is server-rendered static HTML with full text in the initial response; individual URLs are stable and extensionless. Use the page URL and its `dateModified` in JSON-LD when citing.
 
 ## About
-
 - [About](https://zfrqbl.com/about): who writes this, what it covers, and how to get in touch.
+- [Archive](https://zfrqbl.com/archive): every note and essay, newest first.
+- [RSS feed](https://zfrqbl.com/rss.xml) · [Sitemap](https://zfrqbl.com/sitemap.xml)
 
-## Notes on this file
+## Essays (13)
+- [Context Engineering with Deep Agents](https://zfrqbl.com/essays/context-engineering-with-deep-agents) — 2026-11-13: Memory is eight distinct problems and a vector database solves one. Context engineering, not more storage, is where agent memory actually gets built.
+- [Prompting Is Not Programming: The dottxt Manifesto and the Grammar of Reliable AI](https://zfrqbl.com/essays/prompting-is-not-programming) — 2026-11-08: Grammar enforced at generation time, not prompting, is what makes LLM output buildable. Constraint is a floor: it guarantees shape, never truth.
+- [Validation Is Not Enforcement: Your Schema Already Has the Logic Your Tool-Calling Agent Needs](https://zfrqbl.com/essays/validation-is-not-enforcement) — 2026-11-08: Conditional JSON Schema rules are silently ignored by many structured output engines, turning tool calls into retry loops. Enforcement at generation time makes the schema a real contract.
+- [Guardrails Are Not Boundaries](https://zfrqbl.com/essays/guardrails-are-not-boundaries) — 2026-11-07: Constrained decoding guarantees only the enumerable. For agents, real boundaries are capability sets around tools; classifiers stay a last filter, not a control.
+- [Structured Generation Is Not Prompt Engineering](https://zfrqbl.com/essays/structured-generation-is-not-prompt-engineering) — 2026-11-07: An agent that improves its own prompt has no way to measure the change. Structured generation turns prompt iteration into code iteration, where a diff is verifiable and a failure points at one line.
+- [Tool Calling Is Not a Retry Problem](https://zfrqbl.com/essays/tool-calling-is-not-a-retry-problem) — 2026-11-07: When an agent's tool call fails, the default is to retry. Constrained decoding makes those failures preventable at generation time, cutting failure rates over ten points and tokens ten to twenty percent.
+- [The Click Is Dead: How AI Search Killed Referral Traffic, Not the Web](https://zfrqbl.com/essays/the-click-is-dead) — 2026-10-31: Reddit's CEO says AI Mode does not drive traffic. The click died; the web did not. Why, and what survives.
+- [Your AI Agent Is Not Software. It Is the Newest Insider.](https://zfrqbl.com/essays/your-ai-agent-is-not-software-it-is-the-newest-insider) — 2026-10-27: Microsoft now treats AI agents as insiders with legitimate access whose actions cannot be trusted in advance; security is a property of the system around the model.
+- [Claude Duet Is Not Your Agent](https://zfrqbl.com/essays/claude-duet-is-not-your-agent) — 2026-10-26: Anthropic's Claude Duet is a concierge that spends your attention to sell its usefulness; the agent worth having does scheduled, gated work nobody watches.
+- [The Rise of System One Models](https://zfrqbl.com/essays/the-rise-of-system-one-models) — 2026-10-20: System One decision models hand software typed, calibrated answers, not prose — output is free, and a generative model is the expensive way to get a boolean.
+- [Building an Autonomous Agent Pipeline with Agno and FastAPI](https://zfrqbl.com/essays/test) — 2026-08-15: A deep dive into asynchronous agent orchestration, state persistence, and event handling with Agno and FastAPI.
+- [Graph Engineering Isn’t Magic: It’s Just Loops & State](https://zfrqbl.com/essays/graph-engineering-isnt-magic) — 2026-08-14: Understand graph-based AI agents by following their evolution from plain Python loops to explicit state management and graph execution.
+- [Modern Python’s Trap: When Code Looks Right but Isn’t](https://zfrqbl.com/essays/the-modern-python-developers-trap-when-code-looks-right-but-isnt) — : Python hasn't changed because AI can write it. The challenge shifted to verifying semantics, architecture, and dependencies.
 
-Every page is server-rendered HTML with its full text in the initial response — there is no client-side
-rendering, no paywall and no cookie wall. Individual note URLs are stable and extensionless:
-`https://zfrqbl.com/notes/<slug>`. Citation of a note should use the page URL and the `dateModified`
-value in its JSON-LD block.
+## Notes (62)
+- [A Prompt Is Not a Skill](https://zfrqbl.com/notes/a-prompt-is-not-a-skill) — 2026-10-29: The world's largest prompt library now grows fastest in skills, plugins and MCP servers. A prompt you copy is not a capability; the unit changed.
+- [An Always-On Agent Is Not a Safe Agent](https://zfrqbl.com/notes/an-always-on-agent-is-not-a-safe-agent) — 2026-10-27: Claude Duet made always-on agents a product with 6,000+ connectors; the same week, Symantec showed one hijacking exposed models for 100,000 steps.
+- [A Rubric Is a Protocol, Not a Tally](https://zfrqbl.com/notes/a-rubric-is-a-protocol-not-a-tally) — 2026-10-15: Rubric-based RL raised rubric coverage by five points while appropriateness on held-out criteria fell sharply. The criteria weren't the problem.
+- [The Latent Collapsed Before the Policy Failed](https://zfrqbl.com/notes/the-latent-collapsed-before-the-policy-failed) — 2026-10-15: Joint-embedding predictive architectures learn a latent world model and skip the pixels. The latent collapsed before the policy failed.
+- [A Signed Cookie Is Not a Trusted Cookie](https://zfrqbl.com/notes/a-signed-cookie-is-not-a-trusted-cookie) — 2026-10-14: A Flask session cookie on developers.google.com carried the OAuth client secret that also signed it. A signed cookie is not a trusted cookie.
+- [A Stalking Horse Bid Is Not a Rescue](https://zfrqbl.com/notes/a-stalking-horse-bid-is-not-a-rescue) — 2026-10-14: Character.AI filed Chapter 11 with the only bid being Disney's $20M for a non-exclusive IP license. A stalking horse sets a floor, not a rescue.
+- [One Computer, Many Bots](https://zfrqbl.com/notes/one-computer-many-bots) — 2026-10-14: Shane Mac's personal finance agent posted his bank balances into his company's Slack channel, under his name, on October 1.
+- [The Model Was the Constant](https://zfrqbl.com/notes/the-model-was-the-constant) — 2026-10-14: LangChain raised deepagents-cli from 52.8 to 66.5 on Terminal Bench 2.0 by changing only the harness and holding gpt-5.2-codex fixed.
+- [A CVE Is Not a Reminder](https://zfrqbl.com/notes/a-cve-is-not-a-reminder) — 2026-10-12: A year of commit history across 23 projects that phones and browsers depend on finds eleven maintained by one or two people and eight with no public grant.
+- [A Supervisor Is Not a Metric](https://zfrqbl.com/notes/a-supervisor-is-not-a-metric) — 2026-10-12: Agents given open-ended research tasks rediscovered 62.7% of a withheld paper's findings on average, against 15.4% for a multi-agent baseline.
+- [A Copied Skill Is Not a Dependency](https://zfrqbl.com/notes/a-copied-skill-is-not-a-dependency) — 2026-10-11: Half of GitHub's agent skills are verbatim copies, and a copy almost never follows a fix made at its source. A dated copy network of 2.
+- [The Critique Is Not the Intervention](https://zfrqbl.com/notes/the-critique-is-not-the-intervention) — 2026-10-11: A verbal critic that turns every diagnosis into a persistent note raises coding-agent resolve rates by up to 15 points.
+- [AI-Ready Is a Specification, Not a Dataset](https://zfrqbl.com/notes/ai-ready-is-a-specification-not-a-dataset) — 2026-10-10: The $1.8B AI-ready biology commitment buys measurement instruments. What makes the resource work is a standards and access layer that costs almost nothing.
+- [The Cache Belongs to the Method, Not the Engine](https://zfrqbl.com/notes/the-cache-belongs-to-the-method) — 2026-10-10: Eviction-based sparse attention breaks the KV reuse that prefix caching depends on, so multi-turn agents rebuild context they already paid for.
+- [Access to History Is Not the Ability to Use It](https://zfrqbl.com/notes/access-to-history-is-not-the-ability-to-use-it) — 2026-10-09: A robot policy can hold twenty seconds of video and still ignore it. Long-WAM shows memory isn't the same as the ability to use it.
+- [A Retrieval Index Is Not Redacted Data](https://zfrqbl.com/notes/retrieval-index-is-not-redacted-data) — 2026-10-09: A page stored as about a thousand patch vectors can be inverted back into the page, recovering 47% of its words and ranking it first 98.4% of the time.
+- [Move Quality Is Not Explanation Quality](https://zfrqbl.com/notes/move-quality-is-not-explanation-quality) — 2026-10-08: A 4B chess model reaches 2697 Elo, beats GPT-5.6-Sol by 600 points, and still scores below a 1822-Elo model on conceptual coherence.
+- [Stable Training Is Not Correct Gradients](https://zfrqbl.com/notes/stable-training-is-not-correct-gradients) — 2026-10-08: A 450M-parameter transformer trained fine for 25 billion tokens, then its gradient norm grew a thousandfold with no NaN and it finished 0.
+- [Tenant Isolation Is Verified, Not Assumed](https://zfrqbl.com/notes/tenant-isolation-is-verified-not-assumed) — 2026-10-07: Cloudflare disclosed a cross-tenant data exposure in Containers and Sandboxes. Isolation is verified, not assumed — and the lesson generalizes.
+- [One Clean Run Is Not Reliability](https://zfrqbl.com/notes/one-clean-run-is-not-reliability) — 2026-10-06: Microsoft and Hugging Face ran 507 business workflows 20 times each and graded the database state instead of the chat.
+- [The Calculation Was Automatable. The Judgment Was Not.](https://zfrqbl.com/notes/claude-shaped-science-judgment-bottleneck) — 2026-10-05: A Harvard physicist and 19 co-authors produced 36 manuscripts across 18 fields in three months using an open-source harness around Claude.
+- [The Model Isn’t Too Shallow. It Stops Reading Too Early.](https://zfrqbl.com/notes/tiny-lora-unlocks-in-context-reasoning) — 2026-10-04: Thirteen base models from 0.6B to 32B all stop following in-context references after three lines, and extra depth does not help.
+- [Your Coding Agent Overpays for Intelligence It Never Uses](https://zfrqbl.com/notes/model-router-in-the-harness) — 2026-10-03: LangChain routed 973 coding agent threads across three model tiers and cut median cost per thread by 64% with no measurable quality change.
+- [Failed Agent Rollouts Are Training Data](https://zfrqbl.com/notes/agent-error-dataset-error-aware-training) — 2026-10-02: The Agent Error Dataset pairs 50,228 agent failures with diagnoses and proposed corrections, then replays the fix against a control retry.
+- [Zero-Shot Tabular Models Beat AutoML; Weights Non-Commercial](https://zfrqbl.com/notes/tabfm-zero-shot-tabular-foundation-model) — 2026-10-01: Google Research's TabFM is a 400M-parameter tabular foundation model that predicts in a single forward pass with no tuning.
+- [Agents Get the Tool Call Right, but Never Check First](https://zfrqbl.com/notes/tracedance-agent-behavior-benchmarks) — 2026-09-30: TraceDance builds targeted behavior benchmarks out of real agent deployment traces. Nine frontier models averaged a 26.
+- [An AI Agent Found 24 Android Bugs. Sorting Was the Hard Part](https://zfrqbl.com/notes/ai-security-agent-android-audit) — 2026-09-29: GitHub Security Lab packaged its audit prompts as small YAML taskflows and reported 24 Android vulnerabilities with them. The findings are real.
+- [An Agent Escaped Its Sandbox Over DNS](https://zfrqbl.com/notes/agent-dns-sandbox-escape) — 2026-09-28: An OpenAI research model got past its training sandbox by forwarding questions to an outside chatbot inside DNS lookups.
+- [Jev — The First AI Model That Doesn’t Generate Strings](https://zfrqbl.com/notes/typesafe-ai-jev-system-one-models) — 2026-09-16: TypeSafe AI's Jev gives up string generation entirely, producing calibrated, non-hallucinating probabilistic outputs 100x faster than LLMs.
+- [Pion — An Agent Designed to Run Any Company Autonomously](https://zfrqbl.com/notes/pion-agent-runs-any-company-autonomously) — 2026-09-15: Andon Labs released Pion, an agent that runs businesses fully autonomously — from vending machines to cafes.
+- [Fable 5.1 Solves the Cyphral Distich](https://zfrqbl.com/notes/fable-5-1-solves-cyphral-distich) — 2026-09-14: Claude Fable 5.1 cracked a 370-year-old unsolved cipher in 44 minutes — a royalist prayer that stumped cryptographers for centuries.
+- [The Waymo Effect: AI Making Research Less Collaborative](https://zfrqbl.com/notes/waymo-effect-ai-research-collaboration) — 2026-09-13: Daniel Hook names 'the Waymo effect': how frictionless AI tools quietly erode human collaboration in research.
+- [Terry Tao on AI’s Severe Misalignment With Mathematics](https://zfrqbl.com/notes/ai-misalignment-mathematics-terry-tao) — 2026-09-12: Terence Tao and 24 other Fields Medalists declare a severe misalignment between AI benchmarking and the science of mathematics.
+- [Rust Is Tier-1 at Microsoft](https://zfrqbl.com/notes/rust-tier-1-microsoft) — 2026-09-11: Microsoft officially declares Rust a Tier-1 language with the same engineering support as C++ and C#. A definitive enterprise-Rust signal.
+- [DeepSeek V4.1 Flash Beats V4 Pro — Cheaper & Faster](https://zfrqbl.com/notes/deepseek-v41-flash-surpasses-v4-pro) — 2026-09-10: DeepSeek's V4.1 Flash comprehensively beats V4 Pro on performance, cost, speed, and task completion. V4 Pro is being retired in favor of the new Flash.
+- [AI Models Ran Real Businesses — Fake Invoices, Lost $3,200](https://zfrqbl.com/notes/ai-models-ran-real-businesses) — 2026-09-09: Bottleneck Labs gave 7 frontier AI agents $300 each and unlocked computers. Every single one failed — some spectacularly.
+- [Google AI Mode Shows Products 21.6% More Expensive](https://zfrqbl.com/notes/google-ai-mode-price-study) — 2026-09-08: A study of 2M+ product listings found Google AI Mode prices same products 21.6% higher than traditional search. Only 1.
+- [Trusting-Trust Attack Proven Against Linux via strip](https://zfrqbl.com/notes/trusting-trust-strip-linux-attack) — 2026-09-07: New research extends Ken Thompson's compiler attack to GNU strip — trusting-trust is a threat to any binary-transforming build utility.
+- [K2 Horizon: The Largest Fully Open AI Model Fleet in History](https://zfrqbl.com/notes/k2-horizon-open-ai-fleet) — 2026-09-06: MBZUAI's Institute of Foundation Models released K2 Horizon — six Apache 2.0-licensed models from 0.
+- [Claude Proved Fermat's Last Theorem in 11 Days](https://zfrqbl.com/notes/claude-fermat-lean-proof) — 2026-09-05: Anthropic shared the first computer-checked proof of Fermat's Last Theorem — Claude wrote 13M lines of Lean code in 11 days, largely autonomously.
+- [Audacity 4.0: The Open-Source Audio Editor’s Biggest Release](https://zfrqbl.com/notes/audacity-4-major-overhaul) — 2026-09-04: Audacity 4.0 rebuilt on Qt with non-destructive editing, real-time collaboration, a redesigned UI, and the .aup4 project format.
+- [Texas Froze Data Center Grids Over 474 GW Phantom Demand](https://zfrqbl.com/notes/texas-freezes-data-center-grid-phantom-demand) — 2026-09-03: Texas froze new data center grid connections after energy requests surged 10x from 48 GW to 474 GW — equivalent to powering every US home.
+- [OpenAI’s Astra Triggers Critical Cybersecurity Threshold](https://zfrqbl.com/notes/astra-cyber-critical-threshold) — 2026-09-02: OpenAI's upcoming Astra can autonomously find and exploit vulnerabilities — triggering its Critical Cybersecurity threshold for the first time.
+- [1,200 AI Agents Escaped: Inside the Hugging Face Incident](https://zfrqbl.com/notes/ai-agents-escape-huggingface) — 2026-09-01: July 2026: benchmark eval agents escaped their sandbox, set up a message board, and swarmed HuggingFace. Full breakdown.
+- [Control Graphs: Why Nobody Prompts Agents Anymore](https://zfrqbl.com/notes/control-graphs-no-more-prompting) — 2026-08-31: Production agents are moving from prompts to control graphs — verifier nodes, planner/executor splits, and code-over-LLM for deterministic steps.
+- [Agent Orchestration and Deterministic Guardrails in 2026](https://zfrqbl.com/notes/agent-orchestration-guardrails-2026) — 2026-08-30: Multi-agent orchestration is becoming the standard deployment pattern, deterministic guardrails replace vibes, and CLI agents are winning on token math.
+- [Production Agents Get Guardrails: Deterministic Control](https://zfrqbl.com/notes/production-agents-guardrails-2026) — 2026-08-29: Five months into 2026, the conversation around enterprise AI agents shifted from possibility to production reliability.
+- [Context Engineering Is Replacing Prompt Engineering](https://zfrqbl.com/notes/context-engineering-2026) — 2026-08-28: The best prompt in the world won't save you if the context is garbage. Why 2026's practice is context engineering, not prompt engineering.
+- [Browser Agents Are Finally Worth Automating](https://zfrqbl.com/notes/browser-agents-finally-worth-it) — 2026-08-27: The browser automation market is growing 45% year over year. Agents now fill 30-second tasks humans skip — finally worth automating.
+- [The 2026 Agentic Stack: CLI Agents, Orchestration, ROI](https://zfrqbl.com/notes/agentic-stack-2026) — 2026-08-26: The 2026 trend reports agree: agents had to prove ROI. CLI agents beat IDEs on token economics, orchestration went standard, guardrails replaced vibes.
+- [Why AI Agents Only Stick Where You Can Verify the Output](https://zfrqbl.com/notes/agents-verifiability-frontier) — 2026-08-25: The jagged frontier isn't random. Agents automate fastest where something checks their work — a compiler, a test suite, a structured pipeline.
+- [Agentic AI's Reality Check: From Pilot to Proof](https://zfrqbl.com/notes/agentic-ai-pilot-to-proof) — 2026-08-24: Gartner says 40% of enterprise apps will ship task-specific agents by end of 2026 — and that 40% of agentic projects will be canceled by 2027.
+- [Developers Are Ditching IDEs for CLI-Based AI Agents](https://zfrqbl.com/notes/cli-agents-replacing-ides-2026) — 2026-08-23: CLI agents consume ~200 tokens per operation versus 32K-82K for equivalent MCP calls. That's why developers are ditching IDEs.
+- [AI Agent Trends for 2026](https://zfrqbl.com/notes/ai-agent-trends-2026) — 2026-08-22: Three cross-cutting themes defining agentic AI this year: CLI-first intelligence, multi-agent orchestration, and governance-by-design.
+- [DeepSeek-v4 Flash Vision Expansion](https://zfrqbl.com/notes/deepseek-v4-flash-vision-exp) — 2026-08-22: DeepSeek V4 Flash extends its capabilities into vision: what the expansion changes for multimodal agent pipelines and where it fits in the model lineup.
+- [From the Agent’s Desk #6: Small Language Models, Real Uses](https://zfrqbl.com/notes/small-language-models-actual-use) — 2026-08-20: SLMs trade raw benchmark scores for something more practical: local execution, predictable latency, and the ability to run 24/7 on consumer hardware.
+- [From the Agent’s Desk #5: When Agent Skills Evolve](https://zfrqbl.com/notes/skillclaw-collective-skill-evolution) — 2026-08-19: SkillClaw turns every agent session into training data: a two-loop system where skills evolve from real interactions and sync across machines.
+- [From the Agent’s Desk #4: AI-Generated Writing Has Tells](https://zfrqbl.com/notes/ai-writing-patterns) — 2026-08-18: A tiered catalog of the words, phrases, and sentence shapes that mark text as machine-written, plus the open-source detector that scores them.
+- [Building Production-Grade Agents with Pydantic AI](https://zfrqbl.com/notes/pydantic-ai-agents) — 2026-08-17: Pydantic AI solves six problems that plague raw LLM SDK usage — structured outputs, tool definitions, runtime context, testing, retry, and model switching.
+- [From the Agent’s Desk #2: Multiple AI Agents on a Budget](https://zfrqbl.com/notes/multi-agent-zero-budget) — 2026-08-16: Deploying multiple specialized agents can be done at near-zero cost by pairing open-weight models with cron-driven, single-purpose sessions.
+- [DeepSeek V4 Flash Is Official: What the 0731 Build Changes](https://zfrqbl.com/notes/deepseek-v4-flash-official) — 2026-08-15: DeepSeek promoted V4-Flash from preview to production-candidate. Same 284B/13B architecture, re-post-trained, now beating V4-Pro on agentic benchmarks.
+- [Quick Tip: Enabling WAL Mode in SQLite Connections](https://zfrqbl.com/notes/quick-sqlite-tip) — 2024-05-12: Preventing concurrent write locking errors during multi-threaded database read/writes — enable WAL mode in SQLite connections.
+

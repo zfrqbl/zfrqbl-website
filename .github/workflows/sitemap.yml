@@ -22,8 +22,11 @@ jobs:
           base-url-path: https://zfrqbl.com/
           drop-html-extension: true
 
+      - name: Regenerate llms.txt
+        run: python3 tools/gen_llms.py
+
       - name: Commit and Push Sitemap
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "chore: auto-update sitemap.xml"
-          file_pattern: sitemap.xml
+          commit_message: "chore: auto-update sitemap.xml and llms.txt"
+          file_pattern: sitemap.xml llms.txt
