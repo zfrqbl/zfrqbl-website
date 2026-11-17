@@ -11,7 +11,8 @@ Runs over essays/*.html and notes/*.html. Idempotent: safe to re-run.
 import os, re, sys, glob
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SAME_AS = '["https://www.linkedin.com/in/zfrqbl/", "https://github.com/zfrqbl"]'
+SAME_AS = '["https://www.linkedin.com/in/zfrqbl/", "https://github.com/zfrqbl"]'  # raw JSON text (for text injection)
+SAME_AS_LIST = ["https://www.linkedin.com/in/zfrqbl/", "https://github.com/zfrqbl"]  # real list (for json.dumps)
 
 def fix_meta_author(html):
     return re.sub(r'<meta name="author" content="Zafar" />',
@@ -20,10 +21,14 @@ def fix_meta_author(html):
 def fix_person_name(html):
     # Inside the <head> (where ld+json lives), set any JSON "name": "Zafar" to
     # the full name. Restricted to the head so code samples in the body can't
-    # be touched.
+    # be touched. Also repairs a sameAs value that was wrongly serialised as a
+    # string (turns the escaped array text back into a real JSON array).
     head, _, body = html.partition("<body>")
     head = head.replace('"name": "Zafar"', '"name": "Zafar Iqbal"')
     head = head.replace('"name": "Zafar Iqbal Iqbal"', '"name": "Zafar Iqbal"')
+    head = re.sub(r'"sameAs": "(\[.*?\])"',
+                  lambda m: '"sameAs": ' + m.group(1).replace('\\"', '"'),
+                  head, flags=re.S)
     return head + "<body>" + body
 
 def add_sameas_if_missing(html):
@@ -52,7 +57,7 @@ def build_jsonld(kind, title, desc, canonical, iso, image):
         "@type": kind,
         "headline": title,
         "description": desc,
-        "author": {"@type": "Person", "name": "Zafar Iqbal", "sameAs": SAME_AS},
+        "author": {"@type": "Person", "name": "Zafar Iqbal", "sameAs": SAME_AS_LIST},
         "publisher": {"@type": "Organization", "name": "ZFRQBL", "url": "https://zfrqbl.com"},
         "datePublished": iso,
         "dateModified": iso,
