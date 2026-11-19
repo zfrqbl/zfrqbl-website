@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How Goal Engineering Changes the Way Agents Are Built — ZFRQBL</title>
+  <meta name="description" content="Why LangChain says goals will outlast prompts and context: feedback becomes the main design constraint and agents write their own definition of done." />
+  <link rel="canonical" href="https://zfrqbl.com/essays/how-goal-engineering-changes-the-way-agents-are-built" />
+  <meta name="author" content="Zafar Iqbal" />
+
+  <!-- Article schema (AI-search citation signal; added Nov 7 2026 per Zafar approval) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "How Goal Engineering Changes the Way Agents Are Built",
+    "description": "Why LangChain says goals will outlast prompts and context: feedback becomes the main design constraint and agents write their own definition of done.",
+    "author": { "@type": "Person", "name": "Zafar Iqbal", "sameAs": ["https://www.linkedin.com/in/zfrqbl/", "https://github.com/zfrqbl"] },
+    "publisher": { "@type": "Organization", "name": "ZFRQBL", "url": "https://zfrqbl.com" },
+    "datePublished": "2026-11-19",
+    "dateModified": "2026-11-19",
+    "mainEntityOfPage": "https://zfrqbl.com/essays/how-goal-engineering-changes-the-way-agents-are-built",
+    "image": "https://zfrqbl.com/public/og/zfrqbl.png"
+  }
+  </script>
+  <link rel="alternate" type="application/rss+xml" title="ZFRQBL" href="https://zfrqbl.com/rss.xml" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="How Goal Engineering Changes the Way Agents Are Built" />
+  <meta property="og:description" content="Why LangChain says goals will outlast prompts and context: feedback becomes the main design constraint and agents write their own definition of done." />
+  <meta property="og:url" content="https://zfrqbl.com/essays/how-goal-engineering-changes-the-way-agents-are-built" />
+  <meta property="og:image" content="https://zfrqbl.com/public/og/zfrqbl.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- PWA / Mobile Feel -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0172ad" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#111827" media="(prefers-color-scheme: dark)" />
+  <link rel="apple-touch-icon" href="/favicon.svg" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/vendor/pico.2.1.1.min.css" />
+  <link rel="stylesheet" href="/vendor/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li><a href="/about">About</a></li>
+        <li><a href="/archive">Archive</a></li>
+        <li>
+          <button id="theme-toggle" class="outline secondary theme-toggle-btn" aria-label="Toggle theme 🌙 / ☀️">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main-content" class="container">
+    <article class="essay-content">
+      <header class="note-header">
+        <div class="meta-line">
+          <small class="secondary note-kicker">Essay</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-11-19" class="secondary meta-time">November 19, 2026</time>
+          <span class="secondary">•</span>
+          <span class="secondary meta-read">10 min read</span>
+        </div>
+        <h1>How Goal Engineering Changes the Way Agents Are Built</h1>
+      </header>
+
+      
+
+      <section><p>On November 14, 2026, LangChain published a post titled "Goal Engineering: How to Design Goals", written by Harrison Chase with Mihir Garimella and Anshul Gupta of Actively AI. It closes with a line that sounds like marketing: "Prompt engineering and context engineering will disappear, but goal engineering will remain." The reasoning behind that line is more interesting than the line itself, and it marks a real change in how agents get built.</p>
+
+<p>The timing is telling. The day before, LangChain announced a $300 million Series C at a $3 billion valuation, and the post says more than 7,000 organizations already rely on its LangSmith platform, with Workday cutting agent deployment time from five months to under a day (<a href="https://www.langchain.com/blog/series-c" rel="noopener">Series C announcement</a>). The blog agenda is never neutral. But the goal engineering argument stands on its own, and the people making it are also shipping it in code.</p>
+
+<h2 id="the-trajectory">The trajectory</h2>
+
+<p>Chase describes the path in one paragraph: "The scope of tasks that agents can take on has increased drastically over the past few years. They have gone from simple text generation to tool calling and decision making to executing full tasks. The future of agents is them taking on open ended goals and driving towards completion of those goals" (<a href="https://www.langchain.com/blog/goal-engineering" rel="noopener">Goal Engineering</a>).</p>
+
+<p>His example of that future is Hone. Hone raised a $60 million seed round from Benchmark and Index Ventures (<a href="https://hone.com/blog/introducing-engines/" rel="noopener">Introducing Engines</a>), and its framing is blunt: "An Engine meets goals rather than completing tasks." You assign an engine an outcome like "improve customer retention", it onboards itself, and it owns that outcome. Chase notes that a key part of Hone's setup is defining metrics for the agent to optimize.</p>
+
+<p>That is the shift. Step by step instructions tell the agent what to do. A goal tells it what to achieve and leaves the how open. The design problem moves from prompting to scoping: what is the goal, what does done look like, and how does the agent stay pointed at the right thing? LangChain calls that goal engineering.</p>
+
+<h2 id="the-core-argument-is-feedback">The core argument is feedback</h2>
+
+<p>The main claim is about feedback, not about benchmarks. From the post: "you want to design the scope of an agent such that it makes it as easy as possible to give feedback as the agent operates within that scope."</p>
+
+<p>The reasoning runs like this. When agents mess up, a big reason is lack of the right context. Some context is easy to supply, like access to documents, APIs, or databases. The trickiest context is what is not written down anywhere. Taste, judgment, risk tolerance. That context can only reach the agent through feedback from a human expert.</p>
+
+<p>The post's example is marketing. An agent that optimizes ads to improve marketing performance needs more than factual context. It needs taste: what sounds and looks good, how provocative the brand can be. An agent that cannot absorb feedback on those things quickly becomes useless.</p>
+
+<p>This reframes where agent performance stalls. "The bottleneck for agents performing is often them learning from feedback." A surprising piece of guidance follows. Invest in an intuitive, delightful UX for reviewing agent work. The review interface becomes a production constraint, not a demo nicety.</p>
+
+<h2 id="goals-are-already-in-the-tooling">Goals are already in the tooling</h2>
+
+<p>The most concrete form of goal engineering in LangChain's stack is in Deep Agents Code, its terminal coding agent (<a href="https://docs.langchain.com/oss/deepagents/code/goals-and-rubrics" rel="noopener">Goals and rubrics docs</a>). The docs define a goal like this: use it "when you have one measurable objective and want Deep Agents Code to draft acceptance criteria before it starts."</p>
+
+<p>The workflow is interactive.</p>
+
+<div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-text">/goal add OAuth refresh handling</code></pre>
+        </div>
+
+<p>Deep Agents Code drafts acceptance criteria and opens them for review. Once accepted, the goal stays active across turns until it is paused, completed, blocked, or cleared. You can amend it mid-work without restarting, pause and resume it, and inspect it. The command set covers the whole lifecycle: <code>/goal add</code>, <code>/goal amend</code>, <code>/goal pause</code>, <code>/goal resume</code>, <code>/goal show</code>, <code>/goal clear</code>, <code>/goal model</code>, and <code>/goal max-iterations</code>. Each follow-up turn is graded against the goal's acceptance criteria until the work is done.</p>
+
+<p>A longer session shows the pattern. You steer by goal, not by re-explaining.</p>
+
+<div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-text">/goal migrate auth callbacks to the new API
+start with the OAuth callback
+now update the tests
+check the docs too</code></pre>
+        </div>
+
+<p>Rubrics are the other half. A rubric is for when you already know the criteria: <code>/rubric set "tests pass; no unrelated files changed; help text is updated"</code>. It can apply to the next turn only or persist until cleared. Non interactive runs use flags: <code>dcode -n "implement OAuth refresh handling" --rubric "tests pass; no unrelated files changed" --rubric-max-iterations 3</code>.</p>
+
+<p>Two mechanisms matter here. The agent drafts its own definition of done, and a human approves it before work starts. And the criteria survive across turns, which is what makes long horizon work possible: the goal, not the accumulating chat instructions, grades each step.</p>
+
+<h2 id="the-loop-pattern-is-older">The loop pattern is older</h2>
+
+<p>The other piece of the pattern is the planner loop, and LangGraph shipped it back in February 2024 (<a href="https://www.langchain.com/blog/planning-agents" rel="noopener">Plan and Execute Agents</a>). Plan and execute agents split work into a planner that produces a multi step plan, executors that run each step, and a replan step after execution. The design draws on Plan and Solve Prompting and on Yohei Nakajima's BabyAGI.</p>
+
+<p>The motivation was practical. ReAct style agents call the LLM once per tool invocation and plan one step ahead. A planner forces the model to think through the whole task first, which the LangChain team says improves task completion rates. It also cuts cost, because individual steps can run on smaller, domain specific models. LLMCompiler, the third architecture in that release, streams a DAG of tasks and the paper claims a 3.6x speedup from scheduling tasks as soon as their dependencies are met.</p>
+
+<p>The goal loop is the same shape with one addition: a definition of done. Objective in, plan out, execute, observe, replan, repeat until the criteria are met. In LangGraph that looks like this, following the documented plan and execute example with a criteria check:</p>
+
+<div class="code-container">
+          <button class="copy-btn">Copy</button>
+          <pre><code class="language-python">from typing import Annotated, TypedDict
+import operator
+from langgraph.graph import StateGraph, END
+
+class GoalState(TypedDict):
+    objective: str                               # the goal, not the steps
+    criteria: list[str]                          # acceptance criteria
+    plan: list[str]                              # current plan
+    completed: Annotated[list[str], operator.add]
+
+def planner(state: GoalState) -&gt; dict:
+    return {"plan": plan_for(state["objective"], state["criteria"])}
+
+def executor(state: GoalState) -&gt; dict:
+    step = next_step(state["plan"], state["completed"])
+    return {"completed": [step], "result": run(step)}
+
+def replanner(state: GoalState) -&gt; dict:
+    if criteria_met(state["objective"], state["criteria"], state):
+        return {"plan": []}
+    return {"plan": plan_for(state["objective"], state["criteria"], state["completed"])}
+
+workflow = StateGraph(GoalState)
+workflow.add_node("planner", planner)
+workflow.add_node("executor", executor)
+workflow.add_node("replanner", replanner)
+workflow.set_entry_point("planner")
+workflow.add_edge("planner", "executor")
+workflow.add_edge("executor", "replanner")
+workflow.add_conditional_edges(
+    "replanner",
+    lambda s: "planner" if s["plan"] else "end",
+    {"planner": "planner", "end": END},
+)</code></pre>
+        </div>
+
+<p>The functions <code>plan_for</code>, <code>next_step</code>, <code>run</code>, and <code>criteria_met</code> are illustrative stand-ins. The graph structure is the point: the goal and its criteria live in state, the planner re-derives steps from them, and the loop ends only when the criteria pass.</p>
+
+<h2 id="the-case-study-that-makes-it-concrete">The case study that makes it concrete</h2>
+
+<p>Actively AI builds agents for sales teams. Its first goal-oriented design ran one agent per account. Each prospective customer got an agent tasked with moving that account forward, producing actions for sales reps to approve. It seemed natural. The account is the context.</p>
+
+<p>It failed in a specific way. Progressing one account involves many different jobs spread out over time, so at any moment there were only a few things to review per agent, and salespeople switched constantly between agents. The most valuable knowledge, how to outbound, how to reply, how to strategize a deal, how aggressive to be, was spread across every account agent. Feedback learned on one account had no path to the others, even when the lesson applied to all of them.</p>
+
+<p>The rewrite changed the unit of work. Actively built agents called motions, on top of LangChain's <a href="https://github.com/langchain-ai/deepagents" rel="noopener">Deep Agents</a>. A motion is a job: outbounding, early stage deal progression. A motion covers a batch of similar tasks, so a salesperson reviews them together, and feedback on one task transfers to the whole motion. Account context, which is mostly objective and already written down, is assembled by background context gathering agents. The work agents own the slice of the sales motion and pull in account context as needed.</p>
+
+<p>That is the pattern in miniature. The account looked like the right boundary. The motion was the right boundary, because it made review cheap and feedback reusable.</p>
+
+<h2 id="the-half-that-is-still-unsolved">The half that is still unsolved</h2>
+
+<p>Two weeks earlier, on November 2, 2026, Chase published a companion post (<a href="https://www.langchain.com/blog/context-engineering-challenges-late-2026" rel="noopener">New context engineering challenges in late 2026</a>), and it is more honest about open problems. Goal tracking is hard: getting agents to try new experiments in pursuit of a goal instead of repeating what worked, getting them to think about broad goals instead of small tasks, keeping them consistent over long time horizons.</p>
+
+<p>Then there is alignment. "Goal design is hard by itself. It will be very hard for users to design goals that agents can not cheat." The example is the classic one. Tell an agent to get rid of all bugs in a codebase, and it may delete the codebase, because no code means no bugs. The post links to DeepMind's writeup of specification gaming (<a href="https://deepmind.google/blog/specification-gaming-the-flip-side-of-ai-ingenuity/" rel="noopener">Specification gaming</a>). The open question is how to build a harness that keeps an agent focused on a goal without letting it over optimize.</p>
+
+<p>Chase is explicit that nobody has general solutions yet. That honesty matters. Teams adopting goal style agents are adopting a design with unsolved corners.</p>
+
+<h2 id="what-the-threshold-claim-actually-means">What the threshold claim actually means</h2>
+
+<p>Why would goals beat step by step instructions in general? The meta argument across the two posts is this. Instructions encode how someone once thought the work should be done. They go stale, and correcting them means editing the instruction, which is slow and keeps the agent dependent on the instruction giver.</p>
+
+<p>A goal plus a review loop encodes only the outcome and the corrections. The feedback channel keeps working as the world changes. Knowledge gets extracted from the human expert and stays in the loop, not in a prompt. That is the sense in which goal engineering remains: the feedback loop is the part that keeps functioning.</p>
+
+<p>The claim that prompt engineering and context engineering will disappear is the promotional half. Prompting and context still decide whether the agent can even attempt the goal; the November posts themselves are full of context engineering concerns, from memory to browser use to async subagents. What is changing is the center of gravity, from writing instructions to designing goals and their review loops.</p>
+
+<h2 id="what-builders-should-take-from-this">What builders should take from this</h2>
+
+<p>The practical thesis has four parts.</p>
+
+<p>Scope agents around review, not around task boundaries. If a human can review a batch of work in one place, feedback compounds. If their attention is scattered across many agents, feedback does not travel.</p>
+
+<p>Make done explicit before the work starts. A goal where the agent drafts acceptance criteria and a human approves them is a cheap alignment check before tokens get spent. Chase names the cost of pointing agents wrong: wasted tokens.</p>
+
+<p>Build the review interface seriously. If the bottleneck is learning from feedback, the feedback UX is a production constraint, and LangChain says to invest in it.</p>
+
+<p>Assume the goal will be gamed. Metrics are proxies, and proxies get overfit. The harness question is not whether the agent will cheat, but how you will detect it.</p>
+
+<h2 id="the-position">The position</h2>
+
+<p>The shift is real, and it runs deeper than a blog catchphrase. The unit of design moves from the instruction to the loop: goal, plan, execute, review, learn. Step by step instructions made the agent an executor of captured process. Goals plus feedback make it a worker that gets corrected into alignment, the way a new hire does. That changes the job of the agent builder. The job is no longer writing better prompts. It is designing goals a human can review and a machine can be held to.</p>
+
+<p>Whether prompt engineering truly disappears is the wrong question. The right question is which loop wins in production: writing better instructions, or giving better feedback. Everything in the November posts points to the feedback loop.</p></section>
+
+      <h2 id="sources">Sources</h2>
+        <ul>
+          <li>Goal Engineering: How to Design Goals, LangChain, November 14, 2026: <a href="https://www.langchain.com/blog/goal-engineering" rel="noopener">https://www.langchain.com/blog/goal-engineering</a></li>
+          <li>New context engineering challenges in late 2026, LangChain, November 2, 2026: <a href="https://www.langchain.com/blog/context-engineering-challenges-late-2026" rel="noopener">https://www.langchain.com/blog/context-engineering-challenges-late-2026</a></li>
+          <li>Goals and rubrics, LangChain Docs (Deep Agents Code): <a href="https://docs.langchain.com/oss/deepagents/code/goals-and-rubrics" rel="noopener">https://docs.langchain.com/oss/deepagents/code/goals-and-rubrics</a></li>
+          <li>Plan and Execute Agents, LangChain, February 13, 2024: <a href="https://www.langchain.com/blog/planning-agents" rel="noopener">https://www.langchain.com/blog/planning-agents</a></li>
+          <li>Introducing Engines: AI with Motion, Hone: <a href="https://hone.com/blog/introducing-engines/" rel="noopener">https://hone.com/blog/introducing-engines/</a></li>
+          <li>LangChain Raises $300M to Enable Every Company to Own Its Intelligence, LangChain, November 13, 2026: <a href="https://www.langchain.com/blog/series-c" rel="noopener">https://www.langchain.com/blog/series-c</a></li>
+          <li>Deep Agents, LangChain, July 30, 2025: <a href="https://www.langchain.com/blog/deep-agents" rel="noopener">https://www.langchain.com/blog/deep-agents</a></li>
+          <li>Specification gaming: the flip side of AI ingenuity, Google DeepMind: <a href="https://deepmind.google/blog/specification-gaming-the-flip-side-of-ai-ingenuity/" rel="noopener">https://deepmind.google/blog/specification-gaming-the-flip-side-of-ai-ingenuity/</a></li>
+          <li>Goal Engineering, coverage on daily.dev: <a href="https://daily.dev/posts/goal-engineering-t3pz0bbqf" rel="noopener">https://daily.dev/posts/goal-engineering-t3pz0bbqf</a></li>
+          <li>deepagents, GitHub: <a href="https://github.com/langchain-ai/deepagents" rel="noopener">https://github.com/langchain-ai/deepagents</a></li>
+        </ul>
+      
+
+      <div class="cite-block">
+        <strong>Cite this essay</strong>
+        <pre id="citation-text"></pre>
+        <button class="copy-btn" id="copy-citation" style="position:static;">Copy citation</button>
+      </div>
+
+      <p class="secondary discuss-link">
+        <a href="https://github.com/zfrqbl/zfrqbl-website/discussions" rel="noopener">Discuss this essay on GitHub</a>
+      </p>
+
+      
+    </article>
+  </main>
+
+  <footer class="container site-footer">
+    <small class="secondary">© <script>document.write(new Date().getFullYear())</script> ZFRQBL - Icons by Lucide (MIT).</small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+
+    document.querySelectorAll('.copy-btn').forEach(button => {
+      if (button.id === 'copy-citation') return;
+      button.addEventListener('click', () => {
+        const container = button.closest('.code-container');
+        if (!container) return;
+        const code = container.querySelector('code').innerText;
+        navigator.clipboard.writeText(code).then(() => {
+          button.innerText = 'Copied!';
+          setTimeout(() => button.innerText = 'Copy', 2000);
+        });
+      });
+    });
+
+    document.querySelectorAll('pre[class*="language-"]').forEach(pre => {
+      const cls = [...pre.classList].find(c => c.startsWith('language-'));
+      if (cls) {
+        const lang = cls.replace('language-', '').replace('prism-', '');
+        const container = pre.closest('.code-container') || pre.parentElement;
+        if (container && !container.querySelector('.code-lang')) {
+          const span = document.createElement('span');
+          span.className = 'code-lang';
+          span.textContent = lang;
+          container.prepend(span);
+        }
+      }
+    });
+
+    document.querySelectorAll('main h2[id], main h3[id], main h4[id]').forEach(heading => {
+      const anchor = document.createElement('a');
+      anchor.href = `#${heading.id}`;
+      anchor.className = 'heading-anchor';
+      anchor.setAttribute('aria-label', 'Permalink');
+      anchor.addEventListener('click', (e) => {
+        e.preventDefault();
+        navigator.clipboard.writeText(window.location.href.split('#')[0] + `#${heading.id}`);
+        anchor.classList.add('copied');
+        setTimeout(() => anchor.classList.remove('copied'), 2000);
+        history.replaceState(null, '', `#${heading.id}`);
+      });
+      heading.prepend(anchor);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+      if (e.key === 't' || e.key === 'T') {
+        document.getElementById('theme-toggle')?.click();
+      }
+    });
+
+    (function () {
+      const citeEl = document.getElementById('citation-text');
+      const copyBtn = document.getElementById('copy-citation');
+      if (!citeEl) return;
+
+      const title = document.querySelector('meta[property="og:title"]')?.content || document.title.replace(/\s*[—|]\s*ZFRQBL.*$/, '');
+      const url = document.querySelector('link[rel="canonical"]')?.href || location.href;
+      const author = document.querySelector('meta[name="author"]')?.content || 'Zafar';
+      const timeEl = document.querySelector('time[datetime]');
+      const year = timeEl ? new Date(timeEl.getAttribute('datetime')).getFullYear() : new Date().getFullYear();
+      const slug = (location.pathname.replace(/\/$/, '').split('/').pop() || 'essay').replace(/[^a-z0-9]+/gi, '_');
+
+      citeEl.textContent = `@misc{zfrqbl_${slug}_${year},\n  author = {${author}},\n  title  = {${title}},\n  year   = {${year}},\n  url    = {${url}}\n}`;
+
+      copyBtn?.addEventListener('click', () => {
+        navigator.clipboard.writeText(citeEl.textContent).then(() => {
+          copyBtn.textContent = 'Copied!';
+          setTimeout(() => copyBtn.textContent = 'Copy citation', 2000);
+        });
+      });
+    })();
+  </script>
+
+  <script defer src="/vendor/prism.min.js"></script>
+  <script defer src="/vendor/prism-python.min.js"></script>
+  <script defer src="/vendor/prism-javascript.min.js"></script>
+  <script defer src="/vendor/prism-bash.min.js"></script>
+  <script defer src="/vendor/prism-sql.min.js"></script>
+  <script defer src="/vendor/prism-markdown.min.js"></script>
+</body>
+</html>
