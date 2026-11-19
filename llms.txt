@@ -4,14 +4,16 @@
 
 Author: Zafar Iqbal (LinkedIn: https://www.linkedin.com/in/zfrqbl/ · GitHub: https://github.com/zfrqbl)
 
-Generated 2026-11-17. Every page is server-rendered static HTML with full text in the initial response; individual URLs are stable and extensionless. Use the page URL and its `dateModified` in JSON-LD when citing.
+Generated 2026-11-19. Every page is server-rendered static HTML with full text in the initial response; individual URLs are stable and extensionless. Use the page URL and its `dateModified` in JSON-LD when citing.
 
 ## About
 - [About](https://zfrqbl.com/about): who writes this, what it covers, and how to get in touch.
 - [Archive](https://zfrqbl.com/archive): every note and essay, newest first.
 - [RSS feed](https://zfrqbl.com/rss.xml) · [Sitemap](https://zfrqbl.com/sitemap.xml)
 
-## Essays (13)
+## Essays (15)
+- [How Goal Engineering Changes the Way Agents Are Built](https://zfrqbl.com/essays/how-goal-engineering-changes-the-way-agents-are-built) — 2026-11-19: Why LangChain says goals will outlast prompts and context: feedback becomes the main design constraint and agents write their own definition of done.
+- [The Nvidia CEO Scandal: A Timeline](https://zfrqbl.com/essays/the-nvidia-ceo-scandal-a-timeline) — 2026-11-19: A dated timeline of Jensen Huang's resignation: the affair reports, the espionage allegations, and the governance that made it inevitable.
 - [Context Engineering with Deep Agents](https://zfrqbl.com/essays/context-engineering-with-deep-agents) — 2026-11-13: Memory is eight distinct problems and a vector database solves one. Context engineering, not more storage, is where agent memory actually gets built.
 - [Prompting Is Not Programming: The dottxt Manifesto and the Grammar of Reliable AI](https://zfrqbl.com/essays/prompting-is-not-programming) — 2026-11-08: Grammar enforced at generation time, not prompting, is what makes LLM output buildable. Constraint is a floor: it guarantees shape, never truth.
 - [Validation Is Not Enforcement: Your Schema Already Has the Logic Your Tool-Calling Agent Needs](https://zfrqbl.com/essays/validation-is-not-enforcement) — 2026-11-08: Conditional JSON Schema rules are silently ignored by many structured output engines, turning tool calls into retry loops. Enforcement at generation time makes the schema a real contract.
