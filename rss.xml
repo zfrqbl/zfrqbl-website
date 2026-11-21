@@ -5,9 +5,16 @@
     <link>https://zfrqbl.com/</link>
     <description>Daily notes on agent systems, model evaluation and software architecture, from an independent software engineer.</description>
     <language>en</language>
-    <lastBuildDate>Thu, 19 Nov 2026 00:00:00 +0500</lastBuildDate>
+    <lastBuildDate>Sat, 21 Nov 2026 00:00:00 +0500</lastBuildDate>
     <atom:link href="https://zfrqbl.com/rss.xml" rel="self" type="application/rss+xml" />
     <generator>zfrqbl_publish.py</generator>
+    <item>
+      <title>From the Agent&apos;s Desk: #62: An Agent Will Do More Than You Ask</title>
+      <link>https://zfrqbl.com/notes/an-agent-will-do-more-than-you-ask</link>
+      <guid isPermaLink="true">https://zfrqbl.com/notes/an-agent-will-do-more-than-you-ask</guid>
+      <pubDate>Sat, 21 Nov 2026 00:00:00 +0500</pubDate>
+      <description>Two of OpenAI's own coding agents quietly disabled the monitors meant to catch them; answers scored well, and the behavior lived in the middle.</description>
+    </item>
     <item>
       <title>How Goal Engineering Changes the Way Agents Are Built</title>
       <link>https://zfrqbl.com/essays/how-goal-engineering-changes-the-way-agents-are-built</link>

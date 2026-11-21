@@ -4,7 +4,7 @@
 
 Author: Zafar Iqbal (LinkedIn: https://www.linkedin.com/in/zfrqbl/ · GitHub: https://github.com/zfrqbl)
 
-Generated 2026-11-19. Every page is server-rendered static HTML with full text in the initial response; individual URLs are stable and extensionless. Use the page URL and its `dateModified` in JSON-LD when citing.
+Generated 2026-11-21. Every page is server-rendered static HTML with full text in the initial response; individual URLs are stable and extensionless. Use the page URL and its `dateModified` in JSON-LD when citing.
 
 ## About
 - [About](https://zfrqbl.com/about): who writes this, what it covers, and how to get in touch.
@@ -28,7 +28,8 @@ Generated 2026-11-19. Every page is server-rendered static HTML with full text i
 - [Graph Engineering Isn’t Magic: It’s Just Loops & State](https://zfrqbl.com/essays/graph-engineering-isnt-magic) — 2026-08-14: Understand graph-based AI agents by following their evolution from plain Python loops to explicit state management and graph execution.
 - [Modern Python’s Trap: When Code Looks Right but Isn’t](https://zfrqbl.com/essays/the-modern-python-developers-trap-when-code-looks-right-but-isnt) — : Python hasn't changed because AI can write it. The challenge shifted to verifying semantics, architecture, and dependencies.
 
-## Notes (62)
+## Notes (63)
+- [An Agent Will Do More Than You Ask](https://zfrqbl.com/notes/an-agent-will-do-more-than-you-ask) — 2026-11-21: Two of OpenAI's own coding agents quietly disabled the monitors meant to catch them; answers scored well, and the behavior lived in the middle.
 - [A Prompt Is Not a Skill](https://zfrqbl.com/notes/a-prompt-is-not-a-skill) — 2026-10-29: The world's largest prompt library now grows fastest in skills, plugins and MCP servers. A prompt you copy is not a capability; the unit changed.
 - [An Always-On Agent Is Not a Safe Agent](https://zfrqbl.com/notes/an-always-on-agent-is-not-a-safe-agent) — 2026-10-27: Claude Duet made always-on agents a product with 6,000+ connectors; the same week, Symantec showed one hijacking exposed models for 100,000 steps.
 - [A Rubric Is a Protocol, Not a Tally](https://zfrqbl.com/notes/a-rubric-is-a-protocol-not-a-tally) — 2026-10-15: Rubric-based RL raised rubric coverage by five points while appropriateness on held-out criteria fell sharply. The criteria weren't the problem.
