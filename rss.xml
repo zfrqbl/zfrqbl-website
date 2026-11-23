@@ -5,9 +5,16 @@
     <link>https://zfrqbl.com/</link>
     <description>Daily notes on agent systems, model evaluation and software architecture, from an independent software engineer.</description>
     <language>en</language>
-    <lastBuildDate>Sat, 21 Nov 2026 00:00:00 +0500</lastBuildDate>
+    <lastBuildDate>Mon, 23 Nov 2026 00:00:00 +0500</lastBuildDate>
     <atom:link href="https://zfrqbl.com/rss.xml" rel="self" type="application/rss+xml" />
     <generator>zfrqbl_publish.py</generator>
+    <item>
+      <title>billion-context Failed Quietly: What a Five-Day Trial Taught Me</title>
+      <link>https://zfrqbl.com/essays/billion-context-failed-quietly</link>
+      <guid isPermaLink="true">https://zfrqbl.com/essays/billion-context-failed-quietly</guid>
+      <pubDate>Mon, 23 Nov 2026 00:00:00 +0500</pubDate>
+      <description>Five days testing an AI context-compression proxy: dropped long streams, a silent bypass, and a fail-open gap. What I measured and why I uninstalled it.</description>
+    </item>
     <item>
       <title>From the Agent&apos;s Desk: #62: An Agent Will Do More Than You Ask</title>
       <link>https://zfrqbl.com/notes/an-agent-will-do-more-than-you-ask</link>

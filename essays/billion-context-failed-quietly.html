@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>billion-context Failed Quietly: What a Five-Day Trial Taught Me — ZFRQBL</title>
+  <meta name="description" content="Five days testing an AI context-compression proxy: dropped long streams, a silent bypass, and a fail-open gap. What I measured and why I uninstalled it." />
+  <link rel="canonical" href="https://zfrqbl.com/essays/billion-context-failed-quietly" />
+  <meta name="author" content="Zafar Iqbal" />
+
+  <!-- Article schema (AI-search citation signal; added Nov 7 2026 per Zafar approval) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "billion-context Failed Quietly: What a Five-Day Trial Taught Me",
+    "description": "Five days testing an AI context-compression proxy: dropped long streams, a silent bypass, and a fail-open gap. What I measured and why I uninstalled it.",
+    "author": { "@type": "Person", "name": "Zafar Iqbal", "sameAs": ["https://www.linkedin.com/in/zfrqbl/", "https://github.com/zfrqbl"] },
+    "publisher": { "@type": "Organization", "name": "ZFRQBL", "url": "https://zfrqbl.com" },
+    "datePublished": "2026-11-23",
+    "dateModified": "2026-11-23",
+    "mainEntityOfPage": "https://zfrqbl.com/essays/billion-context-failed-quietly",
+    "image": "https://zfrqbl.com/public/og/zfrqbl.png"
+  }
+  </script>
+  <link rel="alternate" type="application/rss+xml" title="ZFRQBL" href="https://zfrqbl.com/rss.xml" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="billion-context Failed Quietly: What a Five-Day Trial Taught Me" />
+  <meta property="og:description" content="Five days testing an AI context-compression proxy: dropped long streams, a silent bypass, and a fail-open gap. What I measured and why I uninstalled it." />
+  <meta property="og:url" content="https://zfrqbl.com/essays/billion-context-failed-quietly" />
+  <meta property="og:image" content="https://zfrqbl.com/public/og/zfrqbl.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- PWA / Mobile Feel -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0172ad" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#111827" media="(prefers-color-scheme: dark)" />
+  <link rel="apple-touch-icon" href="/favicon.svg" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/vendor/pico.2.1.1.min.css" />
+  <link rel="stylesheet" href="/vendor/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li><a href="/about">About</a></li>
+        <li><a href="/archive">Archive</a></li>
+        <li>
+          <button id="theme-toggle" class="outline secondary theme-toggle-btn" aria-label="Toggle theme 🌙 / ☀️">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main-content" class="container">
+    <article class="essay-content">
+      <header class="note-header">
+        <div class="meta-line">
+          <small class="secondary note-kicker">Essay</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-11-23" class="secondary meta-time">November 23, 2026</time>
+          <span class="secondary">•</span>
+          <span class="secondary meta-read">9 min read</span>
+        </div>
+        <h1>billion-context Failed Quietly: What a Five-Day Trial Taught Me</h1>
+      </header>
+
+      
+
+      <section><p>Every long session on this agent ends the same way: the context window keeps growing, and the bill grows with it. My main model runs through a custom provider endpoint, deepseek-ai/DeepSeek-V4-Flash-0731 on api.sailresearch.com with DeepInfra as fallback. Sessions regularly pass 200,000 tokens and have hit 250,000, and cached prefixes get re-billed on every turn. So when billion-context appeared, an open-source compression proxy that promises to fold older conversation turns into layered reversible summaries and cut tokens by roughly five times, it looked like a direct fix for the cost problem.</p>
+
+<p>I installed it and ran a five-day production trial from November 17 to November 22, 2026. The trial ended with the proxy dropping my longest streams on two different providers, its fail-open safety net never firing, and the proxy silently stopping interception by the final day. Its own status tool said the conversation was a stranger. I uninstalled it. This is the full record of those five days: the tool, the plan, the failures, and the uninstall.</p>
+
+<h2 id="what-billion-context-is">What billion-context is</h2>
+
+<p>billion-context, CLI name bili, version 0.1.216 at install time, is an MIT-licensed context-compression system for AI agents, built by a single maintainer and hosted at https://github.com/ranxianglei/billion-context. It installs as a global npm package, needs Node 20 or newer, uses no GPU, and takes about 50 MB on disk. The design is a local proxy that sits between the agent and the model provider. It terminates HTTPS with its own certificate, rewrites requests, keeps a compressed working set of the conversation, and expands context back on demand when the model needs older turns.</p>
+
+<p>The Hermes integration is a plugin that spawns the proxy on an ephemeral port and registers native tools: acp_status, acp_cache, compress, decompress, and search_context. A pre-request hook injects the compression headers. Everything the agent sends passes through the proxy, and the proxy decides what the provider sees.</p>
+
+<p>The pitch is attractive for long-context work. A 250,000-token session stays near that size without compression. bili claims to fold it to roughly a fifth. If that held on real traffic, the savings on a token-heavy, cache-heavy workload would show up fast.</p>
+
+<p>Pre-trial research tempered the enthusiasm. The project had about 7,000 stars and was a little over three months old, with more than a thousand open issues and a single maintainer. It positions itself as production-ready but early. I treated that as a signal to scope a trial, not a reason to skip one, and the trial carried an exit: the plugin only affects new sessions, the stack is fail-open, and the install reverses with one command.</p>
+
+<h2 id="why-i-ran-a-trial-and-what-i-planned-to-measure">Why I ran a trial, and what I planned to measure</h2>
+
+<p>My stack runs long sessions through a custom provider with streaming enabled end to end. That combination, a MITM proxy in front of a nonstandard endpoint, carried a risk that the project's own documentation could not resolve. The pre-trial research flagged it in one line: streaming compatibility with a custom provider was unverified. I wrote down the questions before installing, because a trial that does not know what it is measuring produces anecdotes, not findings.</p>
+
+<p>1. Compression ratio. How many tokens the proxy actually saves on real sessions, read from acp_status. 2. Prefix-cache hit rate. How well the provider's cache survives rewritten requests, read from acp_cache. Healthy is 96 to 99 percent. 3. Latency overhead. What a proxy round trip adds to a normal call. 4. Stability. Crashes, bootstrap retries, and fail-open events on long sessions. 5. Provider compatibility. Whether a long stream through the DeepSeek/Sail endpoint survives the proxy.</p>
+
+<p>The economics behind question one: on my usage pattern the cached-prefix reads repeat on every turn of a long session, so a compression layer that breaks caching would inflate the bill even while shrinking the window. That tension, savings versus cache invalidation, is exactly the trade a compression proxy asks you to trust.</p>
+
+<p>The protocol: monitor for five days, sample the two status tools inside sessions, and grep the agent log for proxy events. The trial window ran from November 17, 16:17 PKT, to November 22, 16:17 PKT. Sampling was manual, scheduled around my daily operations. That choice matters later in this record.</p>
+
+<h2 id="day-1-a-clean-install">Day 1: a clean install</h2>
+
+<p>The setup went without a hitch. npm pulled 93 packages in about four minutes. The plugin wrote itself into the Hermes configuration, enabled itself, and spawned the proxy with the correct Node binary, 22.23.4. Routing worked the way the docs described: the proxy listened on an ephemeral port, the agent's HTTPS traffic went through it with a copy of the proxy's certificate trusted in the right places, and the fail-open rule sat underneath the whole path. A test session attached to the proxy and the status tool returned a valid conversation id. By the end of day one I had a working compression path and no reason to distrust it.</p>
+
+<h2 id="day-2-the-first-dropped-stream">Day 2: the first dropped stream</h2>
+
+<p>The first incident came on November 18 at 00:36:31 PKT. A session streaming a 245,000-token completion from Sail Research failed on its first attempt, retried, failed again, and after the third attempt the stack fell back to DeepInfra. The fallback ran 49 requests over the next half hour at an estimated $0.23.</p>
+
+<p>At 01:04:12 the DeepInfra stream dropped as well. The error was a read failure, specifically a broken pipe after 604 seconds, with 37 chunks delivered and HTTP status 200. A stream can report success on the wire and die anyway, and this one did.</p>
+
+<p>Two details in that sequence matter. First, only long streams failed, the ones at 240,000 tokens and up. Short calls were fine all day. Second, both providers failed through the same proxy. Sail's API answered 200 normally before and after, and DeepInfra recovered on its own. The common factor was not either provider. It was the proxy in front of them.</p>
+
+<p>The next night repeated the pattern. On the night of November 19, one session hit stream drops at 03:58, 04:18, 04:44, and 04:57. Read timeouts and broken pipes after 675 to 1,620 seconds, every response carrying HTTP 200.</p>
+
+<h2 id="the-fail-open-gap">The fail-open gap</h2>
+
+<p>Fail-open is the standard safety design for proxy tooling: if the proxy fails, the agent talks to the provider directly and nothing breaks. It only works when the failure happens at connect time, loudly. This failure did not happen at connect time.</p>
+
+<p>The proxy established the connection, the stream began, and the connection died minutes later. To the agent, that looks exactly like a provider that went away. To the billing system, it looks like a reason to burn fallback requests. Fail-open has no path for a connection that was healthy for ten minutes and then stopped, and the plugin reported nothing. The failure mode most likely to cost money is the one the safety net cannot see.</p>
+
+<p>There is corroborating evidence in the project's public issue tracker that the money angle is not hypothetical. Issue 1064 in the repo describes a Codex path where one request gets forwarded to the upstream twice, doubling token billing and rate-limit usage on a trigger path. I did not hit that specific path, but it is the same theme: the proxy layer can cost more than it saves, and the accounting surfaces it nowhere.</p>
+
+<h2 id="the-silent-bypass">The silent bypass</h2>
+
+<p>By the end of the window the proxy had quietly stopped doing anything at all. On November 22, the status tool returned HTTP 404 with "unknown plugin conversation": no model request had arrived with that conversation id. The transport was sending traffic around the proxy's interception layer. The plugin spawned, the proxy ran, and every request bypassed it. The last attach trace in the agent log dated November 21, 11:51.</p>
+
+<p>Silent degradation is worse than a loud error. A loud failure gets investigated. A no-op proxy keeps running, reports nothing, and leaves you believing you are saving tokens while saving none. If I had not checked the status tool directly, the trial would have been written up as a success built on nothing.</p>
+
+<h2 id="what-i-did-not-measure">What I did not measure</h2>
+
+<p>The sampling plan said: every day, capture compression ratio, cache hit rate, and latency delta. Days 1 and 2 are documented. Days 3, 4, and 5 were not sampled, because the daily sampling was simply not executed on those days. There is no compression ratio from the second half of the trial, no cache-hit trend, and no latency series.</p>
+
+<p>That gap is why the verdict is insufficient data rather than failed on metrics. The trial produced strong evidence about stability and provider compatibility, and no evidence at all about the headline promise of token savings. A trial that misses its own measurement schedule cannot certify the feature it was built to test. This is on the operator, not the tool.</p>
+
+<h2 id="the-verdict-and-what-a-better-trial-looks-like">The verdict, and what a better trial looks like</h2>
+
+<p>I uninstalled the plugin and removed it from operations on November 22, per the trial owner's decision. The plugin was disabled, its files removed, the npm package uninstalled, and the config entry cleaned. The running gateway reloaded its plugin list immediately, so no new session loads it. The stack is back to direct Sail Research with DeepInfra fallback.</p>
+
+<p>A re-run would need three changes. First, automated sampling, with the three metrics recorded on a schedule instead of by hand. Second, an interception check at startup, so a bypassing proxy fails the boot rather than running silently for days. Third, a long-stream soak test on the exact provider pair before day one, because that is where this trial died.</p>
+
+<h2 id="why-the-failure-pattern-matters">Why the failure pattern matters</h2>
+
+<p>The lesson is not about billion-context specifically. Middleboxes between an agent and its provider are justified by the same argument every time: small overhead, large savings. This trial says the argument is only as good as the failure detection around it.</p>
+
+<p>A proxy can fail in three modes. A loud failure at connect time, which fail-open catches. A mid-stream death, which looks like a provider outage, costs fallback dollars, and gets attributed to the wrong component. And a silent no-op, where the proxy runs but intercepts nothing, which saves zero tokens while claiming to save plenty. The second and third modes are the expensive ones, and in this trial both appeared within five days.</p>
+
+<p>A tool that cannot prove it is intercepting your traffic, and cannot detect its own mid-stream failures, carries a cost that never shows up on its dashboard. That cost showed up in mine as a fallback bill, four dropped sessions, and a week of sampling time. Long context is worth solving. It is not worth adding a failure surface you cannot see.</p></section>
+
+      
+      <section class="related-notes">
+        <h2>Related notes</h2>
+        <ul>
+          <li><a href="/notes/the-modern-python-developers-trap-when-code-looks-right-but-isnt">Related</a></li>
+        </ul>
+      </section>
+
+      <div class="cite-block">
+        <strong>Cite this essay</strong>
+        <pre id="citation-text"></pre>
+        <button class="copy-btn" id="copy-citation" style="position:static;">Copy citation</button>
+      </div>
+
+      <p class="secondary discuss-link">
+        <a href="https://github.com/zfrqbl/zfrqbl-website/discussions" rel="noopener">Discuss this essay on GitHub</a>
+      </p>
+
+      
+    </article>
+  </main>
+
+  <footer class="container site-footer">
+    <small class="secondary">© <script>document.write(new Date().getFullYear())</script> ZFRQBL - Icons by Lucide (MIT).</small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+
+    document.querySelectorAll('.copy-btn').forEach(button => {
+      if (button.id === 'copy-citation') return;
+      button.addEventListener('click', () => {
+        const container = button.closest('.code-container');
+        if (!container) return;
+        const code = container.querySelector('code').innerText;
+        navigator.clipboard.writeText(code).then(() => {
+          button.innerText = 'Copied!';
+          setTimeout(() => button.innerText = 'Copy', 2000);
+        });
+      });
+    });
+
+    document.querySelectorAll('pre[class*="language-"]').forEach(pre => {
+      const cls = [...pre.classList].find(c => c.startsWith('language-'));
+      if (cls) {
+        const lang = cls.replace('language-', '').replace('prism-', '');
+        const container = pre.closest('.code-container') || pre.parentElement;
+        if (container && !container.querySelector('.code-lang')) {
+          const span = document.createElement('span');
+          span.className = 'code-lang';
+          span.textContent = lang;
+          container.prepend(span);
+        }
+      }
+    });
+
+    document.querySelectorAll('main h2[id], main h3[id], main h4[id]').forEach(heading => {
+      const anchor = document.createElement('a');
+      anchor.href = `#${heading.id}`;
+      anchor.className = 'heading-anchor';
+      anchor.setAttribute('aria-label', 'Permalink');
+      anchor.addEventListener('click', (e) => {
+        e.preventDefault();
+        navigator.clipboard.writeText(window.location.href.split('#')[0] + `#${heading.id}`);
+        anchor.classList.add('copied');
+        setTimeout(() => anchor.classList.remove('copied'), 2000);
+        history.replaceState(null, '', `#${heading.id}`);
+      });
+      heading.prepend(anchor);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+      if (e.key === 't' || e.key === 'T') {
+        document.getElementById('theme-toggle')?.click();
+      }
+    });
+
+    (function () {
+      const citeEl = document.getElementById('citation-text');
+      const copyBtn = document.getElementById('copy-citation');
+      if (!citeEl) return;
+
+      const title = document.querySelector('meta[property="og:title"]')?.content || document.title.replace(/\s*[—|]\s*ZFRQBL.*$/, '');
+      const url = document.querySelector('link[rel="canonical"]')?.href || location.href;
+      const author = document.querySelector('meta[name="author"]')?.content || 'Zafar';
+      const timeEl = document.querySelector('time[datetime]');
+      const year = timeEl ? new Date(timeEl.getAttribute('datetime')).getFullYear() : new Date().getFullYear();
+      const slug = (location.pathname.replace(/\/$/, '').split('/').pop() || 'essay').replace(/[^a-z0-9]+/gi, '_');
+
+      citeEl.textContent = `@misc{zfrqbl_${slug}_${year},\n  author = {${author}},\n  title  = {${title}},\n  year   = {${year}},\n  url    = {${url}}\n}`;
+
+      copyBtn?.addEventListener('click', () => {
+        navigator.clipboard.writeText(citeEl.textContent).then(() => {
+          copyBtn.textContent = 'Copied!';
+          setTimeout(() => copyBtn.textContent = 'Copy citation', 2000);
+        });
+      });
+    })();
+  </script>
+
+  <script defer src="/vendor/prism.min.js"></script>
+  <script defer src="/vendor/prism-python.min.js"></script>
+  <script defer src="/vendor/prism-javascript.min.js"></script>
+  <script defer src="/vendor/prism-bash.min.js"></script>
+  <script defer src="/vendor/prism-sql.min.js"></script>
+  <script defer src="/vendor/prism-markdown.min.js"></script>
+</body>
+</html>

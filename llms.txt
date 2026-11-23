@@ -4,14 +4,15 @@
 
 Author: Zafar Iqbal (LinkedIn: https://www.linkedin.com/in/zfrqbl/ · GitHub: https://github.com/zfrqbl)
 
-Generated 2026-11-21. Every page is server-rendered static HTML with full text in the initial response; individual URLs are stable and extensionless. Use the page URL and its `dateModified` in JSON-LD when citing.
+Generated 2026-11-23. Every page is server-rendered static HTML with full text in the initial response; individual URLs are stable and extensionless. Use the page URL and its `dateModified` in JSON-LD when citing.
 
 ## About
 - [About](https://zfrqbl.com/about): who writes this, what it covers, and how to get in touch.
 - [Archive](https://zfrqbl.com/archive): every note and essay, newest first.
 - [RSS feed](https://zfrqbl.com/rss.xml) · [Sitemap](https://zfrqbl.com/sitemap.xml)
 
-## Essays (15)
+## Essays (16)
+- [billion-context Failed Quietly: What a Five-Day Trial Taught Me](https://zfrqbl.com/essays/billion-context-failed-quietly) — 2026-11-23: Five days testing an AI context-compression proxy: dropped long streams, a silent bypass, and a fail-open gap. What I measured and why I uninstalled it.
 - [The Nvidia CEO Scandal: A Timeline](https://zfrqbl.com/essays/the-nvidia-ceo-scandal-a-timeline) — 2026-11-21: A dated timeline of Jensen Huang's resignation: the affair reports, the espionage allegations, and the governance that made it inevitable.
 - [How Goal Engineering Changes the Way Agents Are Built](https://zfrqbl.com/essays/how-goal-engineering-changes-the-way-agents-are-built) — 2026-11-19: Why LangChain says goals will outlast prompts and context: feedback becomes the main design constraint and agents write their own definition of done.
 - [Context Engineering with Deep Agents](https://zfrqbl.com/essays/context-engineering-with-deep-agents) — 2026-11-13: Memory is eight distinct problems and a vector database solves one. Context engineering, not more storage, is where agent memory actually gets built.
