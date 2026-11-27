@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UNSLOP — Write Like a Person | ZFRQBL</title>
+  <meta name="description" content="UNSLOP: 22 writing rules for text that does not sound machine-made. One plain-text file, each rule with a say-this-not-that example, installable in any coding agent." />
+  <link rel="canonical" href="https://zfrqbl.com/unslop" />
+  <meta name="author" content="Zafar Iqbal" />
+  <link rel="alternate" type="application/rss+xml" title="ZFRQBL" href="https://zfrqbl.com/rss.xml" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="UNSLOP — Write Like a Person | ZFRQBL" />
+  <meta property="og:description" content="22 writing rules for text that does not sound machine-made. Installable in any coding agent." />
+  <meta property="og:url" content="https://zfrqbl.com/unslop" />
+  <meta property="og:image" content="https://zfrqbl.com/public/og/unslop.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/vendor/pico.2.1.1.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="container">
+    <nav>
+      <ul>
+        <li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li>
+      </ul>
+      <ul>
+        <li><a href="/about">About</a></li>
+        <li><a href="/archive">Archive</a></li>
+        <li>
+          <button id="theme-toggle" class="outline secondary theme-toggle-btn" aria-label="Toggle theme 🌙 / ☀️">
+            🌙 / ☀️
+          </button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article class="note-content">
+      <header class="note-header">
+        <div class="meta-line">
+          <small class="secondary note-kicker">Project</small>
+        </div>
+        <h1>UNSLOP — Write like a person</h1>
+        <p class="secondary">Twenty-two rules for text that does not sound machine-made. One plain-text file. An agent can load it at session start. A person can read it in two minutes.</p>
+      </header>
+
+      <section>
+        <p>Most AI-generated writing fails the same way: it is grammatically perfect and rhythmically dead. It pads claims with adjectives, hedges with filler, inflates importance, and signs off like a press release. UNSLOP is a checklist for the opposite. Every rule has a <em>say this, not that</em> example, so it works as a gate before anything ships.</p>
+      </section>
+
+      <section>
+        <h2>Before and after</h2>
+
+        <h3>1. Hype words</h3>
+        <p><strong>Before:</strong> "This API elegantly leverages robust infrastructure to unlock transformative outcomes."</p>
+        <p><strong>After:</strong> "This API does the job."</p>
+
+        <h3>2. Machine rhythm</h3>
+        <p><strong>Before:</strong> "The rollout was completed approximately three weeks behind schedule due to recurring failures in the staging environment, which necessitated multiple revisions of the migration process."</p>
+        <p><strong>After:</strong> "We shipped on Friday. The rollout ran three weeks late because staging kept failing, and we rewrote the migration twice."</p>
+
+        <h3>3. Vague attribution</h3>
+        <p><strong>Before:</strong> "Studies show that AI agents will transform every industry."</p>
+        <p><strong>After:</strong> "A 2023 NHTSA study of 400 drivers found..."</p>
+      </section>
+
+      <section>
+        <h2>The rules</h2>
+        <ol>
+          <li>Write like you talk. If a sentence sounds stiff when read aloud, rewrite it.</li>
+          <li>Say what you mean. Plain claims beat adjectives. "Faster" not "blazing-fast".</li>
+          <li>No hype words: leverage, harness, delve, robust, seamless, game-changing, unlock, elevate, transformative.</li>
+          <li>No em dashes. Use commas or periods.</li>
+          <li>No AI filler openers: "In today's fast-paced world", "It is important to note", "Let's dive into".</li>
+          <li>No formulaic closers: "This one is worth your time", "Thank me later", "In conclusion".</li>
+          <li>Short sentences. One idea per sentence.</li>
+          <li>Active voice. "We built X", not "X was built by us".</li>
+          <li>Numbers over adjectives. "85% faster" not "much faster".</li>
+          <li>If the same word is the right word, use it again. Do not cycle synonyms.</li>
+          <li>No rule-of-three by default. Use two points or four when the content calls for it.</li>
+          <li>Delete filler words: very, really, actually, just, basically, essentially.</li>
+          <li>No chatbot artifacts: "As of my last update", "I hope this helps", "Great question!".</li>
+          <li>State confidence plainly. "I checked" not "I believe it is safe to say".</li>
+          <li>Read it out loud. If you would not say it, cut it.</li>
+          <li>Vary sentence length. Same-length sentences read machine-made.</li>
+          <li>Say what something IS, not what it isn't. Kill "Not just X, but Y" and "No X. No Y. Just Z."</li>
+          <li>Do not inflate importance. Facts do not need a significance bow. Watch: stands as, testament, pivotal, reflects broader.</li>
+          <li>Cut the dangling "-ing" analysis tail. Watch: underscoring, highlighting, fostering.</li>
+          <li>Name the source or delete the claim. Never "studies show" or "experts believe".</li>
+          <li>Kill metaphors you have seen in print. Watch: landscape, realm, tapestry, backbone, navigate.</li>
+          <li>Prefer verbs over noun-ified actions. "We decided" not "we made the decision".</li>
+        </ol>
+      </section>
+
+      <section>
+        <h2>Install</h2>
+        <p>Clone the repo, then one line per agent:</p>
+        <pre><code>git clone https://github.com/zfrqbl/unslop
+
+# Claude Code
+curl -fsSL https://raw.githubusercontent.com/zfrqbl/unslop/main/UNSLOP.md -o UNSLOP.md
+mkdir -p .claude/skills/unslop &amp;&amp; cp UNSLOP.md .claude/skills/unslop/rules.txt
+
+# Cursor
+curl -fsSL https://raw.githubusercontent.com/zfrqbl/unslop/main/UNSLOP.md -o .cursor/rules/unslop.mdc
+
+# Codex
+curl -fsSL https://raw.githubusercontent.com/zfrqbl/unslop/main/UNSLOP.md -o AGENTS.md
+
+# Hermes
+mkdir -p ~/.hermes/skills/unslop &amp;&amp; cp UNSLOP.md ~/.hermes/skills/unslop/rules.txt</code></pre>
+        <p>ChatGPT users: paste <code>chatgpt-custom-instructions.md</code> into Custom Instructions. The full file, with every say-this-not-that example, lives at <a href="https://github.com/zfrqbl/unslop">github.com/zfrqbl/unslop</a>.</p>
+      </section>
+    </article>
+  </main>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const root = document.documentElement;
+      const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+    });
+  </script>
+</body>
+</html>
