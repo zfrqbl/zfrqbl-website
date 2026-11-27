@@ -5,10 +5,17 @@
     <link>https://zfrqbl.com/</link>
     <description>Daily notes on agent systems, model evaluation and software architecture, from an independent software engineer.</description>
     <language>en</language>
-    <lastBuildDate>Mon, 23 Nov 2026 00:00:00 +0500</lastBuildDate>
+    <lastBuildDate>Fri, 27 Nov 2026 00:00:00 +0500</lastBuildDate>
     <atom:link href="https://zfrqbl.com/rss.xml" rel="self" type="application/rss+xml" />
     <generator>zfrqbl_publish.py</generator>
-    <item>
+        <item>
+      <title>A Prompt Is Not a Policy</title>
+      <link>https://zfrqbl.com/essays/a-prompt-is-not-a-policy</link>
+      <guid isPermaLink="true">https://zfrqbl.com/essays/a-prompt-is-not-a-policy</guid>
+      <pubDate>Fri, 27 Nov 2026 00:00:00 +0500</pubDate>
+      <description>Agents hit 66.3% on OSWorld and still fail one in three attempts; the bottleneck is no longer the model but the identities, permissions, and policies around it.</description>
+    </item>
+<item>
       <title>billion-context Failed Quietly: What a Five-Day Trial Taught Me</title>
       <link>https://zfrqbl.com/essays/billion-context-failed-quietly</link>
       <guid isPermaLink="true">https://zfrqbl.com/essays/billion-context-failed-quietly</guid>

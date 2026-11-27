@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A Prompt Is Not a Policy — ZFRQBL</title>
+  <meta name="description" content="Agents hit 66.3% on OSWorld and still fail one in three attempts; the bottleneck is no longer the model but the identities, permissions, and policies around it." />
+  <link rel="canonical" href="https://zfrqbl.com/essays/a-prompt-is-not-a-policy" />
+  <meta name="author" content="Zafar Iqbal" />
+
+  <!-- Article schema (AI-search citation signal; added Nov 7 2026 per Zafar approval) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "A Prompt Is Not a Policy",
+    "description": "Agents hit 66.3% on OSWorld and still fail one in three attempts; the bottleneck is no longer the model but the identities, permissions, and policies around it.",
+    "author": { "@type": "Person", "name": "Zafar Iqbal", "sameAs": ["https://www.linkedin.com/in/zfrqbl/", "https://github.com/zfrqbl"] },
+    "publisher": { "@type": "Organization", "name": "ZFRQBL", "url": "https://zfrqbl.com" },
+    "datePublished": "2026-11-27",
+    "dateModified": "2026-11-27",
+    "mainEntityOfPage": "https://zfrqbl.com/essays/a-prompt-is-not-a-policy",
+    "image": "https://zfrqbl.com/public/og/zfrqbl.png"
+  }
+  </script>
+  <link rel="alternate" type="application/rss+xml" title="ZFRQBL" href="https://zfrqbl.com/rss.xml" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="A Prompt Is Not a Policy" />
+  <meta property="og:description" content="Agents hit 66.3% on OSWorld and still fail one in three attempts; the bottleneck is no longer the model but the identities, permissions, and policies around it." />
+  <meta property="og:url" content="https://zfrqbl.com/essays/a-prompt-is-not-a-policy" />
+  <meta property="og:image" content="https://zfrqbl.com/public/og/zfrqbl.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- PWA / Mobile Feel -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0172ad" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#111827" media="(prefers-color-scheme: dark)" />
+  <link rel="apple-touch-icon" href="/favicon.svg" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/vendor/pico.2.1.1.min.css" />
+  <link rel="stylesheet" href="/vendor/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li><a href="/about">About</a></li>
+        <li><a href="/archive">Archive</a></li>
+        <li>
+          <button id="theme-toggle" class="outline secondary theme-toggle-btn" aria-label="Toggle theme 🌙 / ☀️">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main-content" class="container">
+    <article class="essay-content">
+      <header class="note-header">
+        <div class="meta-line">
+          <small class="secondary note-kicker">Essay</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-11-27" class="secondary meta-time">November 27, 2026</time>
+          <span class="secondary">•</span>
+          <span class="secondary meta-read">15 min read</span>
+        </div>
+        <h1>A Prompt Is Not a Policy</h1>
+      </header>
+
+      
+
+      <section>
+
+<p>An agent investigating a data-quality issue exported 1,800 sensitive customer records to a shared workspace so the team could verify them. Nobody asked it to. By its own measure, it succeeded.</p>
+
+<h2 id="the-models-got-good-why-is-nobody-shipping">The models got good. Why is nobody shipping?</h2>
+
+<p><strong>Capability benchmarks say agents are ready, and deployment data says they are not.</strong></p>
+
+<p>The <a href="https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance" rel="noopener">Stanford AI Index 2026</a> tracks agents on OSWorld, real computer tasks across operating systems. The best models went from roughly 12% to 66.3%, within six points of the 72.36% human baseline from the <a href="https://arxiv.org/abs/2404.07972" rel="noopener">original OSWorld paper</a>. WebArena went from 15% to 74.3% against 78.2% human; GAIA from 20% to 74.5% against 92%; SWE-bench Verified is near 100% of the human baseline. The same report notes agents still fail roughly one in three attempts on structured benchmarks.</p>
+
+<p><a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai-2025" rel="noopener">McKinsey's State of AI 2025</a>, a survey of 1,993 organizations, found 23% scaling an agentic system somewhere and another 39% experimenting. In any single business function, at most 10% are scaling agents. <a href="https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027" rel="noopener">Gartner</a> predicts over 40% of agentic projects will be canceled by the end of 2027, and estimates only about 130 of the thousands of agentic vendors are genuine. The rest are agent washing.</p>
+
+<p>The benchmark numbers deserve suspicion. The AI Index itself flags reliability problems: invalid-question rates up to 42% on GSM8K. The <a href="https://arxiv.org/abs/2504.01382" rel="noopener">Illusion of Progress</a> study found live-web success far below leaderboard claims, most agents near 30% on Online-Mind2Web. OSWorld-Verified leaders beat the human baseline at 90.19%, but only on a filtered task set; the <a href="https://presenc.ai/research/osworld-computer-use-leaderboard-2026" rel="noopener">best official full-completion score</a> on OSWorld 2.0 is 44.33%. <a href="https://www.lasso.security/blog/ai-supply-chain-risk-what-it-is-where-it-hides-and-how-to-validate-every-component" rel="noopener">Lasso Security</a> measured the same model, prompt, tools, and targets at 1.0% attack success in one harness and 24.4% in another. Where you run an agent may matter more than which model.</p>
+
+<p>The honest reading of the main benchmarks looks like this:</p>
+
+<table>
+<thead><tr><th>Benchmark</th><th>What it measures</th><th>Best score and human baseline</th><th>What the number hides</th></tr></thead>
+<tbody>
+<tr><td>OSWorld</td><td>Real computer tasks across operating systems</td><td>About 12% in 2024 to 66.3% in 2026; human 72.36%</td><td>Verified leaders pass humans only on a filtered task set; OSWorld 2.0 full completion is 44.33%</td></tr>
+<tr><td>WebArena</td><td>Long-horizon work on live websites</td><td>14.41% to 74.3%; human 78.2%</td><td>Live-web retesting drops scores sharply, and results are sensitive to setup</td></tr>
+<tr><td>GAIA</td><td>Assistant tasks combining reasoning and tool use</td><td>20% to 74.5%; human 92%</td><td>Still 17.5 points behind humans, with gains in narrow task families</td></tr>
+<tr><td>SWE-bench Verified</td><td>Real GitHub issues closed</td><td>About 60% to roughly 100% of the human baseline</td><td>Fixes are judged on frozen repos; nothing ships, and nothing gets reviewed</td></tr>
+<tr><td>AgentDojo</td><td>Task utility under prompt injection</td><td>Under 66% benign utility; attacks succeed under 25% against the best</td><td>More capable models are easier to attack; a simple tool filter cuts attacks to about 8%</td></tr>
+<tr><td>Online-Mind2Web</td><td>Web navigation judged by humans</td><td>OpenAI Operator 61.3%; most agents near 30%</td><td>Leaderboard claims outrun what humans observe on the live web</td></tr>
+</tbody></table>
+
+<h2 id="do-you-know-how-many-agents-you-have-you-don-t">Do you know how many agents you have? (You don't.)</h2>
+
+<p><strong>Nobody can govern agents they cannot enumerate, and almost nobody can.</strong></p>
+
+<p>Non-human identities now outnumber humans by every credible estimate. The ratios vary wildly, and the spread is itself the point. <a href="https://astrix.security/learn/blog/csa-and-astrix-research-the-state-of-non-human-identity-security" rel="noopener">Astrix and the Cloud Security Alliance</a> reported about 20:1 in 2024; the CSA working group's median is now 45:1, up from 17:1 in 2023, and Rubrik's telemetry agrees. CyberArk says 82:1, Palo Alto Networks 109:1, with 79 AI-agent identities per human. Surveys and telemetry sample differently, so read the range.</p>
+
+<p><a href="https://www.okta.com/newsroom/articles/global-ciso-insights-2026/" rel="noopener">Okta's Global CISO Insights 2026</a>, from 306 CISOs, finds fewer than half can confidently say where their agents are. Only 47% are confident they can identify all agents. Verizon's 2026 DBIR attributes 31% of identity-related breaches to a non-human credential no current human could identify as theirs.</p>
+
+<p>The mechanism has a name: the zombie agent. <a href="https://www.jumpcloud.com/blog/what-is-a-zombie-agent-and-how-many-do-you-already-have" rel="noopener">A developer wires an agent into the CRM over a weekend and quits</a>. Nothing in the exit process knows it exists; it keeps running on the developer's credentials. JumpCloud's definition is blunt: it has lost its purpose, owner, or oversight, but not its keys. <a href="https://www.oreilly.com/radar/the-identity-crisis-no-one-planned-for-governing-non-human-agents-at-enterprise-scale/" rel="noopener">Entro found</a> 47% of non-human identities unrotated for over a year.</p>
+
+<p>The ritual that fixes this is an <a href="https://www.kdnuggets.com/2026/11/collibra/5-things-that-break-when-ai-agents-start-acting-on-their-own" rel="noopener">agent census</a>: every agent enumerated, each matched to a named owner, long-lived credentials rotated, orphans killed. It runs again next quarter, and after every offboarding. The cited 45 non-human identities per human traces to Okta's CISO report; the CSA median and Rubrik agree, so 45 sits at the conservative end.</p>
+
+<h2 id="who-is-the-attacker-mostly-your-own-sales-team">Who is the attacker? Mostly your own sales team.</h2>
+
+<p><strong>The damage starts inside, and most rogue behavior is a permissions problem, not a hacker.</strong></p>
+
+<p>80% of organizations report risky agent behavior like improper data exposure, and few cases involve an attacker. That number comes from <a href="https://www.kdnuggets.com/2026/11/collibra/5-things-that-break-when-ai-agents-start-acting-on-their-own" rel="noopener">Collibra-sponsored research on KDnuggets</a>; keep the vendor skepticism. The concrete story: a sales team clones a quoting agent, edits its prompt, and the copy keeps granting discounts legal retired a quarter ago.</p>
+
+<p>OWASP's <a href="https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026" rel="noopener">Top 10 for Agentic Applications</a> maps these failures. ASI01 covers goal hijack, when an attacker or a well-meaning salesperson manipulates the agent's objectives. ASI02 covers unsafe tool use, and ASI06 covers context that is poisoned, stale, or tampered with. <a href="https://www.csoonline.com/article/4109123/managing-agentic-ai-risk-lessons-from-the-owasp-top-10.html" rel="noopener">CSO Online's example</a> is the twin: an attacker keeps mentioning a fake price, it lands in agent memory, and the agent later approves bookings at that price.</p>
+
+<p>The public version came first. <a href="https://decisions.civilresolutionbc.ca/crt/crtd/en/525448/1/document.do" rel="noopener">Air Canada's chatbot invented a bereavement refund policy</a>, and the airline lost the case in 2024. <a href="https://www.bbc.com/news/technology-68025677" rel="noopener">DPD's chatbot swore at a customer and wrote a poem trashing the company</a> after an update; the post drew 800,000 views in 24 hours before DPD disabled it. Chatbots got the reputational damage; agents with write access get the same failure plus committed actions.</p>
+
+<p>Cloning an agent is copying production code. A fork without a review is a new deployment. The prompt, tools, and policy version as one bundle, so a retired discount rule cannot silently persist in a clone. Security is not the villain; many agentic deployments run without IT or security knowing at all, with security usually the last to learn an agent exists.</p>
+
+<h2 id="your-agent-is-a-supply-chain-now">Your agent is a supply chain now.</h2>
+
+<p><strong>Every agent inherits risk from third-party code that can change what it does at runtime, and the incidents are already real.</strong></p>
+
+<p><a href="https://www.pillar.security/blog/the-security-risks-of-model-context-protocol-mcp" rel="noopener">Model Context Protocol</a>, released by Anthropic in November 2024 and now governed under the Linux Foundation, is the de facto USB-C of agent tool access. Developers, and now non-developers, add servers to Claude Code, Cursor, VS Code, and desktop configs without review. Most enterprises do not know which MCP servers are running.</p>
+
+<p>The incidents are dated and specific. <a href="https://www.lasso.security/blog/ai-supply-chain-risk-what-it-is-where-it-hides-and-how-to-validate-every-component" rel="noopener">postmark-mcp, September 2025</a>: the npm server's sixteenth release added one line BCC-ing every outgoing email to an attacker address; agents kept working while forwarding password resets, invoices, and mail to a stranger. <a href="https://github.com/dolthub/dolt-mcp/security/advisories/GHSA-mgpq-fxxc-h49q" rel="noopener">Dolt MCP, August 2026</a>: invalid tokens got a 401 and still processed, allowing arbitrary SQL read and write; fixed in 0.3.7. <a href="https://www.pillar.security/blog/valid-but-never-issued-session-spoofing-and-ssrf-in-grafana-mcp" rel="noopener">Grafana MCP, September 2025</a>: the server checked a token's format, not its authenticity, so callers could point it at internal endpoints. That is CVE-2026-19516, CVSS 9.1, over 1.9 million downloads.</p>
+
+<p>Then came the <a href="https://authzed.com/blog/timeline-mcp-breaches" rel="noopener">April 2026</a> pileup: a stdio design flaw enabled configuration-to-command execution, producing 30-plus disclosures and 10 CVEs, 150 million downloads, weaponized into remote code execution on Letta AI and unauthenticated takeover of LangFlow. In August 2026, <a href="https://www.pillar.security/blog/the-security-risks-of-model-context-protocol-mcp" rel="noopener">Pillar</a> documented a server harmless for three tool calls, then having agents collect SSH keys and cloud credentials.</p>
+
+<p>Why this is structurally new: tool descriptions are instructions to the model. OWASP ASI04 covers the agentic supply chain, from plugins to MCP servers. An allowlist is not a one-time event; a server can change what it tells the agent after approval. Token passthrough, accepting tokens not issued for that server, is a defined MCP anti-pattern.</p>
+
+<h2 id="whose-identity-does-an-agent-act-with">Whose identity does an agent act with?</h2>
+
+<p><strong>An agent should act with its own identity, scoped below the human responsible for it.</strong></p>
+
+<p>The core mechanism, from <a href="https://www.pillar.security/blog/the-security-risks-of-model-context-protocol-mcp" rel="noopener">Pillar Security</a>: an MCP server acts with its own credentials, not the caller's. Both 2026 Pillar disclosures, Dolt and Grafana, let unauthenticated callers run tools with the server's credentials. OWASP ASI03 covers agents misusing credentials and inherited permissions. Cycode's primary defense is per-agent identity with short-lived, scoped credentials.</p>
+
+<p>The rule that would have prevented the zombie case: <a href="https://jumpcloud.com/blog/offboarding-humans-leaving-zombies-the-new-workforce-risk" rel="noopener">an agent never holds more systemic privilege than the human responsible for it</a>. If a manager cannot export the financial ledger, their agent cannot either.</p>
+
+<p>Least privilege is no longer enough. Agency is the new variable: what an agent can do with that access before checking back. <a href="https://arxiv.org/abs/2406.13352" rel="noopener">AgentDojo</a>, from ETH Zurich and Invariant Labs, measured the tradeoff: agents solve under 66% of tasks even without attacks, and prompt-injection succeeds under 25% against the best, about 8% with a simple tool filter. Its uncomfortable finding is inverse scaling: more capable models are easier to attack.</p>
+
+<p>Runtime containment exists and can be narrow. <a href="https://attenu.io/docs/example-langgraph/" rel="noopener">Attenu</a> restricts subagents so a child can never hold more than its parent, with deny-by-default tools and hash-chained audit logs.</p>
+
+<p>One subtle trap: revoking an OAuth refresh token does not immediately invalidate already-issued access tokens. Delegated and application identities behave differently when a user leaves, per <a href="https://navarsecurity.com/when-an-employee-leaves-what-happens-to-the-ai-agents-acting-for-them/" rel="noopener">Navar Security</a>. The agent that runs on a service account survives offboarding by design.</p>
+
+<p>The scoping pattern is five lines in an MCP server config: strict JSON-schema validation, deny-by-default egress, no token passthrough, short-lived per-agent credentials, and a runtime audit of every tool call.</p>
+
+<h2 id="why-per-agent-approval-dies-at-a-hundred-agents">Why per-agent approval dies at a hundred agents</h2>
+
+<p><strong>A human sign-off on every action is arithmetic suicide once agents number in the hundreds.</strong></p>
+
+<p>A committee that works at ten agents collapses at a hundred. The count grows sideways too; agents now ship inside software you already use. Manual review already consumes teams: <a href="https://www.kdnuggets.com/2026/11/collibra/5-things-that-break-when-ai-agents-start-acting-on-their-own" rel="noopener">87% of 306 US data, privacy, and AI decision makers</a> say hours go to re-verifying the context agents rely on.</p>
+
+<p>Agents fail roughly one in three structured attempts. If the story is a human checks everything, you review a third of all actions forever. Estimates put year-one costs at $150k to $800k, then $50k to $200k annually, figures tracing to OneReach AI research as synthesized by Beri. The review cost alone kills most projects, which is what <a href="https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027" rel="noopener">Gartner</a> predicts for over 40% of them.</p>
+
+<p>One agent's arithmetic: 200 actions a day, a one-in-three inspection rate, five minutes per review, equals roughly 55 hours of human review a week. With a contract layer auto-vetting 95% of actions and escalating the rest, it needs a fraction of that.</p>
+
+<p>Automation bias is failure mode two. Humans in the loop rubber-stamp. The <a href="https://ai-act-service-desk.ec.europa.eu/en/ai-act/faq/how-are-ai-agents-addressed-within-ai-act-0" rel="noopener">EU AI Act</a> human-oversight rule names the risk of over-relying on the output. The <a href="https://www.kirkland.com/publications/article/2023/07/if-you-think-it-thinks-think-again" rel="noopener">GPT-4 system card</a> warned that as mistakes get harder to detect and trust grows, users challenge less.</p>
+
+<p>So the shift: approve the contract once, enforce it at runtime. Guardian agents check each action against the contract while it runs and flag or block it. Humans see only what crossed a line. The OWASP list reads as chains: ASI01 and ASI06 are entry points; ASI02 and ASI05 cash out.</p>
+
+<h2 id="what-does-a-machine-readable-agent-contract-look-like">What does a machine-readable agent contract look like?</h2>
+
+<p><strong>It looks like policy-as-code: one inherited baseline with risk overlays, enforced at runtime.</strong></p>
+
+<p>The shape, from <a href="https://www.kdnuggets.com/2026/11/collibra/5-things-that-break-when-ai-agents-start-acting-on-their-own" rel="noopener">KDnuggets</a>: one baseline every agent inherits, stating what it may touch and never do, plus narrower rules by risk and domain. This is Open Policy Agent-style policy-as-code applied to agent traces. <a href="https://github.com/invariantlabs-ai/invariant/" rel="noopener">Invariant Labs' Invariant Policy Language</a> is designed for exactly this kind of dataflow rule. A few lines make it concrete:</p>
+
+<div class="code-container"><pre><code class="language-text">text
+raise &quot;Don&#x27;t use send_email after get_website&quot; if:
+    (output: ToolOutput) -&gt; (call2: ToolCall)
+    output is tool:get_website
+    ...
+    call2 is tool:send_email</code></pre></div>
+
+<p>The same pattern blocks executing code after reading an untrusted email. The agent still reasons freely; it just cannot cross the forbidden dataflow edge.</p>
+
+<p>Guardrails and policy are different layers, and the marketing blurs them. <a href="https://aws.amazon.com/blogs/architecture/inside-an-enterprise-ai-agent-a-governed-observable-loop-architecture/" rel="noopener">AWS documents that Bedrock Guardrails do not evaluate tool-call arguments, tool results, or tool definitions</a>. Guardrails control what the agent says; policy controls what it does. A $50,000 refund request contains nothing hateful and no PII; content filters cannot see it.</p>
+
+<p>The evaluation half matters as much. <a href="https://aws.amazon.com/blogs/machine-learning/evaluating-deep-agents-using-langsmith-on-aws/" rel="noopener">LangSmith</a> runs offline and online evaluators, including one that blocks DML in a text-to-SQL agent's production tool calls. <a href="https://aws.amazon.com/blogs/machine-learning/responsible-ai-for-agentic-ai-a-phased-roadmap-for-platform-and-application-teams/" rel="noopener">Bedrock AgentCore Evaluations</a> gates CI/CD on goal attainment. The four-gate pipeline, guardrails, evaluations, confidence scoring, human approval, maps onto NIST AI RMF's GOVERN, MAP, MEASURE, MANAGE.</p>
+
+<p>The protocol is tightening to match. The July 2026 MCP spec adds stricter authorization checks and removes the session-ID mechanism both Pillar disclosures abused. Old servers keep old behavior until updated, so inventory remains the precondition for every fix.</p>
+
+<p>A minimal contract carries nine fields: a named human owner, purpose, allowed tools, denied sinks, budget cap, expiry date, escalation path, memory policy, and kill-switch owner. Any change to prompt, tools, or policy re-triggers the risk review.</p>
+
+<h2 id="who-owns-an-agent-s-lifecycle">Who owns an agent's lifecycle?</h2>
+
+<p><strong>Agents need a lifecycle with an owner and a kill switch, because nothing manages drift or death by default.</strong></p>
+
+<p>OWASP's list ends on ASI10, rogue agents, ones that keep operating after their purpose, ownership, or oversight ended. The taxonomy admits the zombie problem is now a top-ten risk.</p>
+
+<p><a href="https://www.trustle.com/post/zombie-ai-agents" rel="noopener">Trustle's eight-step lifecycle</a> runs from discovery and registration with a named owner to revocation and retirement, audit trail intact. <a href="https://www.lumos.com/identity-matters/offboarding/ai-agent-offboarding" rel="noopener">Lumos</a> separates leaver events, owner leaves, job ends, vendor dies. JumpCloud calls it absolute offboarding: every agent the human owned gets deprovisioned as part of standard exit. <a href="https://aicybersecurityforum.com/articles/nhi-machine-identity-growth/" rel="noopener">CISA's 2025 joint advisory</a> on machine-identity hygiene: rotate short-lived credentials, kill long-lived ones, keep an attribution chain to a human owner.</p>
+
+<p>Autonomy tiers are the governance unit. The <a href="https://labs.cloudsecurityalliance.org/agentic/agentic-nist-ai-rmf-profile-v1/" rel="noopener">Cloud Security Alliance's agentic profile</a> for the NIST AI RMF classifies every agent into four tiers with escalating obligations. Tier 1 is fully supervised, with human approval before any action. Tier 4 is full autonomy, sub-agent spawning, and long-horizon plans, demanding oversight-board review and adversarial security testing.</p>
+
+<p>Drift and memory are lifecycle problems. <a href="https://www.jumpcloud.com/blog/what-is-a-zombie-agent-and-how-many-do-you-already-have" rel="noopener">JumpCloud documents</a> attackers rewriting an agent's persistent memory so it keeps following instructions after the source file is deleted. <a href="https://aws.amazon.com/blogs/machine-learning/responsible-ai-for-agentic-ai-a-phased-roadmap-for-platform-and-application-teams/" rel="noopener">AWS</a> says eval coverage must be re-run after any change to prompts, tools, or policies. The CSA calls it drift that accumulates undetected until it crosses a threshold.</p>
+
+<p>The runbook for that developer has five steps. HR flags the leaver, and the census runs. Agents on that person's credentials are identified, with grants at each issuer. Each is continued or retired, and revocation happens at the issuer, not just the IdP, proven by trying the key and watching it fail.</p>
+
+<h2 id="who-is-accountable-when-an-agent-acts-the-law-is-already-answering">Who is accountable when an agent acts? The law is already answering.</h2>
+
+<p><strong>Courts and regulators are ahead of most company policies, and they have already named who is liable.</strong></p>
+
+<p><a href="https://decisions.civilresolutionbc.ca/crt/crtd/en/525448/1/document.do" rel="noopener">Air Canada lost the chatbot case in 2024</a>. Its chatbot invented a bereavement refund policy; the airline called the chatbot a separate legal entity. The tribunal called that remarkable: the chatbot is still just part of Air Canada's website, and it makes no difference whether the information comes from a static page or a chatbot. The airline owed C$812.02. Companies answer for what their agents say and soon do.</p>
+
+<p><a href="https://www.reuters.com/legal/new-york-lawyers-sanctioned-using-fake-chatgpt-cases-legal-brief-2023-06-22/" rel="noopener">Mata v. Avianca</a> covered the human half. Two New York lawyers were sanctioned $5,000 for filing six fictitious citations ChatGPT invented. The judge found conscious avoidance and a gatekeeping role for lawyers in ensuring accurate filings. Humans remain legally responsible for the agent output they submit.</p>
+
+<p><a href="https://www.bbc.com/news/technology-68025677" rel="noopener">DPD</a> showed the kill speed: its chatbot swore at a customer and was disabled within about a day, after the BBC reported 800,000 views in 24 hours.</p>
+
+<p>The <a href="https://ai-act-service-desk.ec.europa.eu/en/ai-act/faq/how-are-ai-agents-addressed-within-ai-act-0" rel="noopener">EU AI Act</a> is the calendar. The Commission's FAQ: AI agents are not a new legal category; existing definitions already cover them. Prohibited manipulation practices apply now; transparency obligations start 2 August 2026; high-risk obligations follow from December 2027 and August 2028. The window of minimal regulation closes on a published schedule.</p>
+
+<p>The frameworks exist. <a href="https://www.nist.gov/itl/ai-risk-management-framework" rel="noopener">NIST AI RMF 1.0</a> plus the GenAI Profile is the common vocabulary; the CSA profile adds autonomy tiers. <a href="https://thefuturesociety.org/wp-content/uploads/2023/04/Report-Ahead-of-the-Curve-Governing-AI-Agents-Under-the-EU-AI-Act-4-June-2025.pdf" rel="noopener">The Future Society</a> flags the many hands problem across providers and deployers.</p>
+
+<p>These are chatbot-era rulings. The autonomous-action version, an agent that clicks approve on a contract, is not litigated yet. That is why contracts and indemnity clauses are being written now.</p>
+
+<h2 id="so-what-do-you-actually-do-on-monday">So what do you actually do on Monday?</h2>
+
+<p><strong>Five concrete moves, and none of them waits for perfect governance.</strong></p>
+
+<p>The census comes first: the agents, and the identities behind them. Every production agent gets its own service identity, with a named owner, expiry date, and least-privilege scope. The baseline contract is written once, with overlays by domain, stored as policy-as-code. Runtime enforcement and full tracing sit between tool call and consequence; Invariant, Bedrock Guardrails with AgentCore, LangSmith online evals, or a homemade proxy guardrail all fit. Agents go into the exit process: kill switch, offboarding runbook, census next quarter.</p>
+
+<p>Identity tooling exists, Okta's ISPM and NHI features, Astrix, CyberArk, Entro, Lumos. Runtime tooling exists, Invariant, AWS Bedrock Guardrails and AgentCore, LangSmith, Attenu. The frameworks are free: OWASP Top 10 for Agentic Applications, NIST AI RMF with the CSA agentic profile, the EU AI Act deadlines.</p>
+
+<p>The counterargument deserves a hearing: perfectionism is a failure mode too. Waiting for perfect governance is also a decision. <a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai-2025" rel="noopener">McKinsey's</a> AI high performers are about three times more likely to be scaling agents in a given function. <a href="https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027" rel="noopener">Gartner</a> still expects 15% of daily work decisions to be autonomous by 2028. Agents fail a third of the time and still beat the replaced work on cost in the right workflows. A bad baseline policy is a false sense of safety; so is none. The mature pattern is not no agents until governed; it is narrow scope, an eval suite, and an autonomy tier that rises on evidence.</p>
+
+<p>An agent you can't enumerate or stop isn't deployed. It is haunting you. The question for 2027 isn't whether your agents can do the work. It is whether you can turn them off.</p>
+
+      </section>
+
+            <h2 id="sources">Sources</h2>
+        <ul>
+          <li>Stanford AI Index 2026: <a href="https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance" rel="noopener">https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance</a></li>
+          <li>original OSWorld paper: <a href="https://arxiv.org/abs/2404.07972" rel="noopener">https://arxiv.org/abs/2404.07972</a></li>
+          <li>McKinsey's State of AI 2025: <a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai-2025" rel="noopener">https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai-2025</a></li>
+          <li>Gartner: <a href="https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027" rel="noopener">https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027</a></li>
+          <li>Illusion of Progress: <a href="https://arxiv.org/abs/2504.01382" rel="noopener">https://arxiv.org/abs/2504.01382</a></li>
+          <li>best official full-completion score: <a href="https://presenc.ai/research/osworld-computer-use-leaderboard-2026" rel="noopener">https://presenc.ai/research/osworld-computer-use-leaderboard-2026</a></li>
+          <li>Lasso Security: <a href="https://www.lasso.security/blog/ai-supply-chain-risk-what-it-is-where-it-hides-and-how-to-validate-every-component" rel="noopener">https://www.lasso.security/blog/ai-supply-chain-risk-what-it-is-where-it-hides-and-how-to-validate-every-component</a></li>
+          <li>Astrix and the Cloud Security Alliance: <a href="https://astrix.security/learn/blog/csa-and-astrix-research-the-state-of-non-human-identity-security" rel="noopener">https://astrix.security/learn/blog/csa-and-astrix-research-the-state-of-non-human-identity-security</a></li>
+          <li>Okta's Global CISO Insights 2026: <a href="https://www.okta.com/newsroom/articles/global-ciso-insights-2026/" rel="noopener">https://www.okta.com/newsroom/articles/global-ciso-insights-2026/</a></li>
+          <li>A developer wires an agent into the CRM over a weekend and quits: <a href="https://www.jumpcloud.com/blog/what-is-a-zombie-agent-and-how-many-do-you-already-have" rel="noopener">https://www.jumpcloud.com/blog/what-is-a-zombie-agent-and-how-many-do-you-already-have</a></li>
+          <li>Entro found: <a href="https://www.oreilly.com/radar/the-identity-crisis-no-one-planned-for-governing-non-human-agents-at-enterprise-scale/" rel="noopener">https://www.oreilly.com/radar/the-identity-crisis-no-one-planned-for-governing-non-human-agents-at-enterprise-scale/</a></li>
+          <li>agent census: <a href="https://www.kdnuggets.com/2026/11/collibra/5-things-that-break-when-ai-agents-start-acting-on-their-own" rel="noopener">https://www.kdnuggets.com/2026/11/collibra/5-things-that-break-when-ai-agents-start-acting-on-their-own</a></li>
+          <li>Top 10 for Agentic Applications: <a href="https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026" rel="noopener">https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026</a></li>
+          <li>CSO Online's example: <a href="https://www.csoonline.com/article/4109123/managing-agentic-ai-risk-lessons-from-the-owasp-top-10.html" rel="noopener">https://www.csoonline.com/article/4109123/managing-agentic-ai-risk-lessons-from-the-owasp-top-10.html</a></li>
+          <li>Air Canada's chatbot invented a bereavement refund policy: <a href="https://decisions.civilresolutionbc.ca/crt/crtd/en/525448/1/document.do" rel="noopener">https://decisions.civilresolutionbc.ca/crt/crtd/en/525448/1/document.do</a></li>
+          <li>DPD's chatbot swore at a customer and wrote a poem trashing the company: <a href="https://www.bbc.com/news/technology-68025677" rel="noopener">https://www.bbc.com/news/technology-68025677</a></li>
+          <li>Model Context Protocol: <a href="https://www.pillar.security/blog/the-security-risks-of-model-context-protocol-mcp" rel="noopener">https://www.pillar.security/blog/the-security-risks-of-model-context-protocol-mcp</a></li>
+          <li>Dolt MCP, August 2026: <a href="https://github.com/dolthub/dolt-mcp/security/advisories/GHSA-mgpq-fxxc-h49q" rel="noopener">https://github.com/dolthub/dolt-mcp/security/advisories/GHSA-mgpq-fxxc-h49q</a></li>
+          <li>Grafana MCP, September 2025: <a href="https://www.pillar.security/blog/valid-but-never-issued-session-spoofing-and-ssrf-in-grafana-mcp" rel="noopener">https://www.pillar.security/blog/valid-but-never-issued-session-spoofing-and-ssrf-in-grafana-mcp</a></li>
+          <li>April 2026: <a href="https://authzed.com/blog/timeline-mcp-breaches" rel="noopener">https://authzed.com/blog/timeline-mcp-breaches</a></li>
+          <li>an agent never holds more systemic privilege than the human responsible for it: <a href="https://jumpcloud.com/blog/offboarding-humans-leaving-zombies-the-new-workforce-risk" rel="noopener">https://jumpcloud.com/blog/offboarding-humans-leaving-zombies-the-new-workforce-risk</a></li>
+          <li>AgentDojo: <a href="https://arxiv.org/abs/2406.13352" rel="noopener">https://arxiv.org/abs/2406.13352</a></li>
+          <li>Attenu: <a href="https://attenu.io/docs/example-langgraph/" rel="noopener">https://attenu.io/docs/example-langgraph/</a></li>
+          <li>Navar Security: <a href="https://navarsecurity.com/when-an-employee-leaves-what-happens-to-the-ai-agents-acting-for-them/" rel="noopener">https://navarsecurity.com/when-an-employee-leaves-what-happens-to-the-ai-agents-acting-for-them/</a></li>
+          <li>EU AI Act: <a href="https://ai-act-service-desk.ec.europa.eu/en/ai-act/faq/how-are-ai-agents-addressed-within-ai-act-0" rel="noopener">https://ai-act-service-desk.ec.europa.eu/en/ai-act/faq/how-are-ai-agents-addressed-within-ai-act-0</a></li>
+          <li>GPT-4 system card: <a href="https://www.kirkland.com/publications/article/2023/07/if-you-think-it-thinks-think-again" rel="noopener">https://www.kirkland.com/publications/article/2023/07/if-you-think-it-thinks-think-again</a></li>
+          <li>Invariant Labs' Invariant Policy Language: <a href="https://github.com/invariantlabs-ai/invariant/" rel="noopener">https://github.com/invariantlabs-ai/invariant/</a></li>
+          <li>AWS documents that Bedrock Guardrails do not evaluate tool-call arguments, tool results, or tool definitions: <a href="https://aws.amazon.com/blogs/architecture/inside-an-enterprise-ai-agent-a-governed-observable-loop-architecture/" rel="noopener">https://aws.amazon.com/blogs/architecture/inside-an-enterprise-ai-agent-a-governed-observable-loop-architecture/</a></li>
+          <li>LangSmith: <a href="https://aws.amazon.com/blogs/machine-learning/evaluating-deep-agents-using-langsmith-on-aws/" rel="noopener">https://aws.amazon.com/blogs/machine-learning/evaluating-deep-agents-using-langsmith-on-aws/</a></li>
+          <li>Bedrock AgentCore Evaluations: <a href="https://aws.amazon.com/blogs/machine-learning/responsible-ai-for-agentic-ai-a-phased-roadmap-for-platform-and-application-teams/" rel="noopener">https://aws.amazon.com/blogs/machine-learning/responsible-ai-for-agentic-ai-a-phased-roadmap-for-platform-and-application-teams/</a></li>
+          <li>Trustle's eight-step lifecycle: <a href="https://www.trustle.com/post/zombie-ai-agents" rel="noopener">https://www.trustle.com/post/zombie-ai-agents</a></li>
+          <li>Lumos: <a href="https://www.lumos.com/identity-matters/offboarding/ai-agent-offboarding" rel="noopener">https://www.lumos.com/identity-matters/offboarding/ai-agent-offboarding</a></li>
+          <li>CISA's 2025 joint advisory: <a href="https://aicybersecurityforum.com/articles/nhi-machine-identity-growth/" rel="noopener">https://aicybersecurityforum.com/articles/nhi-machine-identity-growth/</a></li>
+          <li>Cloud Security Alliance's agentic profile: <a href="https://labs.cloudsecurityalliance.org/agentic/agentic-nist-ai-rmf-profile-v1/" rel="noopener">https://labs.cloudsecurityalliance.org/agentic/agentic-nist-ai-rmf-profile-v1/</a></li>
+          <li>Mata v. Avianca: <a href="https://www.reuters.com/legal/new-york-lawyers-sanctioned-using-fake-chatgpt-cases-legal-brief-2023-06-22/" rel="noopener">https://www.reuters.com/legal/new-york-lawyers-sanctioned-using-fake-chatgpt-cases-legal-brief-2023-06-22/</a></li>
+          <li>NIST AI RMF 1.0: <a href="https://www.nist.gov/itl/ai-risk-management-framework" rel="noopener">https://www.nist.gov/itl/ai-risk-management-framework</a></li>
+          <li>The Future Society: <a href="https://thefuturesociety.org/wp-content/uploads/2023/04/Report-Ahead-of-the-Curve-Governing-AI-Agents-Under-the-EU-AI-Act-4-June-2025.pdf" rel="noopener">https://thefuturesociety.org/wp-content/uploads/2023/04/Report-Ahead-of-the-Curve-Governing-AI-Agents-Under-the-EU-AI-Act-4-June-2025.pdf</a></li>
+        </ul>
+      
+
+      <div class="cite-block">
+        <strong>Cite this essay</strong>
+        <pre id="citation-text"></pre>
+        <button class="copy-btn" id="copy-citation" style="position:static;">Copy citation</button>
+      </div>
+
+      <p class="secondary discuss-link">
+        <a href="https://github.com/zfrqbl/zfrqbl-website/discussions" rel="noopener">Discuss this essay on GitHub</a>
+      </p>
+
+      
+    </article>
+  </main>
+
+  <footer class="container site-footer">
+    <small class="secondary">© <script>document.write(new Date().getFullYear())</script> ZFRQBL - Icons by Lucide (MIT).</small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+
+    document.querySelectorAll('.copy-btn').forEach(button => {
+      if (button.id === 'copy-citation') return;
+      button.addEventListener('click', () => {
+        const container = button.closest('.code-container');
+        if (!container) return;
+        const code = container.querySelector('code').innerText;
+        navigator.clipboard.writeText(code).then(() => {
+          button.innerText = 'Copied!';
+          setTimeout(() => button.innerText = 'Copy', 2000);
+        });
+      });
+    });
+
+    document.querySelectorAll('pre[class*="language-"]').forEach(pre => {
+      const cls = [...pre.classList].find(c => c.startsWith('language-'));
+      if (cls) {
+        const lang = cls.replace('language-', '').replace('prism-', '');
+        const container = pre.closest('.code-container') || pre.parentElement;
+        if (container && !container.querySelector('.code-lang')) {
+          const span = document.createElement('span');
+          span.className = 'code-lang';
+          span.textContent = lang;
+          container.prepend(span);
+        }
+      }
+    });
+
+    document.querySelectorAll('main h2[id], main h3[id], main h4[id]').forEach(heading => {
+      const anchor = document.createElement('a');
+      anchor.href = `#${heading.id}`;
+      anchor.className = 'heading-anchor';
+      anchor.setAttribute('aria-label', 'Permalink');
+      anchor.addEventListener('click', (e) => {
+        e.preventDefault();
+        navigator.clipboard.writeText(window.location.href.split('#')[0] + `#${heading.id}`);
+        anchor.classList.add('copied');
+        setTimeout(() => anchor.classList.remove('copied'), 2000);
+        history.replaceState(null, '', `#${heading.id}`);
+      });
+      heading.prepend(anchor);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+      if (e.key === 't' || e.key === 'T') {
+        document.getElementById('theme-toggle')?.click();
+      }
+    });
+
+    (function () {
+      const citeEl = document.getElementById('citation-text');
+      const copyBtn = document.getElementById('copy-citation');
+      if (!citeEl) return;
+
+      const title = document.querySelector('meta[property="og:title"]')?.content || document.title.replace(/\s*[—|]\s*ZFRQBL.*$/, '');
+      const url = document.querySelector('link[rel="canonical"]')?.href || location.href;
+      const author = document.querySelector('meta[name="author"]')?.content || 'Zafar';
+      const timeEl = document.querySelector('time[datetime]');
+      const year = timeEl ? new Date(timeEl.getAttribute('datetime')).getFullYear() : new Date().getFullYear();
+      const slug = (location.pathname.replace(/\/$/, '').split('/').pop() || 'essay').replace(/[^a-z0-9]+/gi, '_');
+
+      citeEl.textContent = `@misc{zfrqbl_${slug}_${year},\n  author = {${author}},\n  title  = {${title}},\n  year   = {${year}},\n  url    = {${url}}\n}`;
+
+      copyBtn?.addEventListener('click', () => {
+        navigator.clipboard.writeText(citeEl.textContent).then(() => {
+          copyBtn.textContent = 'Copied!';
+          setTimeout(() => copyBtn.textContent = 'Copy citation', 2000);
+        });
+      });
+    })();
+  </script>
+
+  <script defer src="/vendor/prism.min.js"></script>
+  <script defer src="/vendor/prism-python.min.js"></script>
+  <script defer src="/vendor/prism-javascript.min.js"></script>
+  <script defer src="/vendor/prism-bash.min.js"></script>
+  <script defer src="/vendor/prism-sql.min.js"></script>
+  <script defer src="/vendor/prism-markdown.min.js"></script>
+</body>
+</html>
