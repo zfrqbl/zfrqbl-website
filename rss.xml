@@ -5,10 +5,17 @@
     <link>https://zfrqbl.com/</link>
     <description>Daily notes on agent systems, model evaluation and software architecture, from an independent software engineer.</description>
     <language>en</language>
-    <lastBuildDate>Fri, 27 Nov 2026 00:00:00 +0500</lastBuildDate>
+    <lastBuildDate>Sat, 28 Nov 2026 00:00:00 +0500</lastBuildDate>
     <atom:link href="https://zfrqbl.com/rss.xml" rel="self" type="application/rss+xml" />
     <generator>zfrqbl_publish.py</generator>
         <item>
+      <title>Context is capacity. Memory is retrieval.</title>
+      <link>https://zfrqbl.com/essays/context-is-capacity-memory-is-retrieval</link>
+      <guid isPermaLink="true">https://zfrqbl.com/essays/context-is-capacity-memory-is-retrieval</guid>
+      <pubDate>Sat, 28 Nov 2026 00:00:00 +0500</pubDate>
+      <description>Nvidia&#x27;s measurements show frontier agents keep accuracy with 16K-50K-token working context: bigger windows buy capacity, not recall.</description>
+    </item>
+    <item>
       <title>A Prompt Is Not a Policy</title>
       <link>https://zfrqbl.com/essays/a-prompt-is-not-a-policy</link>
       <guid isPermaLink="true">https://zfrqbl.com/essays/a-prompt-is-not-a-policy</guid>

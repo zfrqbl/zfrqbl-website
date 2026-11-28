@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Context is capacity. Memory is retrieval. — ZFRQBL</title>
+  <meta name="description" content="Nvidia&#x27;s measurements show frontier agents keep accuracy with 16K-50K-token working context: bigger windows buy capacity, not recall." />
+  <link rel="canonical" href="https://zfrqbl.com/essays/context-is-capacity-memory-is-retrieval" />
+  <meta name="author" content="Zafar Iqbal" />
+
+  <!-- Article schema (AI-search citation signal; added Nov 7 2026 per Zafar approval) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Context is capacity. Memory is retrieval.",
+    "description": "Nvidia&#x27;s measurements show frontier agents keep accuracy with 16K-50K-token working context: bigger windows buy capacity, not recall.",
+    "author": { "@type": "Person", "name": "Zafar Iqbal", "sameAs": ["https://www.linkedin.com/in/zfrqbl/", "https://github.com/zfrqbl"] },
+    "publisher": { "@type": "Organization", "name": "ZFRQBL", "url": "https://zfrqbl.com" },
+    "datePublished": "2026-11-28",
+    "dateModified": "2026-11-28",
+    "mainEntityOfPage": "https://zfrqbl.com/essays/context-is-capacity-memory-is-retrieval",
+    "image": "https://zfrqbl.com/public/og/zfrqbl.png"
+  }
+  </script>
+  <link rel="alternate" type="application/rss+xml" title="ZFRQBL" href="https://zfrqbl.com/rss.xml" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Context is capacity. Memory is retrieval." />
+  <meta property="og:description" content="Nvidia&#x27;s measurements show frontier agents keep accuracy with 16K-50K-token working context: bigger windows buy capacity, not recall." />
+  <meta property="og:url" content="https://zfrqbl.com/essays/context-is-capacity-memory-is-retrieval" />
+  <meta property="og:image" content="https://zfrqbl.com/public/og/zfrqbl.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- PWA / Mobile Feel -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0172ad" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#111827" media="(prefers-color-scheme: dark)" />
+  <link rel="apple-touch-icon" href="/favicon.svg" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/vendor/pico.2.1.1.min.css" />
+  <link rel="stylesheet" href="/vendor/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme) {
+        document.documentElement.setAttribute('data-theme', storedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <header class="container">
+    <nav>
+      <ul><li><strong><a href="/" class="contrast">ZFRQBL</a></strong></li></ul>
+      <ul>
+        <li><a href="/about">About</a></li>
+        <li><a href="/archive">Archive</a></li>
+        <li>
+          <button id="theme-toggle" class="outline secondary theme-toggle-btn" aria-label="Toggle theme 🌙 / ☀️">🌙 / ☀️</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main-content" class="container">
+    <article class="essay-content">
+      <header class="note-header">
+        <div class="meta-line">
+          <small class="secondary note-kicker">Essay</small>
+          <span class="secondary">•</span>
+          <time datetime="2026-11-28" class="secondary meta-time">November 28, 2026</time>
+          <span class="secondary">•</span>
+          <span class="secondary meta-read">11 min read</span>
+        </div>
+        <h1>Context is capacity. Memory is retrieval.</h1>
+      </header>
+
+      
+
+      <section><p>CONTEXT IS CAPACITY. MEMORY IS RETRIEVAL.</p>
+<p>A context window is capacity. It decides how many tokens a model can hold in view when it replies. Finding the right token among those is a separate problem, recall, and it is the one long-context systems keep losing. Nvidia researchers quantified the split in a technical report posted to arXiv on November 3, 2026, titled "You don't need long context" (arXiv 2611.05306). Twelve authors led by Peter Belcak and Pavlo Molchanov ran frontier models against their own full histories and against brief compactions, then published 31 pages of results. The short version is that frontier models lose little to no accuracy when an agent's working context is held to roughly 16,000 to 50,000 tokens. A model reading a long document in small pieces beats one handed the whole thing. Bigger context buys capacity. It does not buy recall. Memory is a retrieval and engineering problem, and this paper is the strongest measurement of that claim I have seen.</p>
+<p>The timing is personal. I ran a five-day trial of a billion-context compression system earlier this month, and the record of what it did and where it failed is published on this site. The paper reframed what I was measuring. This site has run a thread under the banner "Memory Is Not Context", and I have argued here that a vector database is retrieval memory, one of eight distinct memory problems. I have also argued that context engineering, what sits in the window and how it gets there, matters more than raw context size. The Nvidia group ran the controlled version of that argument. This is what they found, and what it should change about how we price agent memory.</p>
+<h2 id="what-nvidia-measured">What Nvidia measured</h2>
+<p>The report compares three ways of running the same agent, and the harness is deliberately plain. The model works in a loop that issues a single Bash command at a time, built on mini-swe-agent and the authors' own mini-agent.</p>
+<p>The baseline keeps every action and every tool result in one conversation, full-history accumulation, how most agent frameworks work. The second regime compacts the context. Once it crosses a threshold, the model writes a bounded brief of its state, and a fresh conversation starts from the task plus that brief. The third regime cuts to almost nothing. Each fresh conversation gets the task and the current state, takes exactly one action and updates the state, then gets discarded.</p>
+<p>Long documents never enter the prompt whole. Each one is saved as a file in the agent's environment, and the agent searches it with ordinary tools. In one recorded LongBench v2 run the agent translates a Kalamang sentence using a grammar of roughly a million characters. It greps for a single word and collects the line number. Then it reads 36 lines around the hit, a window of roughly 6,000 characters.</p>
+<p>The tasks cover six long-horizon benchmarks, SWE-bench Verified and Terminal-Bench among them, plus seven long-input ones from Needle in a Haystack to LOONG. The principal runs used Claude Opus 4.5 beside a second closed-weight frontier model.</p>
+<h2 id="short-context-matched-the-full-window">Short context matched the full window</h2>
+<p>The team stepped the context limit down as low as 8,000 tokens on long-horizon tasks. Claude Opus 4.5's accuracy against its own full-history baseline ranged from 3.7 points worse to 5.6 points better, and only 5 of 22 threshold settings lost more than 2 points. The best settings beat the baseline outright, 74.8 percent on SWE-bench Verified at a 24,000-token limit against 70.0 percent with full history. Terminal-Bench at 32,000 came to 52.8 against 47.2.</p>
+<p>The single-action regime is the striking one. Each conversation runs exactly one command and dies. Opus 4.5 scored 70.2 on SWE-bench Verified against 70.0 for the run that carried everything, and 51.8 on Terminal-Bench against 47.2. The median peak context fell from 32,000 tokens to 8,000 on SWE-bench, and from 27,000 to 9,000 on Terminal-Bench. The largest single call dropped from 200,000 tokens to 16,000.</p>
+<p>Long inputs, where the big window should matter most, went better still. LOONG spreads its questions across several documents at once, financial reports and legal cases among them, and academic papers sit in the same mix. Its average score rose from 70.1 to 79.8 at a 48,000-token limit, and the share of perfect answers from 38.9 percent to 52.6. AA-LCR climbed from 65.0 to 84.0 at 16,000 tokens. LongBench v2 came in nearly flat at 67.6 against 68.0, the one small dip in the whole battery. Across every long-input setting the change ranged from 0.4 points worse to 40.0 points better.</p>
+<p>On Needle in a Haystack both models hit 100 percent in every regime, and the authors say exactly why. The questions share words with the needles. When the answer's vocabulary overlaps the question, the window is enough. The gap opens where the answer does not share that surface, a name across a year of filings, a translated word inside a grammar. Holding tokens and finding them are different acts.</p>
+<h2 id="why-shorter-context-costs-less">Why shorter context costs less</h2>
+<p>The price gap is mechanical. Every new token attends to every token before it, so generation cost grows with depth in the window. Retail pricing hides the gradient, since providers quote one flat rate per million tokens. The Nvidia team measured the gradient on the hardware instead. Serving GLM 5.2 and Kimi K2.6 on 16 H100s each, and Qwen 3 Coder Next on 8, at 3.85 dollars per GPU-hour, a 256,000-token window cost between 3.6 and 7 times more per generated token than a 16,000-token one, depending on the model. On an Nvidia DGX Spark the time between tokens roughly doubled for several local models as the input got longer.</p>
+<p>The windows themselves have outgrown what people feed them. The Old Man and the Sea comes to roughly 37,000 tokens, and The Great Gatsby to roughly 64,000. The models in the paper's survey ship with windows between 200,000 and about a million. For scale, The Decoder notes that GPT-4 launched in March 2023 with 8,192 tokens. GPT 5.6 Sol now handles around a million, about 120 times as much, enough for War and Peace.</p>
+<p>The modeled dollars tell the same story. Applying the measured ratio to Opus 4.5's list prices, 5 dollars per million input tokens and 25 per million output, the AA-LCR run falls from 52 dollars to 5.30, and the LOONG run from 1,367.50 to 181.11. The stated savings run 2.2 to 8.8 times on long-horizon tasks and 6.5 to 54.6 times on long-input ones. These are extrapolations from list prices, not receipts, and the report says so itself. Provider pricing could narrow the gap, but even at half the headline saving the direction holds. Context you carry is context you pay for on every call, and these trials show you rarely need to carry it.</p>
+<h2 id="reading-a-file-beat-reading-the-window">Reading a file beat reading the window</h2>
+<p>The long-input results carry the argument that matters for the memory thread on this site. In the full-input baseline the model had everything in view, and it still averaged 70.1 on LOONG against 79.8 for the agent that searched the corpus and read small windows. Capacity was not the constraint. Recall was.</p>
+<p>The Kalamang example shows the shape of the fix. The grammar runs to about a million characters, larger than the context of most deployed systems, and the agent never reads it whole. It greps for the word it needs and collects a line number, then reads 36 lines around the hit. The relevant material enters the window, which is the whole point of having one. Everything else stays on disk until a search wants it.</p>
+<p>Retrieval is doing the remembering outside the prompt, and the search layer does not need to be an embedding model. grep is byte matching. Embeddings are the right tool when the match is semantic rather than literal, which is the retrieval-memory slot in the taxonomy I wrote up in Context Engineering with Deep Agents. The Nvidia result shows the boundary from the hardware side. When the task needs a name or a number, plain search beats pasting the corpus. A phrase works the same way.</p>
+<p>Attention explains why the full window underperforms. Every output token weighs everything in view, so irrelevant material still absorbs attention mass, and a window that holds a million tokens attends to all of them on every step. Capacity is real. Recall is not indexed.</p>
+<h2 id="the-brief-that-replaced-the-history">The brief that replaced the history</h2>
+<p>Compaction that holds accuracy is not a summary. The authors found that summaries give every fact equal weight and lean on repeated stretches of the trace, whatever their relevance. The briefs that worked carried the task near verbatim and the agent's current intentions. They also carried next steps and the artefacts the next action depends on, a decomposed plan and a list of completion criteria. Pointers to files sit alongside. The brief compresses the past and keeps the future intact. The next action depends on where the agent is going, not on where it has been.</p>
+<p>The authors are open about the ceiling. They build a coin-toss task that a fixed-size compaction is guaranteed to fail, because the deciding fact appears once in the history and cannot fit a bounded brief. Their fix is to keep every message in a file the agent can search, which turns remembering back into a long-input task of the kind the paper already covers. Compaction and search work as a pair. Each covers the other's blind spot.</p>
+<p>The conclusion concedes the boundary openly. "Our evidence does not rule out the existence of tasks for which long context is beneficial," the authors write, "nor does it prove that every possible task can be solved with short context." That is the honest version of the claim, and it is stronger than the promotional one. Nobody needs to believe long context is worthless. The evidence says most real workloads pay for it without using it.</p>
+<h2 id="the-model-class-the-paper-left-untrained">The model class the paper left untrained</h2>
+<p>The report ends by sketching a model class it calls semantic state space models, SSSMs. An SSSM is post-trained to read a written description of the conversation's state and to reason about the next action. It takes the action and registers the outcome, then rewrites the state so that a separate instance of the model can carry on. Unlike a state space model in the Mamba line, which passes a black-box neural state between tokens, an SSSM keeps its state in plain language between turns.</p>
+<p>The authors see two consequences. Training should be cheaper, because the model would not need to learn which patches of earlier context to attend to. And there is no obvious reason such a model could not match one that accumulates full history. They close the argument by asking why anyone would train full-history-accumulating models in the first place.</p>
+<p>The paper trains no SSSM, and the single-action results come from existing models prompted to compact. The whole report is a measurement of today's models with a sketch of tomorrow's. A sketch is enough, because the direction points at where the cost sits. Carrying history is the expensive part of a long-horizon run.</p>
+<h2 id="what-the-paper-says-about-my-billion-context-trial">What the paper says about my billion-context trial</h2>
+<p>This is where the report crossed my own work. My trial ran five days on a billion-token context, and the full record is on this site. The Nvidia paper reframes its central question. A billion-token window answers whether a system can hold a billion tokens. The trial, and the paper, answer whether holding them changes recall. Those are different claims, and they need different evidence.</p>
+<p>The transferable test takes an afternoon. Take the trial's hardest recall case and save the corpus as files. Then search instead of pasting, and compare cost and score against the full-context run. That is the design that turned a 52-dollar AA-LCR run into a 5.30-dollar one while raising the score from 65.0 to 84.0.</p>
+<p>It is also close to the harness this site described as context engineering. Large inputs go to disk before the model sees them. Compaction keeps the window from climbing. Retrieval fires at the moment of need. The Nvidia group built a benchmark-grade version of the same loop, and its open-weight runs show the payoff. Shrink the window and the same models fit on less hardware.</p>
+<p>Here is the number I keep returning to. With one action per context and a median peak context of 8,000 tokens, Opus 4.5 scored 70.2 on SWE-bench Verified. The run that carried its entire history scored 70.0. The industry prices the 70.0 design, and the 70.2 design runs on a brief and a file. Memory does not live in the window. It lives in what the agent writes down and in what it can search, and the window only holds what the next action needs.</p>
+</section>
+
+      <h2 id="sources">Sources</h2>
+<ul>
+<li id="src1">Peter Belcak, Saurav Muralidharan, Jindong Jiang, Yonggan Fu, Wonmin Byeon, Hanrong Ye, Ali Taghibakhshi, Shih-Yang Liu, Siru Ouyang, Greg Heinrich, Pavlo Molchanov et al., &quot;You don&#x27;t need long context&quot;, arXiv 2611.05306, November 3 2026. <a href="https://arxiv.org/abs/2611.05306" rel="noopener">https://arxiv.org/abs/2611.05306</a></li>
+<li id="src2">Jonathan Kemper, &quot;Nvidia researchers argue huge AI context windows are a dead end&quot;, The Decoder, November 21 2026. <a href="https://the-decoder.com/nvidia-researchers-argue-huge-ai-context-windows-are-a-dead-end/" rel="noopener">https://the-decoder.com/nvidia-researchers-argue-huge-ai-context-windows-are-a-dead-end/</a></li>
+<li id="src3">&quot;Nvidia paper: AI agents don&#x27;t need long context windows&quot;, Sulat, November 22 2026. <a href="https://news.sulat.com/2026/11/22/nvidia-long-context-paper" rel="noopener">https://news.sulat.com/2026/11/22/nvidia-long-context-paper</a></li>
+<li id="src4">&quot;Context Engineering with Deep Agents&quot;, zfrqbl.com. <a href="https://zfrqbl.com/essays/context-engineering-with-deep-agents" rel="noopener">https://zfrqbl.com/essays/context-engineering-with-deep-agents</a></li>
+<li id="src5">&quot;billion-context Failed Quietly: What a Five-Day Trial Taught Me&quot;, zfrqbl.com. <a href="https://zfrqbl.com/essays/billion-context-failed-quietly" rel="noopener">https://zfrqbl.com/essays/billion-context-failed-quietly</a></li>
+</ul>
+      <section class="related-notes">
+        <h2>Related</h2>
+        <ul>
+          <li><a href="/essays/billion-context-failed-quietly">billion-context Failed Quietly: What a Five-Day Trial Taught Me</a></li>
+          <li><a href="/essays/context-engineering-with-deep-agents">Context Engineering with Deep Agents</a></li>
+        </ul>
+      </section>
+
+      <div class="cite-block">
+        <strong>Cite this essay</strong>
+        <pre id="citation-text"></pre>
+        <button class="copy-btn" id="copy-citation" style="position:static;">Copy citation</button>
+      </div>
+
+      <p class="secondary discuss-link">
+        <a href="https://github.com/zfrqbl/zfrqbl-website/discussions" rel="noopener">Discuss this essay on GitHub</a>
+      </p>
+
+      
+    </article>
+  </main>
+
+  <footer class="container site-footer">
+    <small class="secondary">© <script>document.write(new Date().getFullYear())</script> ZFRQBL - Icons by Lucide (MIT).</small>
+  </footer>
+
+  <script>
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+
+    document.querySelectorAll('.copy-btn').forEach(button => {
+      if (button.id === 'copy-citation') return;
+      button.addEventListener('click', () => {
+        const container = button.closest('.code-container');
+        if (!container) return;
+        const code = container.querySelector('code').innerText;
+        navigator.clipboard.writeText(code).then(() => {
+          button.innerText = 'Copied!';
+          setTimeout(() => button.innerText = 'Copy', 2000);
+        });
+      });
+    });
+
+    document.querySelectorAll('pre[class*="language-"]').forEach(pre => {
+      const cls = [...pre.classList].find(c => c.startsWith('language-'));
+      if (cls) {
+        const lang = cls.replace('language-', '').replace('prism-', '');
+        const container = pre.closest('.code-container') || pre.parentElement;
+        if (container && !container.querySelector('.code-lang')) {
+          const span = document.createElement('span');
+          span.className = 'code-lang';
+          span.textContent = lang;
+          container.prepend(span);
+        }
+      }
+    });
+
+    document.querySelectorAll('main h2[id], main h3[id], main h4[id]').forEach(heading => {
+      const anchor = document.createElement('a');
+      anchor.href = `#${heading.id}`;
+      anchor.className = 'heading-anchor';
+      anchor.setAttribute('aria-label', 'Permalink');
+      anchor.addEventListener('click', (e) => {
+        e.preventDefault();
+        navigator.clipboard.writeText(window.location.href.split('#')[0] + `#${heading.id}`);
+        anchor.classList.add('copied');
+        setTimeout(() => anchor.classList.remove('copied'), 2000);
+        history.replaceState(null, '', `#${heading.id}`);
+      });
+      heading.prepend(anchor);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+      if (e.key === 't' || e.key === 'T') {
+        document.getElementById('theme-toggle')?.click();
+      }
+    });
+
+    (function () {
+      const citeEl = document.getElementById('citation-text');
+      const copyBtn = document.getElementById('copy-citation');
+      if (!citeEl) return;
+
+      const title = document.querySelector('meta[property="og:title"]')?.content || document.title.replace(/\s*[—|]\s*ZFRQBL.*$/, '');
+      const url = document.querySelector('link[rel="canonical"]')?.href || location.href;
+      const author = document.querySelector('meta[name="author"]')?.content || 'Zafar';
+      const timeEl = document.querySelector('time[datetime]');
+      const year = timeEl ? new Date(timeEl.getAttribute('datetime')).getFullYear() : new Date().getFullYear();
+      const slug = (location.pathname.replace(/\/$/, '').split('/').pop() || 'essay').replace(/[^a-z0-9]+/gi, '_');
+
+      citeEl.textContent = `@misc{zfrqbl_${slug}_${year},\n  author = {${author}},\n  title  = {${title}},\n  year   = {${year}},\n  url    = {${url}}\n}`;
+
+      copyBtn?.addEventListener('click', () => {
+        navigator.clipboard.writeText(citeEl.textContent).then(() => {
+          copyBtn.textContent = 'Copied!';
+          setTimeout(() => copyBtn.textContent = 'Copy citation', 2000);
+        });
+      });
+    })();
+  </script>
+
+  <script defer src="/vendor/prism.min.js"></script>
+  <script defer src="/vendor/prism-python.min.js"></script>
+  <script defer src="/vendor/prism-javascript.min.js"></script>
+  <script defer src="/vendor/prism-bash.min.js"></script>
+  <script defer src="/vendor/prism-sql.min.js"></script>
+  <script defer src="/vendor/prism-markdown.min.js"></script>
+</body>
+</html>
